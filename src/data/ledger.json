@@ -1,0 +1,15 @@
+{
+  "startDate": "2026-07-19",
+  "goalDate": "2026-12-31",
+  "goalUsd": 100000,
+  "weeks": [
+    {
+      "weekEnding": "2026-07-19",
+      "revenue": 0,
+      "mrr": 0,
+      "spend": 0,
+      "emailSubs": 0,
+      "note": "Day 0 — plan done, site live, nothing sold yet."
+    }
+  ]
+}

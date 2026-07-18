@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kerem — $0 → $100k by Dec 31, 2026</title>
+    <meta
+      name="description"
+      content="A public ledger. CS senior building AI dev tools in public: $100/mo budget, $0 ads, real numbers every Sunday — including the $0 weeks."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#edf2e7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1511" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Kerem — $0 → $100k by Dec 31, 2026" />
+    <meta
+      property="og:description"
+      content="A public ledger: $100/mo budget, $0 ads, real numbers every Sunday — including the $0 weeks."
+    />
+    <meta property="og:url" content="https://kerem-turhan.github.io/roadto100k-site/" />
+    <meta property="og:image" content="https://kerem-turhan.github.io/roadto100k-site/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kerem — $0 → $100k by Dec 31, 2026" />
+    <meta
+      name="twitter:description"
+      content="A public ledger: $100/mo budget, $0 ads, real numbers every Sunday — including the $0 weeks."
+    />
+    <meta name="twitter:image" content="https://kerem-turhan.github.io/roadto100k-site/og.png" />
+
+    <script>
+      // Apply the stored/system theme before first paint to avoid a flash.
+      ;(function () {
+        var stored = localStorage.getItem('theme')
+        var dark = stored
+          ? stored === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (dark) document.documentElement.classList.add('dark')
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- A tile of ledger paper: pale green stock, ruled rows, red margin line. -->
+  <rect width="64" height="64" fill="#edf2e7"/>
+  <g stroke="#c7d6c2" stroke-width="3">
+    <line x1="0" y1="22" x2="64" y2="22"/>
+    <line x1="0" y1="38" x2="64" y2="38"/>
+    <line x1="0" y1="54" x2="64" y2="54"/>
+  </g>
+  <line x1="17" y1="0" x2="17" y2="64" stroke="#bf3b2f" stroke-width="4"/>
+  <text x="24" y="51" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="30" font-weight="600" fill="#1b2620">$0</text>
+</svg>

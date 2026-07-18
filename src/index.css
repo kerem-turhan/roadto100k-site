@@ -1,0 +1,132 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource-variable/public-sans';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * "The Honest Ledger" theme — see docs/plan.md §1.
+ * Light = classic accounting ledger paper; dark = the night ledger.
+ * These tokens are the entire palette; no color may be used outside them.
+ */
+:root {
+  --paper: #edf2e7;
+  --paper-raised: #e4ebdc;
+  --rule: #c7d6c2;
+  --ink: #1b2620;
+  --ink-muted: #55645b;
+  --ledger-red: #bf3b2f;
+  --ledger-green: #2f5c45;
+
+  /* shadcn contract, mapped onto the ledger palette */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-raised);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-raised);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--paper-raised);
+  --accent-foreground: var(--ink);
+  --destructive: var(--ledger-red);
+  --destructive-foreground: var(--paper);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--ledger-red);
+  --radius: 2px;
+
+  /* vertical rhythm of the ruled-paper background */
+  --ledger-row: 2.75rem;
+}
+
+.dark {
+  --paper: #0f1511;
+  --paper-raised: #151d17;
+  --rule: #26332a;
+  --ink: #e3ebdd;
+  --ink-muted: #8fa096;
+  --ledger-red: #e2604f;
+  --ledger-green: #7fb89a;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-rule: var(--rule);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ledger-red: var(--ledger-red);
+  --color-ledger-green: var(--ledger-green);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Public Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+}
+
+@layer base {
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--ledger-red);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ledger-red);
+    outline-offset: 2px;
+  }
+
+  /* Numbers are data everywhere on this page. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@utility ledger-rules {
+  /* Ruled paper: one hairline per row of vertical rhythm. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--ledger-row) - 1px),
+    var(--rule) calc(var(--ledger-row) - 1px),
+    var(--rule) var(--ledger-row)
+  );
+}
