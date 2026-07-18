@@ -19,7 +19,7 @@ export function SiteFooter() {
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className="inline-block py-2 font-mono text-xs tracking-[0.2em] uppercase underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red"
+              className="-my-2 inline-block px-1 py-3.5 font-mono text-xs tracking-[0.2em] uppercase underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red"
             >
               {link.label} ↗
             </a>

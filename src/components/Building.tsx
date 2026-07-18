@@ -4,7 +4,7 @@ import { config } from '@/config'
 
 export function Building() {
   return (
-    <section aria-label="What I'm building" className="border-t border-rule py-16 md:py-20">
+    <section aria-label="What I'm building" className="border-t border-rule py-[2.75rem] md:py-[4.125rem]">
       <Reveal>
         <SectionHeader eyebrow="Two engines" title="What I'm building" />
         <div className="max-w-[56ch] space-y-5 leading-relaxed">

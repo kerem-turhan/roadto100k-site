@@ -26,3 +26,4 @@ dist-ssr
 # Local agent/tooling workspaces
 .claude/
 .playwright-mcp/
+.claude/settings.local.json

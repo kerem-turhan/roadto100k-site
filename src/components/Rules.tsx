@@ -8,7 +8,7 @@ const RULES = [
   },
   {
     figure: '$0 ads',
-    text: "Not a dollar on ads, ever. Growth comes from building in the open — or it doesn't come.",
+    text: "Not one dollar on ads. Growth comes from building in the open — or it doesn't come at all.",
   },
   {
     figure: '100% public',
@@ -18,7 +18,7 @@ const RULES = [
 
 export function Rules() {
   return (
-    <section aria-label="The rules" className="border-t border-rule py-16 md:py-20">
+    <section aria-label="The rules" className="border-t border-rule py-[2.75rem] md:py-[4.125rem]">
       <Reveal>
         <SectionHeader eyebrow="Terms of the bet" title="The rules" />
         <ul>

@@ -6,11 +6,11 @@ import { config } from '@/config'
 
 export function Signup() {
   return (
-    <section aria-label="Email signup" className="border-t border-rule py-16 md:py-20">
+    <section aria-label="Email signup" className="border-t border-rule py-[2.75rem] md:py-[4.125rem]">
       <Reveal>
         <SectionHeader eyebrow="The Sunday numbers" title="Get the ledger by email" />
         <p className="mb-8 max-w-[52ch] leading-relaxed">
-          One email a week: the full ledger, plus the lesson that cost the most to learn. The $0
+          One email a week: the full ledger, and the lesson that cost the most to learn. The $0
           weeks arrive on schedule too.
         </p>
         {config.BUTTONDOWN_URL ? (
