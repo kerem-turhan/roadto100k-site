@@ -12,7 +12,7 @@ function App() {
       {/* The ledger's red margin rule: a classic double line down the left edge. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-4 hidden w-[3px] border-x border-ledger-red/50 sm:block"
+        className="pointer-events-none absolute inset-y-0 left-2 w-[3px] border-x border-ledger-red/50 sm:left-4"
       />
       <header className="flex items-center justify-between pt-6">
         <p className="font-mono text-xs tracking-[0.25em] text-ink-muted uppercase">

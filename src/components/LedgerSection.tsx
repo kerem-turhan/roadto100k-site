@@ -64,7 +64,43 @@ export function LedgerSection() {
           </p>
         </div>
 
-        <div className="mt-10 overflow-x-auto">
+        {/* Mobile: stacked ledger entries, so the weekly note never hides behind a scroll. */}
+        <ul className="mt-10 sm:hidden">
+          {newestFirst.map((week) => (
+            <li key={week.weekEnding} className="border-b border-rule py-4 first:border-t">
+              <div className="flex items-baseline justify-between">
+                <span className="font-mono text-sm font-medium">
+                  {formatWeekEnding(week.weekEnding)}
+                </span>
+                <span className="font-mono text-[0.65rem] tracking-[0.2em] text-ink-muted uppercase">
+                  Week
+                </span>
+              </div>
+              <dl className="mt-3 grid grid-cols-4 gap-2">
+                {(
+                  [
+                    ['Rev', formatUsd(week.revenue), week.revenue > 0],
+                    ['MRR', formatUsd(week.mrr), false],
+                    ['Spend', formatUsd(week.spend), false],
+                    ['Subs', String(week.emailSubs), false],
+                  ] as const
+                ).map(([label, value, positive]) => (
+                  <div key={label}>
+                    <dt className="font-mono text-[0.65rem] tracking-[0.15em] text-ink-muted uppercase">
+                      {label}
+                    </dt>
+                    <dd className={`font-mono text-sm ${positive ? 'text-ledger-green' : ''}`}>
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">{week.note}</p>
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-10 hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[36rem] border-collapse text-left">
             <thead>
               <tr className="border-b border-rule font-mono text-[0.65rem] tracking-[0.2em] text-ink-muted uppercase">

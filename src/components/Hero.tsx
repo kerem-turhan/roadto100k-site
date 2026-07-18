@@ -17,7 +17,7 @@ export function Hero() {
       {/* Ruled ledger paper behind the headline, fading out toward the bottom. */}
       <div
         aria-hidden
-        className="ledger-rules pointer-events-none absolute inset-0 opacity-60 [mask-image:linear-gradient(to_bottom,black_55%,transparent_95%)]"
+        className="ledger-rules pointer-events-none absolute inset-0 opacity-40 [mask-image:linear-gradient(to_bottom,black_55%,transparent_95%)]"
       />
       <div className="relative">
         <motion.p
