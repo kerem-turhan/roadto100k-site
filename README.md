@@ -26,6 +26,24 @@ npm run build      # production build into dist/
 Design tokens and project rules live in [CLAUDE.md](CLAUDE.md); the full v1 plan and copy in
 [docs/plan.md](docs/plan.md).
 
+## Generated static pages (v2)
+
+`vite build` also runs [scripts/static-pages.ts](scripts/static-pages.ts), which pre-renders
+everything derived from the ledger:
+
+- `feed.xml` — RSS 2.0, one item per ledger week.
+- `sitemap.xml` + `robots.txt` — canonical URLs for every page.
+- `w/<weekEnding>/index.html` — one plain-HTML journal page per week (indexable, no JS
+  beyond the theme snippet) plus the `w/` archive index.
+- JSON-LD (Person + WebSite + Dataset) injected into `index.html`.
+
+The generators are pure functions in `src/lib/` (`feed.ts`, `sitemap.ts`, `journal.ts`,
+`seo.ts`, `sparkline.ts`), each unit-tested with Vitest. Appending a week to `ledger.json`
+automatically produces the new journal page, feed item and sitemap entry on the next build.
+
+The share card `public/og.png` is rendered from [scripts/og-template.html](scripts/og-template.html)
+(screenshot at exactly 1200x630) — regenerate only when the card copy changes.
+
 ## Weekly ledger update (the Sunday ritual)
 
 All numbers on the site come from one file: [src/data/ledger.json](src/data/ledger.json).
