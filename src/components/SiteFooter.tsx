@@ -1,8 +1,9 @@
 import { config } from '@/config'
 
 const LINKS = [
-  { label: 'X', href: config.X_URL },
-  { label: 'GitHub', href: config.GITHUB_URL },
+  { label: 'X', href: config.X_URL, external: true },
+  { label: 'GitHub', href: config.GITHUB_URL, external: true },
+  { label: 'RSS', href: `${import.meta.env.BASE_URL}feed.xml`, external: false },
 ] as const
 
 export function SiteFooter() {
@@ -17,11 +18,11 @@ export function SiteFooter() {
             <a
               key={link.label}
               href={link.href}
-              target="_blank"
-              rel="noreferrer"
+              {...(link.external ? { target: '_blank', rel: 'noreferrer' } : {})}
               className="-my-2 inline-block px-1 py-3.5 font-mono text-xs tracking-[0.2em] uppercase underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red"
             >
-              {link.label} ↗
+              {link.label}
+              {link.external ? ' ↗' : ''}
             </a>
           ))}
         </nav>

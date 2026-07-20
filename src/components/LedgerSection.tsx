@@ -1,3 +1,4 @@
+import { LedgerSparkline } from '@/components/LedgerSparkline'
 import { Reveal } from '@/components/Reveal'
 import { SectionHeader } from '@/components/SectionHeader'
 import rawLedger from '@/data/ledger.json'
@@ -24,12 +25,24 @@ function formatWeekEnding(iso: string): string {
 
 const LABEL = 'font-mono text-[0.6875rem] tracking-[0.2em] text-ink-muted uppercase'
 
+/** Every ledger week has a pre-rendered journal page at /w/<weekEnding>/. */
+function weekHref(weekEnding: string): string {
+  return `${import.meta.env.BASE_URL}w/${weekEnding}/`
+}
+
+const WEEK_LINK =
+  'underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red'
+
 export function LedgerSection() {
   const progress = totals.cumulativeRevenue / ledger.goalUsd
   const newestFirst = [...ledger.weeks].reverse()
 
   return (
-    <section aria-label="The ledger" className="border-t border-rule py-[2.75rem] md:py-[4.125rem]">
+    <section
+      id="ledger"
+      aria-label="The ledger"
+      className="border-t border-rule py-[2.75rem] md:py-[4.125rem]"
+    >
       <Reveal>
         <div className="flex items-baseline justify-between gap-4">
           <SectionHeader eyebrow={`Week ${totals.weekNumber}`} title="The ledger" />
@@ -38,8 +51,9 @@ export function LedgerSection() {
           </p>
         </div>
         <p className="-mt-2 mb-10 max-w-[52ch] leading-relaxed text-ink-muted">
-          Real numbers. Nothing rounded up, nothing hidden. A chart shows up once there's a
-          curve worth drawing — an empty one would be decoration, not honesty.
+          Real numbers. Nothing rounded up, nothing hidden. The green line is what actually
+          happened; the dashed one is the pace $100k demands. The gap between them is the
+          honest part.
         </p>
 
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-rule bg-rule md:grid-cols-4">
@@ -51,16 +65,9 @@ export function LedgerSection() {
           ))}
         </dl>
 
-        {/* The goal line: a single rule with the $100k mark inked in red at the end. */}
-        <div className="mt-6" aria-label={`Progress toward ${formatUsd(ledger.goalUsd)}`}>
-          <div className="relative h-2">
-            <div className="absolute inset-x-0 top-1/2 h-px bg-rule" />
-            <div
-              className="absolute top-1/2 h-px bg-ledger-green"
-              style={{ width: `${Math.min(100, progress * 100)}%`, minWidth: progress > 0 ? '2px' : 0 }}
-            />
-            <div className="absolute top-0 right-0 h-2 w-px bg-ledger-red" />
-          </div>
+        {/* The goal line, now with a time axis: real revenue vs the pace required. */}
+        <div className="mt-8">
+          <LedgerSparkline ledger={ledger} />
           <p className={`mt-2 ${LABEL} tracking-widest`}>
             {formatUsd(totals.cumulativeRevenue)} of {formatUsd(ledger.goalUsd)} ·{' '}
             {(progress * 100).toFixed(1)}%
@@ -68,13 +75,16 @@ export function LedgerSection() {
         </div>
 
         {/* Mobile: stacked ledger entries, so the weekly note never hides behind a scroll. */}
-        <ul className="mt-10 sm:hidden">
+        <ul className="mt-10 sm:hidden" aria-label="Weekly ledger entries">
           {newestFirst.map((week, idx) => (
             <li key={week.weekEnding} className="border-b border-rule py-4 first:border-t">
               <div className="flex items-baseline justify-between">
-                <span className="font-mono text-sm font-medium">
+                <a
+                  href={weekHref(week.weekEnding)}
+                  className={`-my-3 inline-block py-3 font-mono text-sm font-medium ${WEEK_LINK}`}
+                >
                   {formatWeekEnding(week.weekEnding)}
-                </span>
+                </a>
                 <span className={LABEL}>
                   № {String(ledger.weeks.length - idx).padStart(3, '0')}
                 </span>
@@ -105,6 +115,10 @@ export function LedgerSection() {
 
         <div className="mt-10 hidden overflow-x-auto sm:block">
           <table className="w-full min-w-[38rem] border-collapse text-left">
+            <caption className="sr-only">
+              The weekly ledger: revenue, MRR, spend and email subscribers per week, newest
+              first. Each week ending date links to that week's journal page.
+            </caption>
             <thead>
               <tr className={`border-b border-rule ${LABEL}`}>
                 <th scope="col" className="py-3 pr-3 font-normal">№</th>
@@ -125,9 +139,11 @@ export function LedgerSection() {
                   <td className="py-3.5 pr-3 font-mono text-xs text-ink-muted">
                     {String(ledger.weeks.length - idx).padStart(3, '0')}
                   </td>
-                  <td className="py-3.5 pr-4 font-mono text-sm whitespace-nowrap">
-                    {formatWeekEnding(week.weekEnding)}
-                  </td>
+                  <th scope="row" className="py-3.5 pr-4 font-mono text-sm font-normal whitespace-nowrap">
+                    <a href={weekHref(week.weekEnding)} className={WEEK_LINK}>
+                      {formatWeekEnding(week.weekEnding)}
+                    </a>
+                  </th>
                   <td
                     className={`py-3.5 pr-4 text-right font-mono text-sm ${week.revenue > 0 ? 'text-ledger-green' : ''}`}
                   >

@@ -14,12 +14,17 @@ export function Signup({
   xUrl = config.X_URL,
 }: SignupProps = {}) {
   return (
-    <section aria-label="Email signup" className="border-t border-rule py-[2.75rem] md:py-[4.125rem]">
+    <section
+      id="signup"
+      aria-label="Email signup"
+      className="border-t border-rule py-[2.75rem] md:py-[4.125rem]"
+    >
       <Reveal>
         <SectionHeader eyebrow="The Sunday numbers" title="Get the ledger by email" />
         <p className="mb-8 max-w-[52ch] leading-relaxed">
-          One email a week: the full ledger, and the lesson that cost the most to learn. The $0
-          weeks arrive on schedule too.
+          One email every Sunday: the full ledger, and the lesson that cost the most to learn.
+          The $0 weeks arrive on schedule too — and on Dec 31, 2026, one honest post-mortem,
+          whatever the final number is.
         </p>
         {buttondownUrl ? (
           <form
