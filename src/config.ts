@@ -3,8 +3,8 @@
  * Nothing below may be inlined anywhere else in the codebase.
  */
 export const config = {
-  /** Buttondown embed action URL. Empty until the account exists → signup falls back to X. */
-  BUTTONDOWN_URL: '',
+  /** Public Buttondown embed action URL. Empty values make signup fall back to X. */
+  BUTTONDOWN_URL: 'https://buttondown.com/api/emails/embed-subscribe/mehmet_kerem',
   X_URL: 'https://x.com/mkeremturhan',
   GITHUB_URL: 'https://github.com/kerem-turhan',
   CONTACT_EMAIL: 'keremturhan.cs@gmail.com',
