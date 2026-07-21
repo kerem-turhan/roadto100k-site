@@ -15,6 +15,9 @@ Full plan & copy: [docs/plan.md](docs/plan.md).
   stay zeros. No invented testimonials, follower counts, or projections.
 - **No internship-employer content** (NDA). The internship email address never appears
   publicly.
+- **[ANLATIM.md](ANLATIM.md) is the owner's handbook** (Turkish, public — same leak rules).
+  Any significant change (new section, new page type, new/changed ritual step, new config
+  knob) updates it **in the same commit**. A stale handbook is a lying handbook.
 - **Budget $0:** free tiers only — no paid fonts, APIs, analytics, or CDNs. Fonts are
   self-hosted via @fontsource. No external requests at runtime except the Buttondown form
   action.
