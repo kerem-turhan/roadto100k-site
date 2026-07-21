@@ -1,10 +1,19 @@
 import { config } from '@/config'
+import rawLedger from '@/data/ledger.json'
+import { parseLedger, trWeekEntries } from '@/lib/ledger'
 
-const LINKS = [
+// The Turkish summaries exist only for weeks that have one; without any,
+// there is no /tr/ page to link to.
+const hasTurkish = trWeekEntries(parseLedger(rawLedger)).length > 0
+
+const LINKS: Array<{ label: string; href: string; external: boolean; lang?: string }> = [
   { label: 'X', href: config.X_URL, external: true },
   { label: 'GitHub', href: config.GITHUB_URL, external: true },
   { label: 'RSS', href: `${import.meta.env.BASE_URL}feed.xml`, external: false },
-] as const
+  ...(hasTurkish
+    ? [{ label: 'Türkçe', href: `${import.meta.env.BASE_URL}tr/`, external: false, lang: 'tr' }]
+    : []),
+]
 
 export function SiteFooter() {
   return (
@@ -19,6 +28,7 @@ export function SiteFooter() {
               key={link.label}
               href={link.href}
               {...(link.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+              {...(link.lang ? { lang: link.lang, hrefLang: link.lang } : {})}
               className="-my-2 inline-block px-1 py-3.5 font-mono text-xs tracking-[0.2em] uppercase underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red"
             >
               {link.label}

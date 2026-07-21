@@ -10,6 +10,12 @@ export interface LedgerWeek {
   /** Email list size at the end of this week. */
   emailSubs: number
   note: string
+  /**
+   * Optional one-sentence Turkish summary. Present only for weeks Kerem
+   * actually wrote one for — a week without it is simply absent from the
+   * Turkish pages, never padded with placeholder copy.
+   */
+  trNote?: string
 }
 
 export interface Ledger {
@@ -67,7 +73,20 @@ export function parseLedger(raw: unknown): Ledger {
       if (!isFiniteNonNegative(week[key])) fail(`${at}.${key}`, 'expected a non-negative number')
     }
     if (typeof week.note !== 'string') fail(`${at}.note`, 'expected a string')
-    return week as unknown as LedgerWeek
+    if (week.trNote !== undefined && typeof week.trNote !== 'string') {
+      fail(`${at}.trNote`, 'expected a string when present')
+    }
+    // A blank trNote means "not written yet", not "empty summary".
+    const trNote = typeof week.trNote === 'string' ? week.trNote.trim() : ''
+    return {
+      weekEnding: week.weekEnding,
+      revenue: week.revenue as number,
+      mrr: week.mrr as number,
+      spend: week.spend as number,
+      emailSubs: week.emailSubs as number,
+      note: week.note,
+      ...(trNote ? { trNote } : {}),
+    } satisfies LedgerWeek
   })
 
   const sorted = [...weeks].sort((a, b) => a.weekEnding.localeCompare(b.weekEnding))
@@ -94,6 +113,23 @@ export function ledgerTotals(ledger: Ledger): LedgerTotals {
     emailSubs: latest.emailSubs,
     weekNumber: ledger.weeks.length - 1,
   }
+}
+
+export interface TrWeekEntry {
+  week: LedgerWeek
+  /** Week number on the English side — the two languages stay in sync. */
+  index: number
+  trNote: string
+}
+
+/**
+ * The weeks that have a Turkish summary, oldest first. Weeks without one are
+ * dropped entirely: the Turkish pages show real notes or nothing at all.
+ */
+export function trWeekEntries(ledger: Ledger): TrWeekEntry[] {
+  return ledger.weeks.flatMap((week, index) =>
+    week.trNote ? [{ week, index, trNote: week.trNote }] : [],
+  )
 }
 
 /** $0, $1,234 — whole dollars; the ledger tracks real money, not cents. */

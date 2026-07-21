@@ -27,6 +27,7 @@ export const FIXTURE_LEDGER: Ledger = parseLedger({
       spend: 20,
       emailSubs: 12,
       note: 'A note with <angles>, "quotes" & ampersands.',
+      trNote: 'Türkçe özet: <açı>, "tırnak" ve & işareti.',
     },
   ],
 })

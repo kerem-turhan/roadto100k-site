@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { escapeMarkup, formatDateLong, formatDateShort, formatRfc822 } from './text.ts'
+import {
+  escapeMarkup,
+  formatDateLong,
+  formatDateLongTr,
+  formatDateShort,
+  formatRfc822,
+  truncate,
+} from './text.ts'
 
 describe('escapeMarkup', () => {
   it('escapes every markup-significant character', () => {
@@ -30,5 +37,34 @@ describe('date formatting', () => {
 
   it('rejects malformed dates', () => {
     expect(() => formatRfc822('2026/07/19')).toThrow()
+  })
+})
+
+describe('formatDateLongTr', () => {
+  it('formats Turkish dates without an Intl dependency', () => {
+    expect(formatDateLongTr('2026-07-19')).toBe('19 Temmuz 2026')
+    expect(formatDateLongTr('2026-12-31')).toBe('31 Aralık 2026')
+    expect(formatDateLongTr('2026-03-01')).toBe('1 Mart 2026')
+  })
+
+  it('rejects malformed dates', () => {
+    expect(() => formatDateLongTr('19.07.2026')).toThrow()
+  })
+})
+
+describe('truncate', () => {
+  it('leaves short text untouched', () => {
+    expect(truncate('Day 0 — nothing sold yet.', 40)).toBe('Day 0 — nothing sold yet.')
+  })
+
+  it('cuts on a word boundary and marks the cut', () => {
+    const result = truncate('one two three four five six seven eight', 20)
+    expect(result.length).toBeLessThanOrEqual(20)
+    expect(result.endsWith('…')).toBe(true)
+    expect(result).toBe('one two three four…')
+  })
+
+  it('never leaves dangling punctuation before the ellipsis', () => {
+    expect(truncate('shipped the thing, then broke it', 20)).toBe('shipped the thing…')
   })
 })

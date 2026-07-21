@@ -1,6 +1,6 @@
 import type { Ledger, LedgerWeek } from './ledger.ts'
 import { formatUsd } from './ledger.ts'
-import { weekUrl } from './urls.ts'
+import { trWeekUrl, weekUrl } from './urls.ts'
 
 export interface SiteIdentity {
   /** Canonical site URL with trailing slash. */
@@ -66,16 +66,27 @@ export function siteJsonLd(ledger: Ledger, id: SiteIdentity): object {
   }
 }
 
-/** JSON-LD for one weekly journal page: a BlogPosting with real dates only. */
-export function weekJsonLd(week: LedgerWeek, weekNumber: number, id: SiteIdentity): object {
-  const url = weekUrl(id.siteUrl, week.weekEnding)
+/**
+ * JSON-LD for one weekly journal page: a BlogPosting with real dates only.
+ * The Turkish variant describes the `/tr/` page and quotes its own summary.
+ */
+export function weekJsonLd(
+  week: LedgerWeek,
+  weekNumber: number,
+  id: SiteIdentity,
+  lang: 'en' | 'tr' = 'en',
+): object {
+  const tr = lang === 'tr'
+  const url = tr ? trWeekUrl(id.siteUrl, week.weekEnding) : weekUrl(id.siteUrl, week.weekEnding)
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     '@id': url,
     mainEntityOfPage: url,
-    headline: `Week ${weekNumber} — revenue ${formatUsd(week.revenue)} · spend ${formatUsd(week.spend)}`,
-    description: week.note,
+    headline: tr
+      ? `Hafta ${weekNumber} — gelir ${formatUsd(week.revenue)} · harcama ${formatUsd(week.spend)}`
+      : `Week ${weekNumber} — revenue ${formatUsd(week.revenue)} · spend ${formatUsd(week.spend)}`,
+    description: tr ? (week.trNote ?? week.note) : week.note,
     datePublished: week.weekEnding,
     dateModified: week.weekEnding,
     author: {
@@ -84,6 +95,6 @@ export function weekJsonLd(week: LedgerWeek, weekNumber: number, id: SiteIdentit
       url: id.siteUrl,
     },
     isPartOf: { '@id': `${id.siteUrl}#website` },
-    inLanguage: 'en',
+    inLanguage: lang,
   }
 }

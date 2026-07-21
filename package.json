@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "typecheck": "tsc -b",
     "test": "vitest run",
+    "og": "node scripts/render-og.ts",
     "preview": "vite preview"
   },
   "dependencies": {

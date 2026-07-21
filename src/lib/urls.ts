@@ -19,6 +19,31 @@ export function feedUrl(siteUrl: string): string {
   return `${siteUrl}feed.xml`
 }
 
+/** Absolute URL of one week's share card, e.g. `…/og/w/2026-07-19.png`. */
+export function weekOgUrl(siteUrl: string, weekEnding: string, lang: 'en' | 'tr' = 'en'): string {
+  return `${siteUrl}${weekOgPath(weekEnding, lang)}`
+}
+
+/** Build-output path of one week's share card, relative to `public/`. */
+export function weekOgPath(weekEnding: string, lang: 'en' | 'tr' = 'en'): string {
+  return lang === 'tr' ? `og/w/tr/${weekEnding}.png` : `og/w/${weekEnding}.png`
+}
+
+/** Absolute URL of the Turkish summary index. */
+export function trHomeUrl(siteUrl: string): string {
+  return `${siteUrl}tr/`
+}
+
+/** Absolute URL of one week's Turkish summary page. */
+export function trWeekUrl(siteUrl: string, weekEnding: string): string {
+  return `${siteUrl}tr/w/${weekEnding}/`
+}
+
+/** Absolute URL of the Turkish RSS feed. */
+export function trFeedUrl(siteUrl: string): string {
+  return `${siteUrl}tr/feed.xml`
+}
+
 /**
  * Root-relative base path of the site with a trailing slash —
  * `/roadto100k-site/` on GitHub Pages, `/` on a custom domain. Generated

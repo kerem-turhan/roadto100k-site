@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import rawLedger from '../data/ledger.json'
-import { formatUsd, ledgerTotals, parseLedger } from './ledger'
+import { formatUsd, ledgerTotals, parseLedger, trWeekEntries } from './ledger'
 
 const week = (overrides: Partial<Record<string, unknown>> = {}) => ({
   weekEnding: '2026-07-19',
@@ -87,5 +87,40 @@ describe('formatUsd', () => {
     [100000, '$100,000'],
   ])('formats %d as %s', (input, expected) => {
     expect(formatUsd(input)).toBe(expected)
+  })
+})
+
+describe('trNote', () => {
+  it('is optional and kept when written', () => {
+    const parsed = parseLedger(ledger([week({ trNote: '  Gün 0 — plan bitti.  ' })]))
+    expect(parsed.weeks[0].trNote).toBe('Gün 0 — plan bitti.')
+  })
+
+  it('treats a blank summary as not written', () => {
+    expect(parseLedger(ledger([week({ trNote: '   ' })])).weeks[0].trNote).toBeUndefined()
+    expect(parseLedger(ledger([week()])).weeks[0].trNote).toBeUndefined()
+  })
+
+  it('rejects a non-string summary', () => {
+    expect(() => parseLedger(ledger([week({ trNote: 42 })]))).toThrow(/trNote/)
+  })
+})
+
+describe('trWeekEntries', () => {
+  it('returns only the summarised weeks, keeping their week numbers', () => {
+    const parsed = parseLedger(
+      ledger([
+        week({ weekEnding: '2026-07-19' }),
+        week({ weekEnding: '2026-07-26', trNote: 'İkinci hafta.' }),
+        week({ weekEnding: '2026-08-02' }),
+      ]),
+    )
+    expect(trWeekEntries(parsed)).toEqual([
+      { week: parsed.weeks[1], index: 1, trNote: 'İkinci hafta.' },
+    ])
+  })
+
+  it('is empty when nothing has been summarised', () => {
+    expect(trWeekEntries(parseLedger(ledger([week()])))).toEqual([])
   })
 })

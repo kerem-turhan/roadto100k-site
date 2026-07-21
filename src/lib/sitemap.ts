@@ -1,13 +1,16 @@
 import type { Ledger } from './ledger.ts'
+import { trWeekEntries } from './ledger.ts'
 import { escapeMarkup } from './text.ts'
-import { archiveUrl, weekUrl } from './urls.ts'
+import { archiveUrl, trHomeUrl, trWeekUrl, weekUrl } from './urls.ts'
 
 /**
- * sitemap.xml for the root page, the journal archive and every weekly page.
- * `lastmod` is driven by ledger dates only — deterministic across builds.
+ * sitemap.xml for the root page, the journal archive, every weekly page and
+ * every Turkish summary that exists. `lastmod` is driven by ledger dates only
+ * — deterministic across builds.
  */
 export function buildSitemap(ledger: Ledger, siteUrl: string): string {
   const latest = ledger.weeks[ledger.weeks.length - 1].weekEnding
+  const trEntries = trWeekEntries(ledger)
   const entries: Array<{ loc: string; lastmod: string }> = [
     { loc: siteUrl, lastmod: latest },
     { loc: archiveUrl(siteUrl), lastmod: latest },
@@ -15,6 +18,18 @@ export function buildSitemap(ledger: Ledger, siteUrl: string): string {
       loc: weekUrl(siteUrl, week.weekEnding),
       lastmod: week.weekEnding,
     })),
+    ...(trEntries.length > 0
+      ? [
+          {
+            loc: trHomeUrl(siteUrl),
+            lastmod: trEntries[trEntries.length - 1].week.weekEnding,
+          },
+          ...trEntries.map(({ week }) => ({
+            loc: trWeekUrl(siteUrl, week.weekEnding),
+            lastmod: week.weekEnding,
+          })),
+        ]
+      : []),
   ]
 
   return [
