@@ -19,4 +19,19 @@ export const config = {
   START_DATE: '2026-07-19',
   GOAL_DATE: '2026-12-31',
   GOAL_USD: 100_000,
+  /**
+   * Proof-of-work items (see src/lib/proof.ts). An item — and the whole Work
+   * section while no item is live — is rendered ONLY once its `url` is a real
+   * https:// link. Flip day: paste the public URL below and push.
+   */
+  PROOF_ITEMS: [
+    {
+      title: 'Agent reliability teardown: openai-agents-js financial research example',
+      description:
+        'Clean-room, reproducible teardown — 2 fail-open paths, a 1-file fail-closed patch, ' +
+        '4/6 → 6/6 on a deterministic corpus.',
+      stats: ['2 fail-open paths', '1-file patch', '4/6 → 6/6'],
+      url: '',
+    },
+  ],
 } as const

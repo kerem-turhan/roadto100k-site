@@ -1,6 +1,7 @@
 import { Building } from '@/components/Building'
 import { Hero } from '@/components/Hero'
 import { LedgerSection } from '@/components/LedgerSection'
+import { ProofSection } from '@/components/ProofSection'
 import { Rules } from '@/components/Rules'
 import { Signup } from '@/components/Signup'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -25,6 +26,7 @@ function App() {
         <Rules />
         <LedgerSection />
         <Building />
+        <ProofSection />
         <Signup />
       </main>
       <SiteFooter />
