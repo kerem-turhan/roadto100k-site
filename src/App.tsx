@@ -6,6 +6,10 @@ import { Rules } from '@/components/Rules'
 import { Signup } from '@/components/Signup'
 import { SiteFooter } from '@/components/SiteFooter'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { config } from '@/config'
+import { brandParts } from '@/lib/brand'
+
+const brand = brandParts(config.SITE_NAME)
 
 function App() {
   return (
@@ -23,7 +27,9 @@ function App() {
       </a>
       <header className="flex items-center justify-between pt-6">
         <p className="font-mono text-xs tracking-[0.25em] text-ink-muted uppercase">
-          roadto100k<span className="text-ledger-red">w</span>kerem
+          {brand.before}
+          <span className="text-ledger-red">{brand.accent}</span>
+          {brand.after}
         </p>
         <ThemeToggle />
       </header>

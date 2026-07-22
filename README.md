@@ -1,6 +1,6 @@
 # roadto100k-site
 
-The public journey site for **roadto100kwkerem** — $0 → $100k by Dec 31, 2026, built in
+The public journey site for **Kerem — road to $100k** — $0 → $100k by Dec 31, 2026, built in
 public. One page, honest numbers: a live day counter, the rules of the bet, and a weekly
 ledger of real revenue/spend figures (including the $0 weeks).
 

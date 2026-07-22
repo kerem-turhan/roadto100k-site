@@ -1,6 +1,6 @@
 # roadto100k-site — project rules
 
-Single-page journey site for the roadto100kwkerem brand. Vite + React + TS strict +
+Single-page journey site for the "Kerem — road to $100k" brand. Vite + React + TS strict +
 Tailwind v4 + shadcn/ui + Motion. Static, deployed to GitHub Pages.
 Full plan & copy: [docs/plan.md](docs/plan.md).
 

@@ -201,7 +201,7 @@ yeşil tik görürsen iş bitmiştir.
    kelimeleri, `http://` ve şifreli linkler reddedilir. Reddedilen öğe HTML'e hiç basılmaz.
 2. **Rakam veren iddia commit'e sabitlenecek** (`sourceCommit`). Kartın rakamları bizim
    config'imizde duruyor ama gerçek başka repoda; o repo değişince bizim cümle sessizce
-   yalan olur. Pin bunu tarihsel bir cümleye çevirir: "e4076e2'de 6/6'ydı" — kartın altındaki
+   yalan olur. Pin bunu tarihsel bir cümleye çevirir: "şu commit'te 6/6'ydı" — kartın altındaki
    `verified against commit …` satırı okuyucuyu tam o ağaca götürür. `stats` dolu ve
    `sourceCommit` yoksa öğe **görünmez**.
 
@@ -246,6 +246,22 @@ eklendi; her sayfaya site adı (`og:site_name`) kondu; tema düğmelerinin kenar
 zorluğu olan kullanıcılar için 1.33:1'den 5.49:1 kontrasta çıkarıldı; ölü bir fonksiyon
 silindi ve sayfa iskeletinin kendi test dosyası yazıldı (README "her üreteç testli" diyordu,
 biri değildi).
+
+### Marka adı ve kanıt kartının kapsamı (22 Temmuz, akşam)
+
+İki küçük ama canlı yüzeye dokunan düzeltme:
+
+- **Marka adı `Kerem — road to $100k` oldu** (X'teki görünen adla birebir aynı, ki tweet'ten
+  gelen okur aynı ismi görsün). Ad `src/config.ts` → `SITE_NAME`'de duruyor; sayfa üstündeki
+  ve paylaşım kartındaki yazım artık oradan türetiliyor (`src/lib/brand.ts`), yani bir daha
+  değişirse tek satır yetecek — eskiden üç ayrı yerde elle yazılıydı. Kırmızı vurgu `$100k`
+  üzerinde. Hafta kartları yeniden üretildi.
+- **Kanıt kartı repoyla eşitlendi.** Teardown reposu kendi rakamının kapsamını açıklayan bir
+  cümle eklemişti; kart hâlâ ondan önceki ağaca bakıyordu. Sayı aynı (4/6 → 6/6), yanına
+  kapsamı geldi: dört baseline geçişinin ikisi upstream'in kendi testlerini yeniden üretiyor,
+  bu teardown'ın tasarladığı dört vakada baseline 2 geçti. `sourceCommit` güncel HEAD'e
+  (`7dcc0d3`) çekildi. **Pin'in tüm varlık sebebi tam olarak buydu**: repo değişince kartın
+  hangi ağaca dayandığı görünür olsun ve cümle sessizce eskimesin.
 
 ### Sızıntı bekçisi (`npm run leaks`)
 

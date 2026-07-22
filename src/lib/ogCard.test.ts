@@ -4,7 +4,8 @@ import { OG_HEIGHT, OG_WIDTH, weekOgCards, weekOgHtml } from './ogCard.ts'
 
 const subsets = (tag: string) => ({ latin: `data:latin-${tag}`, ext: `data:ext-${tag}` })
 const fonts = { display: subsets('display'), mono: subsets('mono'), body: subsets('body') }
-const card = weekOgHtml({ ledger: FIXTURE_LEDGER, index: 1, fonts })
+const BRAND = 'Kerem — road to $100k'
+const card = weekOgHtml({ ledger: FIXTURE_LEDGER, siteName: BRAND, index: 1, fonts })
 
 describe('weekOgHtml', () => {
   it('renders at the share-card size', () => {
@@ -25,7 +26,7 @@ describe('weekOgHtml', () => {
 
   it('paints revenue green only when there is revenue', () => {
     expect(card).toContain('class="value green"')
-    expect(weekOgHtml({ ledger: FIXTURE_LEDGER, index: 0, fonts })).not.toContain(
+    expect(weekOgHtml({ ledger: FIXTURE_LEDGER, siteName: BRAND, index: 0, fonts })).not.toContain(
       'class="value green"',
     )
   })
@@ -45,20 +46,20 @@ describe('weekOgHtml', () => {
   })
 
   it('is deterministic — no clocks, no randomness', () => {
-    expect(weekOgHtml({ ledger: FIXTURE_LEDGER, index: 1, fonts })).toBe(card)
+    expect(weekOgHtml({ ledger: FIXTURE_LEDGER, siteName: BRAND, index: 1, fonts })).toBe(card)
   })
 })
 
 describe('weekOgCards', () => {
   it('produces an English card for every week', () => {
-    const english = weekOgCards(FIXTURE_LEDGER, fonts).filter((c) => c.lang === 'en')
+    const english = weekOgCards(FIXTURE_LEDGER, fonts, BRAND).filter((c) => c.lang === 'en')
     expect(english.map((c) => c.weekEnding)).toEqual(['2026-07-19', '2026-07-26'])
     expect(english[1].html).toBe(card)
   })
 })
 
 describe('the Turkish card', () => {
-  const tr = weekOgHtml({ ledger: FIXTURE_LEDGER, index: 1, fonts, lang: 'tr' })
+  const tr = weekOgHtml({ ledger: FIXTURE_LEDGER, siteName: BRAND, index: 1, fonts, lang: 'tr' })
 
   it('is built from the Turkish note and Turkish labels', () => {
     expect(tr).toContain('<html lang="tr">')
@@ -79,7 +80,7 @@ describe('the Turkish card', () => {
 
 describe('weekOgCards with Turkish notes', () => {
   it('adds a Turkish card only for the weeks that have one', () => {
-    const cards = weekOgCards(FIXTURE_LEDGER, fonts)
+    const cards = weekOgCards(FIXTURE_LEDGER, fonts, BRAND)
     expect(cards.map((c) => `${c.lang}:${c.weekEnding}`)).toEqual([
       'en:2026-07-19',
       'en:2026-07-26',

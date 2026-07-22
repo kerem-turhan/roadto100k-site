@@ -88,6 +88,10 @@ describe('config.PROOF_ITEMS', () => {
     const [teardown] = config.PROOF_ITEMS
     expect(teardown.title).toContain('openai-agents-js')
     expect(teardown.description).toContain('4/6 → 6/6')
+    // The headline number is only honest with its scope attached: two of the
+    // four baseline passes are upstream's own tests, not this teardown's cases.
+    expect(teardown.description).toMatch(/reproduce upstream’s own tests/)
+    expect(teardown.description).toMatch(/baseline passed 2/)
     expect(teardown.url).toMatch(
       /^https:\/\/github\.com\/kerem-turhan\/agent-reliability-teardown-openai-agents-js$/,
     )

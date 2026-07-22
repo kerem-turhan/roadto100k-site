@@ -34,7 +34,7 @@ export const FIXTURE_LEDGER: Ledger = parseLedger({
 
 export const FIXTURE_META: JournalMeta = {
   siteUrl: 'https://example.test/site/',
-  siteName: 'roadto100kwkerem',
+  siteName: 'Kerem — road to $100k',
   authorName: 'Kerem Turhan',
   description: 'A public ledger of a $0 to $100k journey.',
   sameAs: ['https://x.com/mkeremturhan', 'https://github.com/kerem-turhan'],

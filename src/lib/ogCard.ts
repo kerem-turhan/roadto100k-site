@@ -1,3 +1,4 @@
+import { brandMarkup } from './brand.ts'
 import { calendarDaysBetween, parseIsoDate } from './days.ts'
 import type { FontSubsets } from './fonts.ts'
 import { fontFaceCss } from './fonts.ts'
@@ -45,6 +46,8 @@ const COPY = {
 
 export interface WeekOgInput {
   ledger: Ledger
+  /** Brand name for the wordmark — config.SITE_NAME, passed in to keep this pure. */
+  siteName: string
   /** Index into `ledger.weeks` — also the week number. */
   index: number
   fonts: OgFonts
@@ -92,7 +95,7 @@ function cell(label: string, value: string, positive = false): string {
       </div>`
 }
 
-export function weekOgHtml({ ledger, index, fonts, lang = 'en' }: WeekOgInput): string {
+export function weekOgHtml({ ledger, siteName, index, fonts, lang = 'en' }: WeekOgInput): string {
   const week = ledger.weeks[index]
   const copy = COPY[lang]
   const note = lang === 'tr' ? (week.trNote ?? week.note) : week.note
@@ -235,7 +238,7 @@ ${cell(copy.labels[3], String(week.emailSubs))}
       </div>
       <p class="note">${escapeMarkup(truncate(note, NOTE_MAX))}</p>
       <div class="foot mono">
-        <span class="brand">roadto100k<span class="red">w</span>kerem</span>
+        <span class="brand">${brandMarkup(siteName, escapeMarkup)}</span>
         <span>${escapeMarkup(copy.foot(formatUsd(cumulative), formatUsd(ledger.goalUsd)))}</span>
       </div>
     </div>
@@ -251,15 +254,20 @@ ${cell(copy.labels[3], String(week.emailSubs))}
 export function weekOgCards(
   ledger: Ledger,
   fonts: OgFonts,
+  siteName: string,
 ): Array<{ weekEnding: string; lang: OgLang; html: string }> {
   return ledger.weeks.flatMap((week, index) => [
-    { weekEnding: week.weekEnding, lang: 'en' as const, html: weekOgHtml({ ledger, index, fonts }) },
+    {
+      weekEnding: week.weekEnding,
+      lang: 'en' as const,
+      html: weekOgHtml({ ledger, siteName, index, fonts }),
+    },
     ...(week.trNote
       ? [
           {
             weekEnding: week.weekEnding,
             lang: 'tr' as const,
-            html: weekOgHtml({ ledger, index, fonts, lang: 'tr' }),
+            html: weekOgHtml({ ledger, siteName, index, fonts, lang: 'tr' }),
           },
         ]
       : []),

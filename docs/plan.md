@@ -1,4 +1,4 @@
-# roadto100kwkerem — journey site v1 plan
+# Kerem — road to $100k — journey site v1 plan
 
 Single-page, English, static. The page's one job: convince an AI-dev / indie-hacker visitor
 that this journey is worth following — via email signup or X follow — by showing radical,

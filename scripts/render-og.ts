@@ -23,6 +23,7 @@ import {
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { config } from '../src/config.ts'
 import { parseLedger } from '../src/lib/ledger.ts'
 import type { OgFonts } from '../src/lib/ogCard.ts'
 import { OG_HEIGHT, OG_WIDTH, weekOgCards } from '../src/lib/ogCard.ts'
@@ -139,7 +140,7 @@ async function main(): Promise<void> {
   const only = args.find((arg) => arg.startsWith('--week='))?.slice('--week='.length)
 
   const ledger = parseLedger(JSON.parse(readFileSync(ledgerPath, 'utf8')))
-  const cards = weekOgCards(ledger, loadFonts()).filter(
+  const cards = weekOgCards(ledger, loadFonts(), config.SITE_NAME).filter(
     (card) => !only || card.weekEnding === only,
   )
   if (cards.length === 0) throw new Error(`No ledger week matches --week=${only}`)

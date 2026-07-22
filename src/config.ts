@@ -5,7 +5,8 @@
 export const config = {
   /** Canonical public URL of the deployed site — always with a trailing slash. */
   SITE_URL: 'https://kerem-turhan.github.io/roadto100k-site/',
-  SITE_NAME: 'roadto100kwkerem',
+  /** Matches the display name on X, so a visitor arriving from a tweet sees the same name. */
+  SITE_NAME: 'Kerem — road to $100k',
   AUTHOR_NAME: 'Kerem Turhan',
   /** One-line site description used by the feed and structured data. */
   SITE_DESCRIPTION:
@@ -33,11 +34,13 @@ export const config = {
       title: 'Agent reliability teardown: openai-agents-js financial research example',
       description:
         'Clean-room, reproducible teardown with deliberately orchestrated failures — ' +
-        '2 fail-open paths, a 1-file fail-closed patch, 4/6 → 6/6 on a six-case corpus.',
+        '2 fail-open paths, a 1-file fail-closed patch, 4/6 → 6/6 on a six-case corpus. ' +
+        'Two of those four baseline passes reproduce upstream’s own tests; on the four ' +
+        'cases this teardown designed, baseline passed 2.',
       stats: ['2 fail-open paths', '1-file patch', '4/6 → 6/6'],
       url: 'https://github.com/kerem-turhan/agent-reliability-teardown-openai-agents-js',
       /** The tree these numbers were read from, verified 22 Jul 2026. */
-      sourceCommit: 'e4076e2',
+      sourceCommit: '7dcc0d3',
     },
   ],
 } as const

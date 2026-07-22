@@ -1,6 +1,7 @@
 import { fontFaceCss } from './fonts.ts'
 import type { ShareCards, SiteIdentity } from './seo.ts'
 import { serializeJsonLd } from './seo.ts'
+import { brandMarkup } from './brand.ts'
 import { escapeMarkup, formatDateLong, formatDateLongTr } from './text.ts'
 import { basePath, feedUrl, trFeedUrl } from './urls.ts'
 
@@ -279,7 +280,7 @@ export function pageShell({
     <div class="page">
       <div class="margin-rule" aria-hidden="true"></div>
       <header>
-        <a class="brand" href="${escapeMarkup(home)}">roadto100k<span class="red">w</span>kerem</a>
+        <a class="brand" href="${escapeMarkup(home)}">${brandMarkup(meta.siteName, escapeMarkup)}</a>
         <div class="header-end">
 ${crumb ? `          <a class="crumb" href="${escapeMarkup(crumb.href)}"${crumb.lang ? ` lang="${crumb.lang}" hreflang="${crumb.lang}"` : ''}>${escapeMarkup(crumb.label)}</a>\n` : ''}          <script>${themeToggleScript(lang)}</script>
         </div>

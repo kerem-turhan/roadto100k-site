@@ -21,7 +21,7 @@ function shell(overrides: Partial<Parameters<typeof pageShell>[0]> = {}): string
   return pageShell({
     meta,
     lang: 'en',
-    title: 'Week 1 — $150 revenue · roadto100kwkerem',
+    title: 'Week 1 — $150 revenue · Kerem — road to $100k',
     description: 'One week of the ledger.',
     canonical,
     jsonLd: { '@context': 'https://schema.org', '@id': canonical },
@@ -57,14 +57,14 @@ describe('pageShell head', () => {
 
   it('names the site and its locale on every published page', () => {
     for (const page of published) {
-      expect(page.html).toContain('<meta property="og:site_name" content="roadto100kwkerem" />')
+      expect(page.html).toContain('<meta property="og:site_name" content="Kerem — road to $100k" />')
       expect(page.html).toMatch(/<meta property="og:locale" content="(en_US|tr_TR)" \/>/)
     }
     expect(shell({ lang: 'tr' })).toContain('<meta property="og:locale" content="tr_TR" />')
     // The homepage is vite's own file, not this shell's — but a shared link
     // must not resolve to two different site names depending on which page it
     // was copied from.
-    expect(homepage).toContain('<meta property="og:site_name" content="roadto100kwkerem" />')
+    expect(homepage).toContain('<meta property="og:site_name" content="Kerem — road to $100k" />')
     expect(homepage).toContain('<meta property="og:locale" content="en_US" />')
   })
 
