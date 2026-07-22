@@ -28,8 +28,8 @@ export const config = {
     {
       title: 'Agent reliability teardown: openai-agents-js financial research example',
       description:
-        'Clean-room, reproducible teardown — 2 fail-open paths, a 1-file fail-closed patch, ' +
-        '4/6 → 6/6 on a deterministic corpus.',
+        'Clean-room, reproducible teardown with deliberately orchestrated failures — ' +
+        '2 fail-open paths, a 1-file fail-closed patch, 4/6 → 6/6 on a six-case corpus.',
       stats: ['2 fail-open paths', '1-file patch', '4/6 → 6/6'],
       url: 'https://github.com/kerem-turhan/agent-reliability-teardown-openai-agents-js',
     },
