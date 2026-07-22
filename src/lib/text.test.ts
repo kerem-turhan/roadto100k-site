@@ -1,12 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  escapeMarkup,
-  formatDateLong,
-  formatDateLongTr,
-  formatDateShort,
-  formatRfc822,
-  truncate,
-} from './text.ts'
+import { escapeMarkup, formatDateLong, formatDateLongTr, formatRfc822, truncate } from './text.ts'
 
 describe('escapeMarkup', () => {
   it('escapes every markup-significant character', () => {
@@ -22,10 +15,6 @@ describe('date formatting', () => {
   it('formats long dates deterministically', () => {
     expect(formatDateLong('2026-07-19')).toBe('Jul 19, 2026')
     expect(formatDateLong('2026-12-31')).toBe('Dec 31, 2026')
-  })
-
-  it('formats short dates', () => {
-    expect(formatDateShort('2026-07-19')).toBe('Jul 19')
   })
 
   it('formats RFC 822 dates with the correct weekday', () => {
@@ -66,5 +55,19 @@ describe('truncate', () => {
 
   it('never leaves dangling punctuation before the ellipsis', () => {
     expect(truncate('shipped the thing, then broke it', 20)).toBe('shipped the thing…')
+  })
+
+  it('cuts between code points, never through a surrogate pair', () => {
+    // The cut lands on the rocket, and there is no space to fall back to — the
+    // exact shape that used to leave half a surrogate pair on a share card.
+    const cut = truncate('abcdefgh🚀ij', 10)
+    expect(cut).toBe('abcdefgh🚀…')
+    // A lone surrogate does not survive UTF-8, which is how it reached the PNG
+    // as a replacement character.
+    expect(new TextDecoder().decode(new TextEncoder().encode(cut))).toBe(cut)
+  })
+
+  it('measures the limit in code points, not UTF-16 units', () => {
+    expect(truncate('🚀🚀🚀🚀🚀', 5)).toBe('🚀🚀🚀🚀🚀')
   })
 })

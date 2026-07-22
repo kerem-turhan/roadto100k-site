@@ -55,16 +55,18 @@ function metaFor(ledger: Ledger): JournalMeta {
  * from src/data/ledger.json + src/config.ts at build time; a malformed ledger
  * fails the build via parseLedger.
  */
-export function staticPagesPlugin(): Plugin {
-  let outDir = ''
+/**
+ * Fills index.html's head — the %SITE_URL% token and the site's JSON-LD.
+ *
+ * Separate from the page writer below because this half must also run in dev,
+ * so the served head matches production. The writing half must NOT: vitest
+ * loads this config too, and its `build.outDir` default is a placeholder
+ * directory — leaving them in one plugin meant `npm run test` quietly emitted a
+ * copy of the whole site into the repo root.
+ */
+export function siteHeadPlugin(): Plugin {
   return {
-    name: 'roadto100k:static-pages',
-    // Not build-only: transformIndexHtml also fills index.html's %SITE_URL%
-    // token, and dev should serve the same head as production. closeBundle only
-    // ever fires on a build anyway.
-    configResolved(resolved) {
-      outDir = path.resolve(resolved.root, resolved.build.outDir)
-    },
+    name: 'roadto100k:site-head',
     transformIndexHtml(html) {
       const ledger = readLedger()
       const meta = metaFor(ledger)
@@ -97,7 +99,24 @@ export function staticPagesPlugin(): Plugin {
       }
       return { html: injectSiteUrl(html, config.SITE_URL), tags }
     },
+  }
+}
+
+export function staticPagesPlugin(): Plugin {
+  let outDir = ''
+  return {
+    name: 'roadto100k:static-pages',
+    apply: 'build',
+    configResolved(resolved) {
+      outDir = path.resolve(resolved.root, resolved.build.outDir)
+    },
     closeBundle() {
+      // Refuse to scatter a copy of the site somewhere unexpected: anything but
+      // the real output directory means this hook fired in a context it was
+      // never meant to run in.
+      if (path.basename(outDir) !== 'dist') {
+        this.error(`static pages: refusing to write into ${outDir} — expected dist/`)
+      }
       const ledger = readLedger()
       const meta = metaFor(ledger)
       const trFeed = buildTrFeed(ledger, meta)

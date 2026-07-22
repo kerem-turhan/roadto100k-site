@@ -15,10 +15,24 @@ import { weekOgImage } from './journal.ts'
  * all.
  */
 
-const TR_INTRO =
-  'Bu site, $0’dan 31 Aralık 2026’ya kadar $100.000’a giden yolun halka açık defteri. ' +
-  'Sitenin tamamı İngilizce; burada haftalık kayıtların kısa Türkçe özetleri var. ' +
-  'Rakamlar gerçek — sıfır haftalar dahil.'
+/*
+ * One money convention for the whole Turkish surface: `formatUsd`, the same
+ * one the figures, the TR feed and the TR share cards already use. The intro
+ * used to spell the goal `$100.000` two paragraphs above `$100,000` — and in
+ * tr-TR, where the comma is the decimal separator, that second one reads as a
+ * hundred. The amounts are US dollars, so they are grouped the US way here too.
+ * Goal and date come from `meta` for the same reason: a hardcoded copy of a
+ * config value is how the two spellings drifted apart in the first place. The
+ * date carries its suffix on `tarih`, not on the year, so it stays grammatical
+ * whatever `goalDate` becomes.
+ */
+function trIntro(meta: JournalMeta): string {
+  return (
+    `Bu site, $0’dan ${formatDateLongTr(meta.goalDate)} tarihine kadar ${formatUsd(meta.goalUsd)}’a ` +
+    'giden yolun halka açık defteri. Sitenin tamamı İngilizce; burada haftalık kayıtların kısa ' +
+    'Türkçe özetleri var. Rakamlar gerçek — sıfır haftalar dahil.'
+  )
+}
 
 function alternates(meta: JournalMeta, weekEnding: string): AlternateLink[] {
   const en = weekUrl(meta.siteUrl, weekEnding)
@@ -113,7 +127,7 @@ function trIndexPage(entries: readonly TrWeekEntry[], meta: JournalMeta): Static
   const body = `      <main>
         <p class="eyebrow">Türkçe özet</p>
         <h1>Haftalık defter</h1>
-        <p class="lede">${TR_INTRO}</p>
+        <p class="lede">${trIntro(meta)}</p>
         <ul class="weeks">
 ${list}
         </ul>

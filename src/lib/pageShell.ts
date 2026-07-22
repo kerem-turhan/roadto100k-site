@@ -1,22 +1,15 @@
 import { fontFaceCss } from './fonts.ts'
-import type { SiteIdentity } from './seo.ts'
+import type { ShareCards, SiteIdentity } from './seo.ts'
 import { serializeJsonLd } from './seo.ts'
 import { escapeMarkup, formatDateLong, formatDateLongTr } from './text.ts'
 import { basePath, feedUrl, trFeedUrl } from './urls.ts'
 
-export interface JournalMeta extends SiteIdentity {
+export interface JournalMeta extends SiteIdentity, ShareCards {
   xUrl: string
   goalDate: string
   goalUsd: number
-  /** Absolute URL of the site-wide share image — the fallback for every page. */
+  /** Always set here: every page needs a share image to fall back to. */
   ogImage: string
-  /**
-   * Week-ending dates that have a committed per-week share card in
-   * `public/og/w/`. Weeks not listed fall back to `ogImage`.
-   */
-  weekOgWeeks?: readonly string[]
-  /** Week-ending dates that have a committed Turkish card in `public/og/w/tr/`. */
-  trWeekOgWeeks?: readonly string[]
   /** True when at least one week has a Turkish summary, so /tr/ exists. */
   hasTrPages?: boolean
 }
@@ -35,8 +28,8 @@ export interface AlternateLink {
 export type PageLang = 'en' | 'tr'
 
 /*
- * Pre-rendered pages are plain HTML — no React, no JS beyond the theme
- * snippet — so every ledger week is a real, indexable URL on GitHub Pages.
+ * Pre-rendered pages are plain HTML — no React, no JS beyond the two theme
+ * snippets — so every ledger week is a real, indexable URL on GitHub Pages.
  * Styling is the same locked token set as the app; English and Turkish pages
  * share this one shell.
  */
@@ -46,6 +39,53 @@ const THEME_SCRIPT = `;(function () {
   var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
   if (dark) document.documentElement.classList.add('dark')
 })()`
+
+const TOGGLE_COPY = {
+  en: {
+    light: 'Light',
+    dark: 'Dark',
+    toLight: 'Switch to light theme',
+    toDark: 'Switch to dark theme',
+  },
+  tr: {
+    light: 'Açık',
+    dark: 'Koyu',
+    toLight: 'Açık temaya geç',
+    toDark: 'Koyu temaya geç',
+  },
+} as const
+
+/**
+ * The theme toggle, written by the script instead of shipped as markup: with
+ * JavaScript off the button could not flip anything, and a dead control is
+ * worse than no control. Same behaviour as the app's ThemeToggle — flip the
+ * class the pre-paint snippet set, persist the choice, relabel itself.
+ */
+function themeToggleScript(lang: PageLang): string {
+  const copy = TOGGLE_COPY[lang]
+  // JSON.stringify rather than quotes: it escapes whatever the copy grows into.
+  const q = (value: string) => JSON.stringify(value)
+  return `;(function () {
+  var here = document.currentScript
+  var root = document.documentElement
+  var button = document.createElement('button')
+  button.type = 'button'
+  button.className = 'theme-toggle'
+  function sync() {
+    var dark = root.classList.contains('dark')
+    button.textContent = dark ? ${q(copy.light)} : ${q(copy.dark)}
+    button.setAttribute('aria-label', dark ? ${q(copy.toLight)} : ${q(copy.toDark)})
+  }
+  button.addEventListener('click', function () {
+    var dark = !root.classList.contains('dark')
+    root.classList.toggle('dark', dark)
+    localStorage.setItem('theme', dark ? 'dark' : 'light')
+    sync()
+  })
+  sync()
+  here.parentNode.insertBefore(button, here)
+})()`
+}
 
 /** All four families, latin + latin-ext, resolved against the site base. */
 function fontFaces(base: string): string {
@@ -101,8 +141,11 @@ a{color:inherit;text-decoration:underline;text-decoration-color:var(--rule);text
 a:hover{text-decoration-color:var(--red)}
 :focus-visible{outline:2px solid var(--red);outline-offset:2px}
 ::selection{background:var(--red);color:var(--paper)}
-header{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding-top:.25rem}
+header{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-top:.25rem}
+.header-end{display:flex;align-items:center;gap:1rem}
 header a,footer nav a{display:inline-block;padding:.5rem 0;margin:-.5rem 0}
+.theme-toggle{min-height:2.75rem;padding:.5rem .875rem;border:1px solid var(--ink-muted);border-radius:2px;background:none;color:var(--ink-muted);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s}
+.theme-toggle:hover{border-color:var(--ink-muted);color:var(--ink)}
 .brand,.crumb{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;text-decoration:none}
 .brand{color:var(--ink)}.crumb{color:var(--ink-muted)}
 .brand:hover,.crumb:hover{text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:4px}
@@ -217,6 +260,7 @@ export function pageShell({
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f1511" />
     <meta property="og:type" content="article" />
     <meta property="og:locale" content="${lang === 'tr' ? 'tr_TR' : 'en_US'}" />
+    <meta property="og:site_name" content="${escapeMarkup(meta.siteName)}" />
     <meta property="og:title" content="${escapeMarkup(title)}" />
     <meta property="og:description" content="${escapeMarkup(description)}" />
     <meta property="og:url" content="${escapeMarkup(canonical)}" />
@@ -236,7 +280,9 @@ export function pageShell({
       <div class="margin-rule" aria-hidden="true"></div>
       <header>
         <a class="brand" href="${escapeMarkup(home)}">roadto100k<span class="red">w</span>kerem</a>
-${crumb ? `        <a class="crumb" href="${escapeMarkup(crumb.href)}"${crumb.lang ? ` lang="${crumb.lang}" hreflang="${crumb.lang}"` : ''}>${escapeMarkup(crumb.label)}</a>\n` : ''}
+        <div class="header-end">
+${crumb ? `          <a class="crumb" href="${escapeMarkup(crumb.href)}"${crumb.lang ? ` lang="${crumb.lang}" hreflang="${crumb.lang}"` : ''}>${escapeMarkup(crumb.label)}</a>\n` : ''}          <script>${themeToggleScript(lang)}</script>
+        </div>
       </header>
 ${body}
       <footer>

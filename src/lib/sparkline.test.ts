@@ -47,6 +47,48 @@ describe('sparklineModel', () => {
     expect(sparklineModel(FIXTURE_LEDGER, parseIsoDate('2027-06-01'), W, H).todayX).toBe(W)
   })
 
+  it('never emits a coordinate that is not a number', () => {
+    // The x scale divides by the journey span, the y scale by the goal. Both
+    // are guarded upstream, in parseLedger — this is what notices if that ever
+    // stops being true, because the symptom here is a silent "M0 NaN" path.
+    const shortest = parseLedger({
+      startDate: '2026-07-19',
+      goalDate: '2026-07-20',
+      goalUsd: 1,
+      weeks: [
+        { weekEnding: '2026-07-20', revenue: 0, mrr: 0, spend: 0, emailSubs: 0, note: 'one day' },
+      ],
+    })
+    for (const ledger of [FIXTURE_LEDGER, shortest]) {
+      const svg = sparklineModel(ledger, now, W, H)
+      const numbers = [
+        ...Object.values(svg.goal),
+        svg.last.x,
+        svg.last.y,
+        svg.todayX ?? 0,
+        ...svg.actualPath.replaceAll(/[ML]/g, ' ').trim().split(/\s+/).map(Number),
+      ]
+      expect(numbers.every(Number.isFinite)).toBe(true)
+    }
+  })
+
+  it.each([
+    ['a zero goal', { goalUsd: 0 }],
+    ['a goal date equal to the start', { goalDate: '2026-07-19' }],
+  ])('is never handed %s — parseLedger refuses it first', (_label, patch) => {
+    expect(() =>
+      parseLedger({
+        startDate: '2026-07-19',
+        goalDate: '2026-12-31',
+        goalUsd: 100_000,
+        weeks: [
+          { weekEnding: '2026-07-19', revenue: 0, mrr: 0, spend: 0, emailSubs: 0, note: 'zero' },
+        ],
+        ...patch,
+      }),
+    ).toThrow()
+  })
+
   it('clamps cumulative revenue above the goal to the top of the plot', () => {
     const rich = parseLedger({
       startDate: '2026-07-19',

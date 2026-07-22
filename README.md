@@ -32,6 +32,12 @@ Fonts are self-hosted from `public/fonts` in two subsets per family — latin an
 scoped by `unicode-range` in [src/lib/fonts.ts](src/lib/fonts.ts). The ext file carries the
 Turkish letters (İ, Ş, Ğ) the latin subset omits; English-only pages never fetch it.
 
+All three families are OFL-1.1, and that licence permits redistribution only with the
+copyright notice and licence alongside. `public/fonts/OFL-*.txt` are the upstream
+`@fontsource*` licence files, copied verbatim and served next to the `.woff2` files they
+cover. A test in [src/lib/pageShell.test.ts](src/lib/pageShell.test.ts) fails if a family the
+shell serves has no notice.
+
 ## Leak guard
 
 [CLAUDE.md](CLAUDE.md)'s leak-prevention rule — the unreleased product's name and the NDA'd
@@ -109,12 +115,47 @@ everything derived from the ledger:
 - `feed.xml` — RSS 2.0, one item per ledger week.
 - `sitemap.xml` + `robots.txt` — canonical URLs for every page.
 - `w/<weekEnding>/index.html` — one plain-HTML journal page per week (indexable, no JS
-  beyond the theme snippet) plus the `w/` archive index.
+  beyond the two theme snippets) plus the `w/` archive index.
 - `tr/w/<weekEnding>/index.html`, `tr/index.html`, `tr/feed.xml` — the Turkish summary of a
   week, built **only** for weeks whose ledger entry has a `trNote`. No `trNote` anywhere
   means no `/tr/` at all: the site never pads a missing summary with placeholder copy.
   English and Turkish pages cross-link with `hreflang`.
 - JSON-LD (Person + WebSite + Dataset) injected into `index.html`.
+
+Every generated page carries the same theme control as the app: an inline script writes a
+`<button>` into the header, flips the `dark` class, stores the choice in `localStorage.theme`
+and relabels itself — in Turkish on `/tr/` pages. The button is written by the script rather
+than shipped as markup: with JavaScript off there is no control at all, instead of a dead one.
+Anyone landing on a shared `/w/…` link can now leave their OS preference behind.
+
+### The homepage is prerendered too
+
+`npm run build` ends with [scripts/prerender.ts](scripts/prerender.ts), which renders the real
+`App` to HTML and fills `index.html`'s `<div id="root">`. Until then the one page people
+actually land on was a 42-byte shell: the ledger, the rules and the whole proof section
+existed only after JavaScript ran, so a crawler, a link preview or a reader with JS off saw
+nothing.
+
+It loads the app through a throwaway Vite server in SSR mode — same resolution as the client
+build, so aliases, TSX and CSS imports behave identically and there is no second bundle to
+keep in sync. No new dependency; vite is already here. `src/main.tsx` calls `hydrateRoot`
+when the container has markup and `createRoot` when it does not, so dev still works.
+
+Two things this must never break, both tested:
+
+- **The proof gate holds in raw HTML.** With no live `PROOF_ITEMS` entry, the prerendered
+  markup contains no "The work", no "What I do", not even a `#work` anchor
+  ([src/App.test.tsx](src/App.test.tsx)). Hiding a section in the browser while shipping it in
+  the source would publish a claim to exactly the readers who cannot see it withdrawn.
+- **The build stays deterministic.** Two consecutive builds produce a byte-identical
+  `dist/index.html`. The only clock-dependent text is the day stamp, which carries the build
+  day in the HTML and is corrected to today by the browser on hydration —
+  `suppressHydrationWarning` on that one element, and nowhere else.
+
+`injectPrerenderedHtml` throws if the mount point is missing or the app renders empty, rather
+than shipping a blank shell that looks fine in a browser and is invisible to everything else.
+The leak guard's `--dist` pass now covers this markup: prerendering turned generated output
+into a new place a forbidden string could surface.
 
 The generators are pure functions in `src/lib/` (`feed.ts`, `sitemap.ts`, `journal.ts`,
 `journalTr.ts`, `pageShell.ts`, `seo.ts`, `sparkline.ts`, `ogCard.ts`), each unit-tested with

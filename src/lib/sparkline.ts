@@ -18,6 +18,14 @@ export interface SparklineModel {
  * Geometry for the quiet ledger sparkline: time (start → goal date) on x,
  * dollars (0 → goal) on y. Only real ledger points are plotted — the goal
  * line is visibly a reference, not data.
+ *
+ * Both scales divide by a ledger field, and both emit NaN into the live SVG at
+ * zero (`M0 NaN L0 NaN`). There is deliberately no guard here: `parseLedger`
+ * rejects `goalUsd <= 0` and `goalDate <= startDate`, and it is the only way a
+ * Ledger is ever built. A second copy of that rule would be a second place to
+ * keep it in sync, and it would dress a broken ledger.json up as a plausible
+ * flat line instead of failing the build. sparkline.test.ts pins the
+ * dependency, so relaxing the upstream guard turns this file's tests red.
  */
 export function sparklineModel(
   ledger: Ledger,

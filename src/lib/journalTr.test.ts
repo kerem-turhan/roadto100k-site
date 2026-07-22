@@ -64,6 +64,18 @@ describe('buildTrPages', () => {
     expect(index.html).toContain('&lt;açı&gt;')
   })
 
+  it('groups every dollar amount the same way on the whole Turkish surface', () => {
+    // The intro used to say $100.000 while the figures below it said $100,000.
+    // In tr-TR the comma is a decimal separator, so one page carried the goal
+    // twice: as a hundred thousand and as a hundred.
+    for (const page of pages) {
+      for (const [amount] of page.html.matchAll(/\$\d+(?:[.,]\d+)*/g)) {
+        expect(amount).toMatch(/^\$\d{1,3}(?:,\d{3})*$/)
+      }
+    }
+    expect(index.html).toContain('$100,000’a giden yolun')
+  })
+
   it('never invents a summary for a week without one', () => {
     const all = pages.map((p) => p.html).join('')
     expect(all).not.toContain('2026-07-19')

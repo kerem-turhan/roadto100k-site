@@ -50,7 +50,16 @@ export function DayStamp({ now }: DayStampProps) {
 
   return (
     <p className="mt-10">
-      <span className="day-stamp inline-block -rotate-2 rounded-sm border-2 border-ledger-red px-4 py-2 font-mono text-sm font-medium tracking-[0.2em] text-ledger-red uppercase">
+      {/*
+        The only clock-dependent text on the page. Prerendered HTML carries the
+        build day, the browser corrects it to today on hydration — a visitor two
+        days after a deploy would otherwise get a mismatch warning for a counter
+        that is behaving exactly as intended.
+      */}
+      <span
+        suppressHydrationWarning
+        className="day-stamp inline-block -rotate-2 rounded-sm border-2 border-ledger-red px-4 py-2 font-mono text-sm font-medium tracking-[0.2em] text-ledger-red uppercase"
+      >
         Day {day} · {displayLeft} days left
       </span>
     </p>

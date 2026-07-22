@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FIXTURE_LEDGER, FIXTURE_META } from './fixtures.ts'
+import { weekOgImage } from './journal.ts'
 import { serializeJsonLd, siteJsonLd, weekJsonLd } from './seo.ts'
 
 describe('siteJsonLd', () => {
@@ -48,5 +49,44 @@ describe('weekJsonLd', () => {
     expect(post.datePublished).toBe('2026-07-26')
     expect(post.mainEntityOfPage).toBe('https://example.test/site/w/2026-07-26/')
     expect(post.author.name).toBe('Kerem Turhan')
+  })
+
+  it('names the same person as publisher, on the homepage graph’s node', () => {
+    const post = weekJsonLd(FIXTURE_LEDGER.weeks[1], 1, FIXTURE_META) as Record<string, any>
+    expect(post.publisher).toEqual({
+      '@type': 'Person',
+      '@id': 'https://example.test/site/#person',
+      name: 'Kerem Turhan',
+      url: 'https://example.test/site/',
+    })
+    // The posting itself still identifies as its own page.
+    expect(post['@id']).toBe('https://example.test/site/w/2026-07-26/')
+  })
+
+  it('carries the very image the page shows a share preview', () => {
+    // Two implementations of one fallback rule (journal.ts fills og:image,
+    // seo.ts fills the JSON-LD); this is what keeps them from drifting.
+    const week = FIXTURE_LEDGER.weeks[1]
+    const cases = [
+      { meta: FIXTURE_META, lang: 'en' as const },
+      { meta: FIXTURE_META, lang: 'tr' as const },
+      { meta: { ...FIXTURE_META, weekOgWeeks: ['2026-07-26'] }, lang: 'en' as const },
+      { meta: { ...FIXTURE_META, trWeekOgWeeks: ['2026-07-26'] }, lang: 'tr' as const },
+      // An English card must never stand in for a missing Turkish one.
+      { meta: { ...FIXTURE_META, weekOgWeeks: ['2026-07-26'] }, lang: 'tr' as const },
+    ]
+    for (const { meta, lang } of cases) {
+      const post = weekJsonLd(week, 1, meta, lang) as Record<string, any>
+      expect(post.image).toBe(weekOgImage(week, meta, lang))
+    }
+    expect(
+      (weekJsonLd(week, 1, { ...FIXTURE_META, weekOgWeeks: ['2026-07-26'] }) as Record<string, any>)
+        .image,
+    ).toBe('https://example.test/site/og/w/2026-07-26.png')
+  })
+
+  it('claims no image when the site has none to show', () => {
+    const { ogImage: _ogImage, ...noCard } = FIXTURE_META
+    expect(weekJsonLd(FIXTURE_LEDGER.weeks[1], 1, noCard)).not.toHaveProperty('image')
   })
 })

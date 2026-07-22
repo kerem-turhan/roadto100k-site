@@ -78,7 +78,8 @@ defter verisinden yazılır — elle bakım gerektirmez.
 | **hreflang** | EN ve TR sayfalarının başında | Google'a "bu iki sayfa aynı içeriğin İngilizcesi ve Türkçesi" der; yanlış dili yanlış kişiye göstermesin diye. |
 | **OG kartı (paylaşım görseli)** | `/og.png` (site geneli) · `/og/w/<hafta>.png` (İngilizce hafta kartı) · `/og/w/tr/<hafta>.png` (Türkçe hafta kartı) | Linki X/WhatsApp/LinkedIn'e attığında çıkan büyük görsel. Site geneli kart zamansızdır; **hafta sayfalarının kendi kartı** o haftanın gerçek rakamlarını taşır. Türkçe sayfa Türkçe kartı kullanır (yoksa genel karta düşer — asla İngilizce kartı göstermez). |
 | **Türkçe harf desteği** | tüm sayfalar | Yazı tiplerinin "latin" seti İ, Ş, Ğ harflerini içermiyor; bu yüzden her aileye ikinci bir "latin-ext" dosyası eklendi ve `unicode-range` ile sınırlandı. Türkçe harf içermeyen sayfalar bu ek dosyayı hiç indirmez. |
-| **Tema + erişilebilirlik** | her yerde | Açık/koyu mod (sistem tercihi + düğme), klavye odak halkaları, ekran okuyucu etiketleri, `prefers-reduced-motion` (animasyon istemeyen kullanıcıda animasyon yok). İçerik hiçbir zaman **animasyona** bağlı değildir: animasyon kapalıyken de rakamlar tam olarak orada. (Ana sayfa şu an yine de JavaScript ile çiziliyor — JS kapalıysa boş görünür; hafta ve Türkçe sayfaları sade HTML olduğu için JS'siz de okunur. Ana sayfayı da JS'siz okunur hale getirmek denetim planında sırada.) |
+| **Yazı tipi lisansları** | `/fonts/OFL-*.txt` | Üç yazı tipi de OFL-1.1; bu lisans "dağıtacaksan telif notunu ve lisansı yanında taşı" diyor. Font dosyalarının yanına üç lisans metni kondu. Bir aile eklenip lisansı unutulursa test kırmızıya döner. |
+| **Tema + erişilebilirlik** | her yerde | Açık/koyu mod (sistem tercihi + düğme) — **22 Temmuz'dan beri hafta ve Türkçe sayfalarında da düğme var**. Klavye odak halkaları, ekran okuyucu etiketleri, `prefers-reduced-motion` (animasyon istemeyen kullanıcıda animasyon yok). İçerik hiçbir zaman animasyona **veya JavaScript'e** bağlı değildir: 22 Temmuz'dan beri ana sayfa da build sırasında hazır HTML olarak yazılıyor (aşağıya bak), hafta ve Türkçe sayfaları zaten öyleydi. |
 
 ### 2.3 Rakamlar nereden geliyor
 
@@ -204,6 +205,48 @@ yeşil tik görürsen iş bitmiştir.
    `verified against commit …` satırı okuyucuyu tam o ağaca götürür. `stats` dolu ve
    `sourceCommit` yoksa öğe **görünmez**.
 
+### Ana sayfa artık JavaScript'siz de okunuyor
+
+22 Temmuz'a kadar ana sayfa tarayıcıya **42 baytlık boş bir kabuk** olarak gidiyordu; defter,
+kurallar ve kanıt bölümü ancak JavaScript çalıştıktan sonra vardı. Yani Google'ın tarayıcısı,
+X'in link önizlemesi ve JS'i kapalı bir okuyucu boş sayfa görüyordu — üstelik insanların
+gerçekten indiği tek sayfada.
+
+Artık `npm run build` sonunda site kendi kendini bir kez çiziyor ve sonucu HTML'e gömüyor
+(`scripts/prerender.ts`). Tarayıcı açıldığında bu hazır HTML'i "devralıyor" (hydration), yani
+sayfa iki kez çizilmiyor. Yeni bir servis, yeni bir ücret, yeni bir bağımlılık yok — zaten
+kurulu olan Vite kullanılıyor.
+
+İki şey hiçbir zaman bozulmayacak, ikisi de testli:
+- **Kanıt kapısı ham HTML'de de geçerli.** Canlı bir kanıt öğesi yokken HTML'de "The work"
+  de, "What I do" de, `#work` bağlantısı da yok. Tarayıcıda gizleyip kaynağa koymak, tam da
+  gizlemenin işe yaramadığı okuyucuya iddiayı göstermek olurdu.
+- **Build deterministik kalıyor.** Arka arkaya iki build birebir aynı baytları üretiyor. Tek
+  saat bağımlı metin gün damgası: HTML'de build günü yazılı durur, tarayıcı açıldığında
+  bugünün doğru sayısına döner.
+
+### Paylaşılan hafta linkinde de tema düğmesi var
+
+Biri X'te `/w/2026-07-19/` linkini paylaştığında açan okur, o güne kadar işletim sistemi
+tercihine mahkûmdu: hafta ve Türkçe sayfalarında tema düğmesi yoktu (ana sayfada vardı).
+Artık dört sayfa tipinde de var, ana sayfadakiyle aynı davranıyor ve seçim `localStorage`'da
+tutulduğu için sayfalar arasında da korunuyor. Türkçe sayfalarda düğme Türkçe konuşuyor
+("Koyu temaya geç" / "Açık temaya geç").
+
+Küçük ama önemli bir ayrıntı: düğmeyi HTML'e koymuyoruz, **script kendisi yazıyor**.
+JavaScript kapalıysa ortada hiç düğme olmuyor — tıklanınca hiçbir şey yapmayan ölü bir düğme
+göstermektense hiç göstermemek doğrusu.
+
+Aynı turda yapılan diğer küçük temizlikler: Türkçe sayfada hedef tutarı iki farklı biçimde
+yazılıyordu (`$100.000` ve `$100,000` — Türkçede virgül ondalık ayırıcı olduğu için ikincisi
+"yüz" gibi okunuyordu), artık tek biçim ve rakam config'ten türetiliyor; paylaşım kartındaki
+metin kısaltması emoji'yi ortadan ikiye bölüp bozuk karakter üretebiliyordu, artık bölmüyor;
+hafta sayfalarının yapısal verisine sayfanın gerçek paylaşım görseli ve yayıncı bilgisi
+eklendi; her sayfaya site adı (`og:site_name`) kondu; tema düğmelerinin kenarlığı görme
+zorluğu olan kullanıcılar için 1.33:1'den 5.49:1 kontrasta çıkarıldı; ölü bir fonksiyon
+silindi ve sayfa iskeletinin kendi test dosyası yazıldı (README "her üreteç testli" diyordu,
+biri değildi).
+
 ### Sızıntı bekçisi (`npm run leaks`)
 
 Kural zaten vardı: yayınlanmamış ürünün adı ve NDA'lı proje adları bu public repoda hiçbir
@@ -239,6 +282,18 @@ printf %s 'kelime' | npm run leaks:add   # listeye yeni kelime ekle
 **NDA'lı staj/işveren adları listede değil** (hiçbir yerde yazılı olmadıkları için).
 Fırsat buldukça `printf %s 'ad' | npm run leaks:add` ile tek tek ekle — kelime hiçbir dosyaya,
 hiçbir loga düşmez.
+
+**Bekçinin YAPMADIKLARI** (bunu bilerek yaz: ona olmadığı bir güvence yüklenmesin):
+- Sadece **birebir kelimeyi** arar. Parafraz, kısaltma, base64/hex kodlama, ya da mekanizmayı
+  adını anmadan anlatan bir cümle **geçer**. Kural "ad geçmesin"i korur, "anlatma"yı değil.
+- Commit **mesajlarını** tarar, commit **diff'lerini** değil: bir kelime commit'lenip sonra
+  silinmişse geçmişte kalır ve bekçi görmez.
+- PNG/woff2 gibi ikili dosyaları okuyamaz — paylaşım kartına gömülmüş bir metni göremez.
+- `package.json` ve kilit dosyaları kapsam dışı (özel bir git bağımlılığı eklenirse önemli
+  olur).
+- Çok kısa kelimeler bu tasarımda **kullanılamaz**: 4 harfli bir deneme terimi ("is imported"
+  gibi masum İngilizce dizilerin içinde çıktığı için) sürekli yanlış alarm verdi ve çıkarıldı.
+  Terimler en az 6-7 harf olmalı.
 
 ## 5. Sırada ne var
 

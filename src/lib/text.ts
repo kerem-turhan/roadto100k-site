@@ -33,12 +33,6 @@ export function formatDateLong(iso: string): string {
   return `${MONTHS[m - 1]} ${d}, ${y}`
 }
 
-/** `2026-07-19` → `Jul 19` — short axis/label form. */
-export function formatDateShort(iso: string): string {
-  const { m, d } = utcParts(iso)
-  return `${MONTHS[m - 1]} ${d}`
-}
-
 /** `2026-07-19` → `19 Temmuz 2026` (Turkish pages; no Intl dependency). */
 export function formatDateLongTr(iso: string): string {
   const { m, d, y } = utcParts(iso)
@@ -49,11 +43,19 @@ export function formatDateLongTr(iso: string): string {
  * Shorten to at most `max` characters on a word boundary, appending an
  * ellipsis. Used where layout is fixed (share cards) — never for the ledger
  * itself, which always shows the full note.
+ *
+ * Counted and cut in code points, not UTF-16 units: an emoji straddling the
+ * limit used to be sliced through its surrogate pair, and the card rendered a
+ * `�` that no re-run would fix. ASCII text is unaffected — one unit, one code
+ * point — so the committed cards keep their exact wording. A cut can still land
+ * inside a multi-code-point cluster (a flag, a ZWJ family) and change which
+ * emoji shows, but never produces an invalid string.
  */
 export function truncate(value: string, max: number): string {
   const text = value.trim()
-  if (text.length <= max) return text
-  const cut = text.slice(0, max - 1)
+  const points = [...text]
+  if (points.length <= max) return text
+  const cut = points.slice(0, max - 1).join('')
   const lastSpace = cut.lastIndexOf(' ')
   return `${(lastSpace > max / 2 ? cut.slice(0, lastSpace) : cut).replace(/[\s,;:.—-]+$/, '')}…`
 }
