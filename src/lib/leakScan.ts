@@ -282,17 +282,30 @@ export type DenyTerm = {
   /** Length of the normalised term — the window size to slide. */
   len: number
   hash: string
-  /** Optional, deliberately vague label ("product", "nda-project") so a hit is debuggable. */
-  note?: string
 }
 
 export type Denylist = {
   version: number
   salt: string
-  /** A harmless plaintext token used by the self-test to prove the scanner still matches. */
-  canary: string
   terms: DenyTerm[]
 }
+
+/*
+ * The canary is deliberately public: it is the guard's liveness proof, not a
+ * secret. It therefore gets its OWN salt.
+ *
+ * The first version of this file kept the canary next to the real terms, under
+ * the same salt, in a committed file. That was the whole scheme handed over:
+ * a known plaintext plus its hash confirms the construction is
+ * `sha256(salt + normalizedTerm)`, and from there each term's `len` narrows the
+ * search to something a laptop finishes in seconds. (Proven, not theorised —
+ * a 4-character term in that file was recovered by brute force during this
+ * session.) Separating the salts means knowing the canary tells you nothing
+ * about the real terms, and the real salt now lives outside the repository
+ * entirely.
+ */
+export const CANARY_TOKEN = 'leakcanaryxyzzy'
+const CANARY_SALT = 'leak-guard-self-test-v1'
 
 function parseTerm(entry: unknown, index: number): DenyTerm {
   const where = `denylist term #${index}`
@@ -308,11 +321,13 @@ function parseTerm(entry: unknown, index: number): DenyTerm {
   if (typeof hash !== 'string' || !/^[0-9a-f]+$/.test(hash) || hash.length !== HASH_LENGTH) {
     throw new Error(`${where} needs a "hash" of exactly ${HASH_LENGTH} lowercase hex characters`)
   }
-  const note = value.note
-  if (note !== undefined && typeof note !== 'string') {
-    throw new Error(`${where} has a "note" that is not a string`)
+  // No labels. A note saying what a term is for ("nda-project") tells a reader
+  // what to guess, and confirms the category exists at all. Rejected rather
+  // than ignored, so the old shape cannot quietly come back.
+  if ('note' in value) {
+    throw new Error(`${where} carries a "note" — labels describe what to guess for; remove it`)
   }
-  return note === undefined ? { len, hash } : { len, hash, note }
+  return { len, hash }
 }
 
 /**
@@ -331,10 +346,13 @@ export function parseDenylist(raw: unknown): Denylist {
   if (typeof salt !== 'string' || salt.length === 0) {
     throw new Error('denylist is missing a non-empty "salt"')
   }
-  const canary = value.canary
-  if (typeof canary !== 'string' || normalize(canary).length < MIN_TERM_LENGTH) {
+  // A known plaintext stored beside the real hashes, under the same salt, is
+  // what turned the old committed file into a confirmation oracle. The canary
+  // now lives in code with its own salt, and this shape is refused outright.
+  if ('canary' in value) {
     throw new Error(
-      `denylist is missing a "canary" token of at least ${MIN_TERM_LENGTH} normalised characters`,
+      'denylist carries a "canary" — a known plaintext next to the real terms reveals the ' +
+        'hash construction. The canary belongs in leakScan.ts, under its own salt.',
     )
   }
   const terms = value.terms
@@ -342,7 +360,7 @@ export function parseDenylist(raw: unknown): Denylist {
   if (terms.length === 0) {
     throw new Error('denylist "terms" is empty — a guard with nothing to look for is not a guard')
   }
-  return { version: DENYLIST_VERSION, salt, canary, terms: terms.map(parseTerm) }
+  return { version: DENYLIST_VERSION, salt, terms: terms.map(parseTerm) }
 }
 
 function sortTerms(terms: readonly DenyTerm[]): DenyTerm[] {
@@ -513,17 +531,31 @@ export function scanFiles(files: readonly ScanFile[], denylist: Denylist): Findi
  * Returns `null` when healthy, or a human-readable reason to fail the run.
  */
 export function runSelfTest(denylist: Denylist, scan: ScanFn = scanText): string | null {
-  const probe = `guard self test ${denylist.canary} end of probe`
-  const hits = scan(probe, denylist)
+  // Run against the canary's own list, under its own salt: the real denylist is
+  // never exercised with a known plaintext, and the real salt is never used to
+  // hash anything an outsider can see.
+  const canaryList: Denylist = {
+    version: DENYLIST_VERSION,
+    salt: CANARY_SALT,
+    terms: [{ len: normalize(CANARY_TOKEN).length, hash: hashTerm(CANARY_SALT, CANARY_TOKEN) }],
+  }
+
+  const probe = `guard self test ${CANARY_TOKEN} end of probe`
+  const hits = scan(probe, canaryList)
   if (hits.length === 0) {
     return 'the canary token was not flagged — the scanner is not matching anything'
   }
-  if (scan('the quick brown fox jumps over the lazy dog', denylist).length > 0) {
+  if (scan('the quick brown fox jumps over the lazy dog', canaryList).length > 0) {
     return 'ordinary control text was flagged — the scanner is matching everything'
   }
-  const normalizedCanary = normalize(denylist.canary)
+  const normalizedCanary = normalize(CANARY_TOKEN)
   if (hits.some((hit) => normalize(hit.excerpt).includes(normalizedCanary))) {
     return 'the report echoed the matched token instead of redacting it'
+  }
+  // The real list still has to be usable: compiling it is what would catch a
+  // structurally valid but unscannable term set.
+  if (scan('nothing to see here', denylist).length > 0) {
+    return 'the real denylist flagged neutral text — it is not usable'
   }
   return null
 }

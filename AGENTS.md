@@ -13,8 +13,10 @@ Full plan & copy: [docs/plan.md](docs/plan.md).
   breaking your code"). This file is public too — keep it name-free.
 - **No fake data.** Ledger numbers come from `src/data/ledger.json` and are real — zeros
   stay zeros. No invented testimonials, follower counts, or projections.
-- **No internship-employer content** (NDA). The internship email address never appears
-  publicly.
+- **Nothing third-party or confidential ships from here.** Names, addresses and details that
+  belong to anyone else stay out of this repo — code, copy, meta tags, comments, commit
+  messages. The specifics live in the private ops repo; `npm run leaks` enforces them from a
+  secret, so this file never has to name what it is protecting.
 - **[ANLATIM.md](ANLATIM.md) is the owner's handbook** (Turkish, public — same leak rules).
   Any significant change (new section, new page type, new/changed ritual step, new config
   knob) updates it **in the same commit**. A stale handbook is a lying handbook.

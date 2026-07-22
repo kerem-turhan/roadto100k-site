@@ -31,3 +31,7 @@ dist-ssr
 # Stray screenshots land in the repo root; site images belong in public/.
 /*.png
 /*.jpg
+
+# Leak-guard terms. Never committed: the hashes plus their lengths were
+# close enough to plaintext to be brute-forced. CI reads $LEAK_DENYLIST instead.
+.leak-denylist.local.json

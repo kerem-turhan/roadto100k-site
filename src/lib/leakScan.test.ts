@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Denylist, TextFinding } from './leakScan.ts'
 import {
+  CANARY_TOKEN,
   DENYLIST_VERSION,
   HASH_LENGTH,
   MIN_TERM_LENGTH,
@@ -20,7 +21,6 @@ import {
  * whole reason the denylist stores hashes.
  */
 const SALT = 'test-salt-v1'
-const CANARY = 'nnbbcanary42' // 12 normalised characters
 const TERM_A = 'zzqxwidget' // 10
 const TERM_B = 'qwibbler' // 8
 
@@ -28,8 +28,7 @@ function makeDenylist(...extra: string[]): Denylist {
   return parseDenylist({
     version: DENYLIST_VERSION,
     salt: SALT,
-    canary: CANARY,
-    terms: [CANARY, ...extra].map((term) => ({
+    terms: extra.map((term) => ({
       len: normalize(term).length,
       hash: hashTerm(SALT, term),
     })),
@@ -197,14 +196,13 @@ describe('parseDenylist', () => {
     const denylist = parseDenylist({
       version: 1,
       salt: SALT,
-      canary: CANARY,
-      terms: [{ len: 10, hash: hashTerm(SALT, TERM_A), note: 'anything' }],
+      terms: [{ len: 10, hash: hashTerm(SALT, TERM_A) }],
     })
     expect(denylist.terms).toHaveLength(1)
     expect(denylist.salt).toBe(SALT)
   })
 
-  const valid = { version: 1, salt: SALT, canary: CANARY, terms: [{ len: 10, hash: 'a'.repeat(32) }] }
+  const valid = { version: 1, salt: SALT, terms: [{ len: 10, hash: 'a'.repeat(32) }] }
 
   it.each([
     ['is not an object', null],
@@ -213,8 +211,9 @@ describe('parseDenylist', () => {
     ['has an unknown version', { ...valid, version: 2 }],
     ['has no salt', { ...valid, salt: undefined }],
     ['has an empty salt', { ...valid, salt: '' }],
-    ['has no canary', { ...valid, canary: undefined }],
-    ['has a canary too short to mean anything', { ...valid, canary: 'ab' }],
+    // Metadata that made the old committed file an oracle: a known plaintext
+    // pins the hash construction, a label says what to guess for.
+    ['carries a canary next to the real terms', { ...valid, canary: 'nnbbcanary42' }],
     ['has no terms key', { ...valid, terms: undefined }],
     ['has terms that are not an array', { ...valid, terms: {} }],
     ['has an empty terms array', { ...valid, terms: [] }],
@@ -226,7 +225,7 @@ describe('parseDenylist', () => {
     ['has a truncated hash', { ...valid, terms: [{ len: 10, hash: 'abc' }] }],
     ['has a non-hex hash', { ...valid, terms: [{ len: 10, hash: 'z'.repeat(32) }] }],
     ['has an uppercase hash', { ...valid, terms: [{ len: 10, hash: 'A'.repeat(32) }] }],
-    ['has a note that is not a string', { ...valid, terms: [{ len: 10, hash: 'a'.repeat(32), note: 7 }] }],
+    ['carries a note on a term', { ...valid, terms: [{ len: 10, hash: 'a'.repeat(32), note: 'product' }] }],
   ])('refuses a denylist that %s', (_label, raw) => {
     // Every one of these would otherwise leave the guard scanning for nothing
     // while still exiting 0.
@@ -235,8 +234,10 @@ describe('parseDenylist', () => {
 })
 
 describe('runSelfTest', () => {
-  it('passes with a healthy scanner and a denylist that includes its canary', () => {
+  it('passes with a healthy scanner, without the real denylist knowing the canary', () => {
     expect(runSelfTest(denylistA)).toBeNull()
+    // The canary is not one of the real terms, and is not hashed with their salt.
+    expect(denylistA.terms.map((term) => term.hash)).not.toContain(hashTerm(SALT, CANARY_TOKEN))
   })
 
   it('fails when the scanner has stopped matching', () => {
@@ -252,19 +253,21 @@ describe('runSelfTest', () => {
     // Matches the right things, but prints the word it found — which on a
     // public repo would publish the term into the CI log.
     const echoes = (text: string): TextFinding[] =>
-      normalize(text).includes(normalize(CANARY)) ? [{ line: 1, termLen: 12, excerpt: text }] : []
+      normalize(text).includes(normalize(CANARY_TOKEN))
+        ? [{ line: 1, termLen: normalize(CANARY_TOKEN).length, excerpt: text }]
+        : []
     expect(runSelfTest(denylistA, echoes)).toMatch(/redact/i)
   })
 
-  it('fails when the canary is not itself a denied term', () => {
-    // Nothing would flag the canary, so the guard could no longer prove it works.
-    const noCanaryTerm = parseDenylist({
-      version: 1,
-      salt: SALT,
-      canary: CANARY,
-      terms: [{ len: normalize(TERM_A).length, hash: hashTerm(SALT, TERM_A) }],
-    })
-    expect(runSelfTest(noCanaryTerm)).toMatch(/canary/i)
+  it('fails when the real denylist would flag neutral text', () => {
+    // A term set that matches everything is unusable even if the canary passes.
+    const overBroad = (text: string, list: Denylist): TextFinding[] =>
+      list.salt === SALT && text.includes('nothing to see')
+        ? [{ line: 1, termLen: 8, excerpt: '[REDACTED len=8]' }]
+        : normalize(text).includes(normalize(CANARY_TOKEN))
+          ? [{ line: 1, termLen: normalize(CANARY_TOKEN).length, excerpt: '[REDACTED]' }]
+          : []
+    expect(runSelfTest(denylistA, overBroad)).toMatch(/not usable/i)
   })
 })
 
@@ -295,17 +298,13 @@ describe('addTerm', () => {
     expect(addTerm(once.denylist, 'QWIB-BLER').denylist.terms).toHaveLength(once.denylist.terms.length)
   })
 
-  it('keeps the notes already in the file', () => {
-    // leaks:add rewrites the committed denylist; losing the notes would leave
-    // every future hit unattributable.
-    const annotated = parseDenylist({
-      version: 1,
-      salt: SALT,
-      canary: CANARY,
-      terms: [{ len: normalize(CANARY).length, hash: hashTerm(SALT, CANARY), note: 'canary' }],
-    })
-    const result = addTerm(annotated, TERM_A)
-    expect(result.denylist.terms.filter((term) => term.note === 'canary')).toHaveLength(1)
+  it('never writes metadata back into the file', () => {
+    // The stored shape is exactly {len, hash}: no labels, no known plaintext.
+    const result = addTerm(denylistA, TERM_B)
+    for (const term of result.denylist.terms) {
+      expect(Object.keys(term).sort()).toEqual(['hash', 'len'])
+    }
+    expect(Object.keys(result.denylist).sort()).toEqual(['salt', 'terms', 'version'])
   })
 
   it('keeps the committed file ordered by (len, hash), not by when a term was added', () => {

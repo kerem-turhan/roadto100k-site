@@ -40,8 +40,8 @@ shell serves has no notice.
 
 ## Leak guard
 
-[CLAUDE.md](CLAUDE.md)'s leak-prevention rule — the unreleased product's name and the NDA'd
-project names must never appear in this repo — is enforced by `npm run leaks`, not by trust.
+[CLAUDE.md](CLAUDE.md)'s rule that nothing third-party or confidential ships from this repo is
+enforced by `npm run leaks`, not by trust.
 
 ```sh
 npm run leaks              # scan sources
@@ -50,12 +50,19 @@ npm run leaks -- --git     # also scan every commit message
 npm run leaks:add          # add a term, read from stdin
 ```
 
-The forbidden words are not in this repo.
-[scripts/leak-denylist.json](scripts/leak-denylist.json) stores only salted, truncated SHA-256
-hashes, which is what lets the denylist live in a public repo. **That is obfuscation, not
-secrecy:** the salt sits next to the hashes, so a short term is recoverable by dictionary
-attack. The guard stops accidental leaks — a stray paste, a forgotten comment, a string that
-only shows up in the bundle — not a motivated attacker.
+**The terms are not in this repository, in any form.** They come from `$LEAK_DENYLIST` — a
+repository secret in CI — or from a gitignored `.leak-denylist.local.json` when you run it
+locally. Nothing else works: no source means a red run, never a quiet pass.
+
+They used to be committed as salted hashes, on the theory that a hash is not a word. That was
+wrong, and it was demonstrated rather than argued: the same file also carried the salt, a
+known-plaintext canary that confirms the construction is `sha256(salt + term)`, each term's
+exact length, and a note naming its category. A term in it was recovered by brute force in
+seconds, and any single guess could be confirmed against it. A committed denylist is a
+confirmation oracle for exactly the words it is meant to protect.
+
+What remains committed is the canary, under its own separate salt — it is a liveness probe,
+not a secret, and it must not share a scheme with the real terms.
 
 Matching normalises text to `[a-z0-9]` (lowercased, everything else deleted) and slides a
 window of each denied length across every position, so a term is caught however it is written:
@@ -81,15 +88,20 @@ printf %s 'the-term' | npm run leaks:add
 ```
 
 Read from stdin, never from arguments, which land in shell history. Only `added (len N)` is
-printed back. The denylist currently covers the unreleased product's name, one NDA'd project
-name, and the canary. **The NDA'd internship/employer names are not in it** — they are written
-down nowhere — so add each one with `leaks:add` when you get the chance.
+printed back, and `--add` refuses to run against the CI secret — it writes to the local file,
+which you then use to update the secret (`gh secret set LEAK_DENYLIST < .leak-denylist.local.json`).
+
+What is and is not in the list is deliberately not documented here: a README that enumerates
+the categories it protects hands over the shape of the answer. The list itself is the record.
+Terms shorter than about six characters are a bad idea regardless — a four-character one fired
+on ordinary English (`is imported` normalises to contain it) until it was removed.
 
 ### Where it runs
 
 CI runs `npm run leaks -- --git` before the build and `npm run leaks -- --dist` after it
 ([.github/workflows/deploy.yml](.github/workflows/deploy.yml)); the checkout uses
-`fetch-depth: 0`, because a shallow clone hides most commit messages from the scan. CI alone
+`fetch-depth: 0`, because a shallow clone hides most commit messages from the scan, and both
+steps receive the denylist through `env: LEAK_DENYLIST`. CI alone
 only blocks the *deploy* — by then the commit is already public — so a pre-push hook is the
 other half:
 

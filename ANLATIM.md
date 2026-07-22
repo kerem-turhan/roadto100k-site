@@ -249,10 +249,10 @@ biri değildi).
 
 ### Sızıntı bekçisi (`npm run leaks`)
 
-Kural zaten vardı: yayınlanmamış ürünün adı ve NDA'lı proje adları bu public repoda hiçbir
-yerde geçmeyecek. 22 Temmuz'a kadar bu kuralı **hiçbir makine kontrol etmiyordu** — denetimde
-ürün adı `index.html`'e enjekte edildi ve bütün testler yeşil kaldı, kelime `dist`'e kadar
-gitti. Artık bir bekçi var:
+Kural zaten vardı: başkasına ait olan hiçbir ad, adres veya ayrıntı bu public repoda geçmeyecek.
+22 Temmuz'a kadar bu kuralı **hiçbir makine kontrol etmiyordu** — denetimde yasaklı bir kelime
+`index.html`'e enjekte edildi ve bütün testler yeşil kaldı, kelime `dist`'e kadar gitti. Artık
+bir bekçi var:
 
 ```sh
 npm run leaks              # kaynakları tara
@@ -261,9 +261,14 @@ npm run leaks -- --git     # bütün commit mesajlarını da tara
 printf %s 'kelime' | npm run leaks:add   # listeye yeni kelime ekle
 ```
 
-- **Yasaklı kelimeler repoda yazılı değil.** `scripts/leak-denylist.json` sadece tuzlanmış
-  özetleri (hash) tutuyor; liste bu yüzden public repoda durabiliyor. Bu gizlilik değil,
-  gözden saklama — amaç kazayla sızmayı durdurmak.
+- **Kelimeler bu repoda hiçbir biçimde yok.** Ne düz metin, ne hash. Liste CI'da bir GitHub
+  *secret*'ından (`LEAK_DENYLIST`), yerelde ise git'e girmeyen `.leak-denylist.local.json`
+  dosyasından geliyor. Kaynak yoksa bekçi yeşil değil **kırmızı** verir.
+  *Neden böyle:* önce liste hash'lenmiş halde repoda duruyordu — "hash kelime değildir" diye.
+  Yanlıştı ve tartışmayla değil kanıtla anlaşıldı: aynı dosyada tuz, şemayı doğrulayan bilinen
+  bir kanarya kelimesi, her terimin tam uzunluğu ve ne olduğunu söyleyen bir not vardı. Bir
+  terim saniyeler içinde kaba kuvvetle çözüldü; dahası dosya tek tahmini anında doğrulayan bir
+  "kâhin" işlevi görüyordu. Public bir denylist, korumaya çalıştığı kelimenin doğrulayıcısıdır.
 - **Nasıl yazıldığı fark etmiyor.** Metin küçük harfe indirilip harf-rakam dışındaki her şey
   silinerek taranıyor: `Foo-Bar`, `foo_bar`, `Foo Bar`, `kerem@foobar.com`,
   `https://x.com/foobar/...` ve minify edilmiş kodun içi dahil hepsi yakalanıyor. E-posta ve
@@ -279,9 +284,11 @@ printf %s 'kelime' | npm run leaks:add   # listeye yeni kelime ekle
   ile açılan **pre-push hook**'unda — CI ancak deploy'u durdurabilir, o noktada commit çoktan
   GitHub'da olur; hook ise kelime daha bilgisayardan çıkmadan yakalar.
 
-**NDA'lı staj/işveren adları listede değil** (hiçbir yerde yazılı olmadıkları için).
-Fırsat buldukça `printf %s 'ad' | npm run leaks:add` ile tek tek ekle — kelime hiçbir dosyaya,
-hiçbir loga düşmez.
+Listede ne olduğu **burada yazılı değil** — hangi kategorileri koruduğunu ilan eden bir metin,
+cevabın şeklini karşıya bedavaya verir. Yeni kelime eklemek: `printf %s 'ad' | npm run leaks:add`
+(kelime stdin'den okunur, hiçbir dosyaya ve loga düşmez, ekrana sadece `added (len N)` yazar).
+Ekledikten sonra CI'daki secret'ı tazele:
+`gh secret set LEAK_DENYLIST < .leak-denylist.local.json`.
 
 **Bekçinin YAPMADIKLARI** (bunu bilerek yaz: ona olmadığı bir güvence yüklenmesin):
 - Sadece **birebir kelimeyi** arar. Parafraz, kısaltma, base64/hex kodlama, ya da mekanizmayı
@@ -298,10 +305,11 @@ hiçbir loga düşmez.
 ## 5. Sırada ne var
 
 1. **Her Pazar defteri güncelle.** Sitenin tek gerçek bakımı bu; asıl bileşik faiz burada.
-2. **Denetim planının kalan fazları** ([docs/audit-2026-07-22.md](docs/audit-2026-07-22.md)):
-   sitenin kendisiyle çelişen yerlerini düzeltmek, ziyaretçinin "bu adam ne satıyor"
-   sorusunun cevabını mobilde sayfanın %63'ünü kaydırmadan bulması, ana sayfanın
-   JavaScript'siz de okunabilir hale gelmesi.
+2. **Denetim planı bitti** ([docs/audit-2026-07-22.md](docs/audit-2026-07-22.md)): 28 bulgunun
+   tamamı kapandı — kapılar gerçek, teklif artık mobilde ilk ekranda, ana sayfa JavaScript'siz
+   de okunuyor. Geriye bilinçli bırakılanlar: `№ ← → ↗` karakterleri hâlâ sistem yazı tipine
+   düşüyor (kozmetik), ve sayfa üstündeki marka ile alttaki bağlantı aynı yere gidiyor (ekran
+   okuyucuda ufak tekrar).
 3. **E-posta listesini büyütmek** için X'ten siteye trafik: her defter haftası ayrı bir
    paylaşılabilir sayfa ve kendi görseline sahip — haftalık thread'in doğal ekidir.
 4. Opsiyonel, ücretsiz: Google Search Console'a siteyi ekle (`sitemap.xml` zaten hazır) ve

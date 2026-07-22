@@ -31,11 +31,17 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test
-      # Leak guard, before the build: sources + commit messages.
+      # Leak guard, before the build: sources + commit messages. The terms come
+      # from a repository secret, never from the tree — a committed denylist, even
+      # hashed, was recoverable. No secret means a red build, never a silent pass.
       - run: npm run leaks -- --git
+        env:
+          LEAK_DENYLIST: ${{ secrets.LEAK_DENYLIST }}
       - run: npm run build
       # And again on the generated output, which is what actually ships.
       - run: npm run leaks -- --dist
+        env:
+          LEAK_DENYLIST: ${{ secrets.LEAK_DENYLIST }}
       - uses: actions/configure-pages@v5
         with:
           enablement: true

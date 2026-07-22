@@ -6,10 +6,9 @@
  *   npm run leaks -- --git     also scan every commit message
  *   npm run leaks:add          add a term, read from stdin, never echoed
  *
- * The forbidden words live nowhere in this repo: `scripts/leak-denylist.json`
- * stores salted, truncated SHA-256 hashes instead. See `src/lib/leakScan.ts`
- * for the matching semantics and for an honest account of what that hashing
- * does and does not protect.
+ * The terms live nowhere in this repository — not as words, not as hashes.
+ * They come from $LEAK_DENYLIST (a repository secret in CI) or from a
+ * gitignored local file. See `src/lib/leakScan.ts` for the matching semantics.
  *
  * ## The one rule this file exists to honour: no silent green
  *
@@ -27,8 +26,7 @@ import type { Denylist, Finding, ScanFile } from '../src/lib/leakScan.ts'
 import { addTerm, parseDenylist, runSelfTest, scanFiles, scanText } from '../src/lib/leakScan.ts'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
-const DENYLIST_FILE = 'scripts/leak-denylist.json'
-const denylistPath = path.join(root, DENYLIST_FILE)
+const localDenylistPath = path.join(root, '.leak-denylist.local.json')
 
 const USAGE = [
   'usage:',
@@ -55,27 +53,57 @@ const plural = (n: number, noun: string): string => `${n.toLocaleString('en-US')
 /* Denylist                                                                   */
 /* -------------------------------------------------------------------------- */
 
-function loadDenylist(): Denylist {
-  if (!existsSync(denylistPath)) {
-    fail(`${DENYLIST_FILE} is missing — the guard has nothing to look for. Restore it from git.`)
-  }
-  let text: string
-  try {
-    text = readFileSync(denylistPath, 'utf8')
-  } catch (error) {
-    fail(`${DENYLIST_FILE} could not be read: ${describe(error)}`)
-  }
+/**
+ * Where the terms come from — never from this repository.
+ *
+ * The denylist used to be committed. Even as salted hashes that was close to
+ * plaintext: the file also carried the salt, a known-plaintext canary that
+ * confirms the hash construction, each term's exact length, and a note saying
+ * what category it belonged to. Enough to recover a term by brute force, and
+ * enough to use the file as an oracle — one guess, instant confirmation.
+ *
+ * So it lives outside the tree: an environment variable in CI (a repository
+ * secret), or a gitignored file locally. Missing means RED, never green: a
+ * guard that cannot see its terms has not checked anything.
+ */
+const ENV_VAR = 'LEAK_DENYLIST'
+const LOCAL_FILE = '.leak-denylist.local.json'
+
+function parseOrFail(text: string, source: string): Denylist {
   let raw: unknown
   try {
     raw = JSON.parse(text)
   } catch (error) {
-    fail(`${DENYLIST_FILE} is not valid JSON: ${describe(error)}`)
+    fail(`${source} is not valid JSON: ${describe(error)}`)
   }
   try {
     return parseDenylist(raw)
   } catch (error) {
-    fail(`${DENYLIST_FILE} is malformed: ${describe(error)}`)
+    fail(`${source} is malformed: ${describe(error)}`)
   }
+}
+
+function loadDenylist(): { denylist: Denylist; source: string } {
+  const fromEnv = process.env[ENV_VAR]
+  if (fromEnv !== undefined && fromEnv.trim() !== '') {
+    return { denylist: parseOrFail(fromEnv, `$${ENV_VAR}`), source: `$${ENV_VAR}` }
+  }
+
+  if (existsSync(localDenylistPath)) {
+    let text: string
+    try {
+      text = readFileSync(localDenylistPath, 'utf8')
+    } catch (error) {
+      fail(`${LOCAL_FILE} could not be read: ${describe(error)}`)
+    }
+    return { denylist: parseOrFail(text, LOCAL_FILE), source: LOCAL_FILE }
+  }
+
+  fail(
+    `no denylist: set $${ENV_VAR} (a repository secret in CI) or create ${LOCAL_FILE} ` +
+      '(gitignored, never committed). The guard will not pass without one — see README ' +
+      '"Leak guard".',
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -105,7 +133,7 @@ function walk(dir: string, extensions: ReadonlySet<string>, found: string[]): vo
     if (!entry.isFile()) continue
     if (!extensions.has(path.extname(entry.name).toLowerCase())) continue
     // The denylist is the one file allowed to hold the plaintext canary.
-    if (full === denylistPath) continue
+    if (full === localDenylistPath) continue
     found.push(full)
   }
 }
@@ -264,7 +292,7 @@ async function readStdin(): Promise<string> {
  * Add a term from stdin — never argv, which would land in shell history. The
  * term is hashed and appended; only its length is ever printed back.
  */
-async function runAdd(denylist: Denylist): Promise<void> {
+async function runAdd(denylist: Denylist, source: string): Promise<void> {
   const input = (await readStdin()).trim()
   if (input.length === 0) {
     fail(
@@ -272,12 +300,18 @@ async function runAdd(denylist: Denylist): Promise<void> {
         'Never pass it as an argument — argv is recorded in your shell history.',
     )
   }
+  if (source !== LOCAL_FILE) {
+    fail(
+      `--add writes to ${LOCAL_FILE}, but this run is using ${source}. Run it locally, then ` +
+        'update the CI secret from the resulting file.',
+    )
+  }
   const result = addTerm(denylist, input)
   if (!result.added) {
     console.log(`already present (len ${result.len})`)
     return
   }
-  writeFileSync(denylistPath, `${JSON.stringify(result.denylist, null, 2)}\n`)
+  writeFileSync(localDenylistPath, `${JSON.stringify(result.denylist, null, 2)}\n`)
   console.log(`added (len ${result.len})`)
 }
 
@@ -293,7 +327,7 @@ async function main(): Promise<void> {
   const isAdd = args.includes('--add')
   if (isAdd && args.length > 1) fail(`--add runs on its own\n${USAGE}`)
 
-  const denylist = loadDenylist()
+  const { denylist, source } = loadDenylist()
 
   // Before scanning anything real: prove the scanner still matches, still
   // rejects ordinary text, and still redacts what it reports. A guard that
@@ -305,10 +339,10 @@ async function main(): Promise<void> {
         'fix src/lib/leakScan.ts before trusting a green result.',
     )
   }
-  console.log(`leaks: denylist ${DENYLIST_FILE} — ${plural(denylist.terms.length, 'term')}, self-test ok`)
+  console.log(`leaks: denylist ${source} — ${plural(denylist.terms.length, 'term')}, self-test ok`)
 
   if (isAdd) {
-    await runAdd(denylist)
+    await runAdd(denylist, source)
     return
   }
 
