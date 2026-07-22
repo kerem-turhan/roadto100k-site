@@ -56,7 +56,7 @@ gitmiyor (tek istisna: e-posta formunu gönderdiğinde Buttondown'a giden istek)
 | **The rules (kurallar)** | Bahsin kuralları: $100/ay tavan, $0 reklam, her sayı public, haftalık kayıt, yıl sonunda ne olursa olsun dürüst post-mortem. Bu bölüm senin kendine koyduğun kısıt — okuyucunun sana güvenmesinin sebebi. |
 | **The ledger (defter)** | Sitenin kalbi. Haftalık tablo (hafta bitişi, gelir, MRR, harcama, abone, not) + üstünde **sparkline**: yeşil çizgi gerçekleşen kümülatif gelir, kesikli çizgi $100k'nın gerektirdiği tempo. Rakamların tamamı tek bir dosyadan gelir: `src/data/ledger.json`. |
 | **What I'm building (ne inşa ediyorum)** | Ne üzerinde çalıştığın — kategori dilinde, ürün adı vermeden. Altında iletişim satırı. |
-| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / sürekli reliability desteği; fiyat yok). **Şu anda tamamen gizli**: `src/config.ts` içindeki `PROOF_ITEMS[0].url` boş olduğu sürece bölüm HTML'e hiç basılmaz — boş başlık bile görünmez. Gerçek bir `https://` link yapıştırıldığı an bölüm kendiliğinden açılır. |
+| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / sürekli reliability desteği; fiyat yok). **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor: `src/config.ts` içindeki bir öğenin `url`'i boş/placeholder olduğu sürece o öğe HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Gerçek bir `https://` link yapıştırıldığı an kendiliğinden açılır. |
 | **Email signup (kayıt)** | Asıl hedef. Buttondown formu; "her Pazar gerçek rakamlar + yıl sonu post-mortem" vaadi. Buttondown adresi config'te boş bırakılırsa form yerine X'i takip bağlantısı gösterilir. |
 | **Footer** | X, GitHub, e-posta, RSS bağlantıları + tema (açık/koyu) düğmesi. |
 
@@ -178,8 +178,9 @@ yeşil tik görürsen iş bitmiştir.
   bir kayıtla test edilmiş.
 - Defterde **1 hafta** var: 19 Temmuz 2026 (Gün 0) — gelir $0, MRR $0, harcama $0, abone 0.
   Hepsi gerçek; bu tabloda henüz gösterilecek bir başarı yok, tam da olması gereken bu.
-- **Kanıt bölümü hazır ve gizli.** İlk öğenin metni config'te yazılı duruyor; yayına açılması
-  tek satırlık config değişikliğine bakıyor.
+- **Kanıt bölümü AÇILDI (22 Temmuz).** İlk teardown reposu public oldu; `PROOF_ITEMS[0].url`
+  gerçek linkle dolduruldu, "The work" bölümü + "What I do" kartı artık sitede görünür.
+  Sonraki kanıtlar da aynı yolla eklenir: config'e bir öğe yaz, `url`'i gerçek olduğu an yayında.
 - Teknik taban tamam: JSON-LD, sitemap, robots, canonical, RSS, haftalık statik sayfalar,
   sparkline, haftalık OG kartları, Türkçe özet sayfaları, açık/koyu tema, erişilebilirlik.
 - Otomatik testler (Vitest) mantığın tamamını koruyor: gün sayacı, defter doğrulama, feed,

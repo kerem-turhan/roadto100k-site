@@ -18,8 +18,11 @@ describe('ProofSection', () => {
     ).toBe('')
   })
 
-  it('is hidden today: the checked-in config has no live proof URL yet', () => {
-    expect(renderToStaticMarkup(<ProofSection />)).toBe('')
+  it('is live since the 22 Jul flip: the checked-in config renders the teardown', () => {
+    const html = renderToStaticMarkup(<ProofSection />)
+
+    expect(html).toContain('Proof of work')
+    expect(html).toContain(config.PROOF_ITEMS[0].url)
   })
 
   it('renders the full section once a real URL exists', () => {
@@ -50,6 +53,9 @@ describe('config.PROOF_ITEMS', () => {
     const [teardown] = config.PROOF_ITEMS
     expect(teardown.title).toContain('openai-agents-js')
     expect(teardown.description).toContain('4/6 → 6/6')
-    expect(teardown.url).toBe('')
+    // flipped public on 22 Jul 2026 — a real https URL, not a placeholder
+    expect(teardown.url).toMatch(
+      /^https:\/\/github\.com\/kerem-turhan\/agent-reliability-teardown-openai-agents-js$/,
+    )
   })
 })

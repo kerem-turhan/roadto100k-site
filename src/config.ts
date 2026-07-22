@@ -31,7 +31,7 @@ export const config = {
         'Clean-room, reproducible teardown — 2 fail-open paths, a 1-file fail-closed patch, ' +
         '4/6 → 6/6 on a deterministic corpus.',
       stats: ['2 fail-open paths', '1-file patch', '4/6 → 6/6'],
-      url: '',
+      url: 'https://github.com/kerem-turhan/agent-reliability-teardown-openai-agents-js',
     },
   ],
 } as const
