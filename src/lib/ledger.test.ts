@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { config } from '@/config'
 import rawLedger from '../data/ledger.json'
 import { formatUsd, ledgerTotals, parseLedger, trWeekEntries } from './ledger'
 
@@ -44,6 +45,74 @@ describe('parseLedger', () => {
     ['not an object', 42],
   ])('rejects %s', (_name, raw) => {
     expect(() => parseLedger(raw)).toThrow(/Invalid ledger data/)
+  })
+
+  /*
+   * Dates that match /^\d{4}-\d{2}-\d{2}$/ but are not days. These used to be
+   * accepted: `2026-19-07` published "Wed, 07 undefined 2026" as a pubDate into
+   * the live RSS feed, and the whole gauntlet stayed green.
+   */
+  it.each([
+    ['month 19 (transposed day/month)', '2026-19-07'],
+    ['month 00', '2026-00-15'],
+    ['month 13', '2026-13-01'],
+    ['day 00', '2026-07-00'],
+    ['day 32', '2026-07-32'],
+    ['30 February', '2026-02-30'],
+    ['29 February in a common year', '2026-02-29'],
+    ['31 April', '2026-04-31'],
+  ])('rejects an impossible weekEnding: %s', (_name, weekEnding) => {
+    expect(() => parseLedger(ledger([week({ weekEnding })]))).toThrow(/real calendar date/)
+  })
+
+  it('rejects an impossible startDate or goalDate too', () => {
+    expect(() => parseLedger({ ...ledger([week()]), startDate: '2026-19-07' })).toThrow(
+      /startDate.*real calendar date/,
+    )
+    expect(() => parseLedger({ ...ledger([week()]), goalDate: '2026-02-30' })).toThrow(
+      /goalDate.*real calendar date/,
+    )
+  })
+
+  it('still accepts real leap days', () => {
+    const parsed = parseLedger({
+      ...ledger([week({ weekEnding: '2028-02-29' })]),
+      goalDate: '2028-12-31',
+    })
+    expect(parsed.weeks[0].weekEnding).toBe('2028-02-29')
+  })
+
+  /*
+   * Numbers that parse but cannot be true. Each of these used to render: a week
+   * outside the window printed "day -2387 of 165", and 2.7 subscribers printed
+   * as "2.7" on a page that claims every figure is real.
+   */
+  it.each([
+    ['a week before the journey started', ledger([week({ weekEnding: '2020-01-05' })])],
+    ['a week after the goal date', ledger([week({ weekEnding: '2027-06-30' })])],
+    ['a fractional subscriber count', ledger([week({ emailSubs: 2.7 })])],
+    ['a zero goal', { ...ledger([week()]), goalUsd: 0 }],
+    ['a goal date before the start', { ...ledger([week()]), goalDate: '2026-07-18' }],
+    ['a goal date equal to the start', { ...ledger([week()]), goalDate: '2026-07-19' }],
+  ])('rejects %s', (_name, raw) => {
+    expect(() => parseLedger(raw)).toThrow(/Invalid ledger data/)
+  })
+})
+
+/*
+ * The journey window is written down twice — src/config.ts and
+ * src/data/ledger.json — and different surfaces read different copies: the day
+ * stamp and the static-page generator read the config, while the week pages,
+ * share cards and sparkline read the ledger. Changing one alone used to publish
+ * two contradictory numbers on the same page ("day 0 of 346" beside a footer
+ * promising Dec 31, 2026) with the whole suite still green.
+ */
+describe('config.ts and ledger.json', () => {
+  it('agree on the journey window', () => {
+    const shipped = parseLedger(rawLedger)
+    expect(shipped.startDate).toBe(config.START_DATE)
+    expect(shipped.goalDate).toBe(config.GOAL_DATE)
+    expect(shipped.goalUsd).toBe(config.GOAL_USD)
   })
 })
 

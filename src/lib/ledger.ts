@@ -36,6 +36,22 @@ export interface LedgerTotals {
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 
+/**
+ * A shape check is not a date check. `2026-19-07` (month and day transposed)
+ * and `2026-02-30` both match the regex, and both used to sail through the
+ * build: the first published `<pubDate>Wed, 07 undefined 2026</pubDate>` into
+ * the live RSS feed, because month 19 has no name. Round-tripping through
+ * Date.UTC is what makes "validates every field" true.
+ */
+function isRealIsoDate(value: unknown): value is string {
+  if (typeof value !== 'string' || !ISO_DATE.test(value)) return false
+  const [year, month, day] = value.split('-').map(Number)
+  const utc = new Date(Date.UTC(year, month - 1, day))
+  return (
+    utc.getUTCFullYear() === year && utc.getUTCMonth() === month - 1 && utc.getUTCDate() === day
+  )
+}
+
 function isFiniteNonNegative(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0
 }
@@ -53,11 +69,16 @@ export function parseLedger(raw: unknown): Ledger {
   const data = raw as Record<string, unknown>
 
   for (const key of ['startDate', 'goalDate'] as const) {
-    if (typeof data[key] !== 'string' || !ISO_DATE.test(data[key])) {
-      fail(key, 'expected an ISO YYYY-MM-DD string')
+    if (!isRealIsoDate(data[key])) {
+      fail(key, 'expected a real calendar date as YYYY-MM-DD')
     }
   }
-  if (!isFiniteNonNegative(data.goalUsd)) fail('goalUsd', 'expected a non-negative number')
+  if (!isFiniteNonNegative(data.goalUsd) || data.goalUsd <= 0) {
+    fail('goalUsd', 'expected a positive number')
+  }
+  if ((data.goalDate as string) <= (data.startDate as string)) {
+    fail('goalDate', 'expected a date after startDate')
+  }
   if (!Array.isArray(data.weeks) || data.weeks.length === 0) {
     fail('weeks', 'expected a non-empty array')
   }
@@ -66,11 +87,22 @@ export function parseLedger(raw: unknown): Ledger {
     const at = `weeks[${i}]`
     if (typeof entry !== 'object' || entry === null) fail(at, 'not an object')
     const week = entry as Record<string, unknown>
-    if (typeof week.weekEnding !== 'string' || !ISO_DATE.test(week.weekEnding)) {
-      fail(`${at}.weekEnding`, 'expected an ISO YYYY-MM-DD string')
+    if (!isRealIsoDate(week.weekEnding)) {
+      fail(`${at}.weekEnding`, 'expected a real calendar date as YYYY-MM-DD')
+    }
+    // A week outside the journey window renders nonsense ("day -2387 of 165").
+    if (week.weekEnding < (data.startDate as string)) {
+      fail(`${at}.weekEnding`, `expected a date on or after startDate ${data.startDate as string}`)
+    }
+    if (week.weekEnding > (data.goalDate as string)) {
+      fail(`${at}.weekEnding`, `expected a date on or before goalDate ${data.goalDate as string}`)
     }
     for (const key of ['revenue', 'mrr', 'spend', 'emailSubs'] as const) {
       if (!isFiniteNonNegative(week[key])) fail(`${at}.${key}`, 'expected a non-negative number')
+    }
+    // Subscribers are people; 2.7 of them is a typo, not a number.
+    if (!Number.isInteger(week.emailSubs)) {
+      fail(`${at}.emailSubs`, 'expected a whole number — subscribers are people')
     }
     if (typeof week.note !== 'string') fail(`${at}.note`, 'expected a string')
     if (week.trNote !== undefined && typeof week.trNote !== 'string') {
