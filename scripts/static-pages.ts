@@ -11,7 +11,7 @@ import type { Ledger } from '../src/lib/ledger.ts'
 import { parseLedger, trWeekEntries } from '../src/lib/ledger.ts'
 import { serializeJsonLd, siteJsonLd } from '../src/lib/seo.ts'
 import { buildRobots, buildSitemap } from '../src/lib/sitemap.ts'
-import { trHomeUrl, weekOgPath } from '../src/lib/urls.ts'
+import { injectSiteUrl, trHomeUrl, weekOgPath } from '../src/lib/urls.ts'
 
 const LEDGER_PATH = fileURLToPath(new URL('../src/data/ledger.json', import.meta.url))
 const PUBLIC_DIR = fileURLToPath(new URL('../public', import.meta.url))
@@ -59,11 +59,13 @@ export function staticPagesPlugin(): Plugin {
   let outDir = ''
   return {
     name: 'roadto100k:static-pages',
-    apply: 'build',
+    // Not build-only: transformIndexHtml also fills index.html's %SITE_URL%
+    // token, and dev should serve the same head as production. closeBundle only
+    // ever fires on a build anyway.
     configResolved(resolved) {
       outDir = path.resolve(resolved.root, resolved.build.outDir)
     },
-    transformIndexHtml() {
+    transformIndexHtml(html) {
       const ledger = readLedger()
       const meta = metaFor(ledger)
       const tags: HtmlTagDescriptor[] = [
@@ -93,7 +95,7 @@ export function staticPagesPlugin(): Plugin {
           },
         )
       }
-      return tags
+      return { html: injectSiteUrl(html, config.SITE_URL), tags }
     },
     closeBundle() {
       const ledger = readLedger()

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   archiveUrl,
   basePath,
+  injectSiteUrl,
   feedUrl,
   trFeedUrl,
   trHomeUrl,
@@ -34,3 +35,19 @@ describe('url helpers', () => {
     expect(basePath('https://example.test')).toBe('/')
   })
 })
+
+describe('injectSiteUrl', () => {
+  it('fills every occurrence of the token', () => {
+    const html = '<link href="%SITE_URL%" /><meta content="%SITE_URL%og.png" />'
+    expect(injectSiteUrl(html, 'https://example.test/site/')).toBe(
+      '<link href="https://example.test/site/" /><meta content="https://example.test/site/og.png" />',
+    )
+  })
+
+  it('throws rather than silently shipping an unsubstituted head', () => {
+    expect(() => injectSiteUrl('<link href="https://hardcoded.test/" />', 'https://x.test/')).toThrow(
+      /carries no %SITE_URL% token/,
+    )
+  })
+})
+

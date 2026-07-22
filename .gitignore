@@ -27,3 +27,7 @@ dist-ssr
 .claude/
 .playwright-mcp/
 .claude/settings.local.json
+
+# Stray screenshots land in the repo root; site images belong in public/.
+/*.png
+/*.jpg

@@ -178,15 +178,28 @@ All numbers on the site come from one file: [src/data/ledger.json](src/data/ledg
    ```
 
 4. GitHub Actions rebuilds and redeploys Pages automatically (~1 minute). The build fails
-   loudly if an entry is malformed — `parseLedger` validates every field.
+   loudly if an entry is malformed — `parseLedger` rejects anything that is not a real
+   calendar date (`2026-19-07` and `2026-02-30` both used to sail through), a week outside
+   the journey window, a fractional subscriber count, or a missing/negative figure.
 
 ## Configuration
 
-Every external link and journey date lives in [src/config.ts](src/config.ts):
+Every external link, journey date and public claim lives in [src/config.ts](src/config.ts):
 
+- `SITE_URL` — canonical public URL, trailing slash included. Drives canonical tags,
+  hreflang, sitemap, feed and every `og:` URL, including `index.html`'s (which carries a
+  `%SITE_URL%` token the build fills — never paste an absolute URL back in).
+- `SITE_NAME`, `AUTHOR_NAME`, `SITE_DESCRIPTION` — used by the feed, JSON-LD and share cards.
 - `BUTTONDOWN_URL` — empty until the Buttondown account exists; the signup section shows a
   "follow on X" fallback while it's empty. Paste the embed action URL to switch the form on.
 - `X_URL`, `GITHUB_URL`, `CONTACT_EMAIL` — footer/contact links.
-- `START_DATE` (day 0, 2026-07-19) and `GOAL_DATE` — the live day counter's anchors.
+- `START_DATE` (day 0, 2026-07-19), `GOAL_DATE` and `GOAL_USD` — the journey window. These
+  are also in `src/data/ledger.json`; a test pins the two files to the same values, because
+  different surfaces read different copies.
+- `PROOF_ITEMS` — the "The work" section. An item renders only when its `url` is a real,
+  public, deep `https://` link, and any item carrying `stats` must also carry the
+  `sourceCommit` those numbers were read from, or it stays hidden. See
+  [src/lib/proof.ts](src/lib/proof.ts).
 
-If a custom domain is ever added, also change `base` in [vite.config.ts](vite.config.ts) to `'/'`.
+Moving to a custom domain means changing `base` in [vite.config.ts](vite.config.ts) to `'/'`
+**and** `SITE_URL` here. Nothing else — `index.html` and every generated page follow.
