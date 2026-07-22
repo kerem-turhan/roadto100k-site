@@ -20,6 +20,7 @@ npm run dev        # local dev server
 npm run typecheck  # tsc -b
 npm run lint       # oxlint
 npm run test       # vitest (day counter + ledger parsing)
+npm run leaks      # leak guard — see below
 npm run build      # production build into dist/
 ```
 
@@ -30,6 +31,75 @@ what the site is, what every part does, and the weekly ritual.
 Fonts are self-hosted from `public/fonts` in two subsets per family — latin and latin-ext,
 scoped by `unicode-range` in [src/lib/fonts.ts](src/lib/fonts.ts). The ext file carries the
 Turkish letters (İ, Ş, Ğ) the latin subset omits; English-only pages never fetch it.
+
+## Leak guard
+
+[CLAUDE.md](CLAUDE.md)'s leak-prevention rule — the unreleased product's name and the NDA'd
+project names must never appear in this repo — is enforced by `npm run leaks`, not by trust.
+
+```sh
+npm run leaks              # scan sources
+npm run leaks -- --dist    # also scan the built output (after npm run build)
+npm run leaks -- --git     # also scan every commit message
+npm run leaks:add          # add a term, read from stdin
+```
+
+The forbidden words are not in this repo.
+[scripts/leak-denylist.json](scripts/leak-denylist.json) stores only salted, truncated SHA-256
+hashes, which is what lets the denylist live in a public repo. **That is obfuscation, not
+secrecy:** the salt sits next to the hashes, so a short term is recoverable by dictionary
+attack. The guard stops accidental leaks — a stray paste, a forgotten comment, a string that
+only shows up in the bundle — not a motivated attacker.
+
+Matching normalises text to `[a-z0-9]` (lowercased, everything else deleted) and slides a
+window of each denied length across every position, so a term is caught however it is written:
+`Foo-Bar`, `foo_bar`, `Foo Bar`, `kerem@foobar.com`, `https://x.com/foobar/tree/main`,
+`"foobar"` in JSON, or `foobar` inside a minified identifier. Looking *inside* email and URL
+strings is the point: that is exactly where a sibling project's leak hid. The cost is an
+occasional false positive when two ordinary words concatenate into a denied term — the correct
+direction to fail. Hits print as `file:line` with the match replaced by `[REDACTED len=N]`;
+the word itself is never printed, because CI logs on a public repo are public.
+
+**A guard that cannot look goes red.** Every condition where the scan could not actually check
+something exits 1 instead of passing: a missing, unreadable, malformed or empty denylist; a
+scanned directory that moved; a target matching zero files; an unreadable file; `--dist`
+without a build; a shallow clone under `--git`; an unknown flag. And on every run, before
+scanning anything real, the guard pushes a plaintext canary through the same code path and
+requires that it be flagged, that ordinary control text *not* be flagged, and that its own
+report redact what it found. If it cannot prove it still works, the run fails.
+
+### Adding a term
+
+```sh
+printf %s 'the-term' | npm run leaks:add
+```
+
+Read from stdin, never from arguments, which land in shell history. Only `added (len N)` is
+printed back. The denylist currently covers the unreleased product's name, one NDA'd project
+name, and the canary. **The NDA'd internship/employer names are not in it** — they are written
+down nowhere — so add each one with `leaks:add` when you get the chance.
+
+### Where it runs
+
+CI runs `npm run leaks -- --git` before the build and `npm run leaks -- --dist` after it
+([.github/workflows/deploy.yml](.github/workflows/deploy.yml)); the checkout uses
+`fetch-depth: 0`, because a shallow clone hides most commit messages from the scan. CI alone
+only blocks the *deploy* — by then the commit is already public — so a pre-push hook is the
+other half:
+
+```sh
+git config core.hooksPath .githooks   # once per clone
+```
+
+[.githooks/pre-push](.githooks/pre-push) runs the same guard before anything leaves the
+machine.
+
+**Limits, stated plainly:** it matches literal strings, so a paraphrase, an abbreviation or an
+encoding passes; it reads the working tree and commit *messages*, never commit *diffs*, so a
+term committed and later deleted stays in history unseen; it cannot read PNGs; and
+`package.json` / lockfiles are outside the scan set. The scan covers `src/`, `scripts/`,
+`docs/`, `.github/workflows/`, `index.html`, root `*.md` and the text files under `public/` —
+contents only, never file names.
 
 ## Generated static pages (v2)
 

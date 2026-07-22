@@ -21,8 +21,12 @@ export const config = {
   GOAL_USD: 100_000,
   /**
    * Proof-of-work items (see src/lib/proof.ts). An item — and the whole Work
-   * section while no item is live — is rendered ONLY once its `url` is a real
-   * https:// link. Flip day: paste the public URL below and push.
+   * section while no item is live — is rendered ONLY once its `url` is a real,
+   * public, deep https link. Any item carrying `stats` must also carry the
+   * `sourceCommit` those numbers were read from: the numbers live here, the
+   * truth lives in another repo, and the pin is what keeps a claim that was
+   * true on flip day from quietly turning into a lie. Flip day: paste the
+   * public URL and the SHA below, then push.
    */
   PROOF_ITEMS: [
     {
@@ -32,6 +36,8 @@ export const config = {
         '2 fail-open paths, a 1-file fail-closed patch, 4/6 → 6/6 on a six-case corpus.',
       stats: ['2 fail-open paths', '1-file patch', '4/6 → 6/6'],
       url: 'https://github.com/kerem-turhan/agent-reliability-teardown-openai-agents-js',
+      /** The tree these numbers were read from, verified 22 Jul 2026. */
+      sourceCommit: 'e4076e2',
     },
   ],
 } as const

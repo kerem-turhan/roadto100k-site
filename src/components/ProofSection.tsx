@@ -2,7 +2,7 @@ import { Reveal } from '@/components/Reveal'
 import { SectionHeader } from '@/components/SectionHeader'
 import { config } from '@/config'
 import type { ProofItem } from '@/lib/proof'
-import { liveProofItems } from '@/lib/proof'
+import { liveProofItems, sourceCommitUrl } from '@/lib/proof'
 
 interface ProofSectionProps {
   items?: readonly ProofItem[]
@@ -66,6 +66,23 @@ export function ProofSection({
               {item.stats.length > 0 && (
                 <p className="mt-3 font-mono text-xs tracking-[0.15em] text-ledger-green uppercase">
                   {item.stats.join(' · ')}
+                </p>
+              )}
+              {item.sourceCommit && (
+                <p className="mt-2 font-mono text-[0.6875rem] text-ink-muted">
+                  {'verified against commit '}
+                  {sourceCommitUrl(item) ? (
+                    <a
+                      href={sourceCommitUrl(item) ?? undefined}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="-my-1.5 inline-block py-1.5 underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red"
+                    >
+                      {item.sourceCommit}
+                    </a>
+                  ) : (
+                    item.sourceCommit
+                  )}
                 </p>
               )}
             </li>

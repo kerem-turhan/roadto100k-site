@@ -7,7 +7,7 @@
 > ritüel adımı değişimi) bu dosya **aynı commit'te** güncellenir. Dosya eskiyorsa yalan
 > söylüyor demektir.
 >
-> Son güncelleme: 21 Temmuz 2026
+> Son güncelleme: 22 Temmuz 2026
 
 ---
 
@@ -56,7 +56,7 @@ gitmiyor (tek istisna: e-posta formunu gönderdiğinde Buttondown'a giden istek)
 | **The rules (kurallar)** | Bahsin kuralları: $100/ay tavan, $0 reklam, her sayı public, haftalık kayıt, yıl sonunda ne olursa olsun dürüst post-mortem. Bu bölüm senin kendine koyduğun kısıt — okuyucunun sana güvenmesinin sebebi. |
 | **The ledger (defter)** | Sitenin kalbi. Haftalık tablo (hafta bitişi, gelir, MRR, harcama, abone, not) + üstünde **sparkline**: yeşil çizgi gerçekleşen kümülatif gelir, kesikli çizgi $100k'nın gerektirdiği tempo. Rakamların tamamı tek bir dosyadan gelir: `src/data/ledger.json`. |
 | **What I'm building (ne inşa ediyorum)** | Ne üzerinde çalıştığın — kategori dilinde, ürün adı vermeden. Altında iletişim satırı. |
-| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / sürekli reliability desteği; fiyat yok). **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor: `src/config.ts` içindeki bir öğenin `url`'i boş/placeholder olduğu sürece o öğe HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Gerçek bir `https://` link yapıştırıldığı an kendiliğinden açılır. |
+| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / sürekli reliability desteği; fiyat yok). **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor ve 22 Temmuz'da sıkılaştırıldı: `src/config.ts` içindeki bir öğe, linki gerçek **ve** (rakam veriyorsa) `sourceCommit`'i dolu olmadıkça HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Ayrıntı: §4, "Kanıt bölümünün iki kapısı". |
 | **Email signup (kayıt)** | Asıl hedef. Buttondown formu; "her Pazar gerçek rakamlar + yıl sonu post-mortem" vaadi. Buttondown adresi config'te boş bırakılırsa form yerine X'i takip bağlantısı gösterilir. |
 | **Footer** | X, GitHub, e-posta, RSS bağlantıları + tema (açık/koyu) düğmesi. |
 
@@ -78,7 +78,7 @@ defter verisinden yazılır — elle bakım gerektirmez.
 | **hreflang** | EN ve TR sayfalarının başında | Google'a "bu iki sayfa aynı içeriğin İngilizcesi ve Türkçesi" der; yanlış dili yanlış kişiye göstermesin diye. |
 | **OG kartı (paylaşım görseli)** | `/og.png` (site geneli) · `/og/w/<hafta>.png` (İngilizce hafta kartı) · `/og/w/tr/<hafta>.png` (Türkçe hafta kartı) | Linki X/WhatsApp/LinkedIn'e attığında çıkan büyük görsel. Site geneli kart zamansızdır; **hafta sayfalarının kendi kartı** o haftanın gerçek rakamlarını taşır. Türkçe sayfa Türkçe kartı kullanır (yoksa genel karta düşer — asla İngilizce kartı göstermez). |
 | **Türkçe harf desteği** | tüm sayfalar | Yazı tiplerinin "latin" seti İ, Ş, Ğ harflerini içermiyor; bu yüzden her aileye ikinci bir "latin-ext" dosyası eklendi ve `unicode-range` ile sınırlandı. Türkçe harf içermeyen sayfalar bu ek dosyayı hiç indirmez. |
-| **Tema + erişilebilirlik** | her yerde | Açık/koyu mod (sistem tercihi + düğme), klavye odak halkaları, ekran okuyucu etiketleri, `prefers-reduced-motion` (animasyon istemeyen kullanıcıda animasyon yok). İçerik hiçbir zaman animasyona bağlı değildir: JavaScript çalışmasa da rakamlar orada. |
+| **Tema + erişilebilirlik** | her yerde | Açık/koyu mod (sistem tercihi + düğme), klavye odak halkaları, ekran okuyucu etiketleri, `prefers-reduced-motion` (animasyon istemeyen kullanıcıda animasyon yok). İçerik hiçbir zaman **animasyona** bağlı değildir: animasyon kapalıyken de rakamlar tam olarak orada. (Ana sayfa şu an yine de JavaScript ile çiziliyor — JS kapalıysa boş görünür; hafta ve Türkçe sayfaları sade HTML olduğu için JS'siz de okunur. Ana sayfayı da JS'siz okunur hale getirmek denetim planında sırada.) |
 
 ### 2.3 Rakamlar nereden geliyor
 
@@ -165,14 +165,14 @@ yeşil tik görürsen iş bitmiştir.
 
 | Ne | Nerede |
 |---|---|
-| Kanıt bölümünü açmak (flip günü) | `src/config.ts` → `PROOF_ITEMS[0].url` = gerçek repo linki. Tek satır. |
-| Yeni kanıt işi eklemek | `src/config.ts` → `PROOF_ITEMS` dizisine yeni nesne ({title, description, stats, url}) |
+| Kanıt bölümünü açmak (flip günü) | `src/config.ts` → `PROOF_ITEMS[0].url` = gerçek repo linki **+ `sourceCommit`** = o repodaki commit SHA'sı. |
+| Yeni kanıt işi eklemek | `src/config.ts` → `PROOF_ITEMS` dizisine yeni nesne ({title, description, stats, url, sourceCommit}). Rakam (`stats`) veren her öğe `sourceCommit` **zorunlu** — yoksa öğe sitede hiç görünmez. |
 | Buttondown / X / GitHub / e-posta adresi | `src/config.ts` |
 | Özel alan adı alınırsa | `vite.config.ts` → `base: '/'` **ve** `src/config.ts` → `SITE_URL` |
 
 ---
 
-## 4. Şu an neredeyiz (21 Temmuz 2026)
+## 4. Şu an neredeyiz (22 Temmuz 2026)
 
 - Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
   bir kayıtla test edilmiş.
@@ -185,12 +185,68 @@ yeşil tik görürsen iş bitmiştir.
   sparkline, haftalık OG kartları, Türkçe özet sayfaları, açık/koyu tema, erişilebilirlik.
 - Otomatik testler (Vitest) mantığın tamamını koruyor: gün sayacı, defter doğrulama, feed,
   sitemap, JSON-LD, hafta sayfaları, sparkline, kanıt görünürlüğü, OG kartı, TR sayfaları.
+- **22 Temmuz denetimi:** site düşman gözüyle baştan aşağı denetlendi (canlı tarayıcı +
+  erişilebilirlik, testlerin gerçekten koruyup korumadığı, SEO/paylaşım, kanıt doğruluğu,
+  sızıntı taraması). Bulgular ve sıralı plan: [docs/audit-2026-07-22.md](docs/audit-2026-07-22.md).
+  Denetimin en önemli dersi: **bir "kapı" belgede yazıyor diye kapı olmuyor.** Kanıt kapısı
+  yalnızca `https://` önekine bakıyordu; sahte bir link tüm testlerden geçip yayına girebiliyordu.
+  Artık kapı gerçek (aşağıda), ve kalıcı kural şu: **bir bekçi bakamadığı durumda yeşil değil
+  KIRMIZI verir — "bilmiyorum" = başarısız.**
+
+### Kanıt bölümünün iki kapısı (22 Temmuz'da sıkılaştırıldı)
+
+1. **Link gerçek olacak.** Sadece `https://` yetmez: gerçek bir alan adı + en az bir yol
+   parçası şart; `example.com`, `localhost`, IP adresi, `TODO/TBD/WIP` gibi doldurma
+   kelimeleri, `http://` ve şifreli linkler reddedilir. Reddedilen öğe HTML'e hiç basılmaz.
+2. **Rakam veren iddia commit'e sabitlenecek** (`sourceCommit`). Kartın rakamları bizim
+   config'imizde duruyor ama gerçek başka repoda; o repo değişince bizim cümle sessizce
+   yalan olur. Pin bunu tarihsel bir cümleye çevirir: "e4076e2'de 6/6'ydı" — kartın altındaki
+   `verified against commit …` satırı okuyucuyu tam o ağaca götürür. `stats` dolu ve
+   `sourceCommit` yoksa öğe **görünmez**.
+
+### Sızıntı bekçisi (`npm run leaks`)
+
+Kural zaten vardı: yayınlanmamış ürünün adı ve NDA'lı proje adları bu public repoda hiçbir
+yerde geçmeyecek. 22 Temmuz'a kadar bu kuralı **hiçbir makine kontrol etmiyordu** — denetimde
+ürün adı `index.html`'e enjekte edildi ve bütün testler yeşil kaldı, kelime `dist`'e kadar
+gitti. Artık bir bekçi var:
+
+```sh
+npm run leaks              # kaynakları tara
+npm run leaks -- --dist    # build çıktısını da tara
+npm run leaks -- --git     # bütün commit mesajlarını da tara
+printf %s 'kelime' | npm run leaks:add   # listeye yeni kelime ekle
+```
+
+- **Yasaklı kelimeler repoda yazılı değil.** `scripts/leak-denylist.json` sadece tuzlanmış
+  özetleri (hash) tutuyor; liste bu yüzden public repoda durabiliyor. Bu gizlilik değil,
+  gözden saklama — amaç kazayla sızmayı durdurmak.
+- **Nasıl yazıldığı fark etmiyor.** Metin küçük harfe indirilip harf-rakam dışındaki her şey
+  silinerek taranıyor: `Foo-Bar`, `foo_bar`, `Foo Bar`, `kerem@foobar.com`,
+  `https://x.com/foobar/...` ve minify edilmiş kodun içi dahil hepsi yakalanıyor. E-posta ve
+  URL dizelerinin **içine** bakmak işin can alıcı kısmı — kardeş projede sızıntı tam orada
+  saklanmıştı.
+- **Bulgu raporlanırken kelime yazılmıyor:** `dosya:satır` + `[REDACTED len=N]`. Public repoda
+  CI logları da public.
+- **Bakamayan bekçi kırmızı yanar.** Liste yoksa/bozuksa/boşsa, bir klasör taşınmışsa, hedef
+  sıfır dosya eşleştirmişse, `--dist` var ama build yoksa, klon sığsa → hepsi hata. Ayrıca her
+  çalıştırmada bekçi kendi "kanarya" kelimesini yakalayabildiğini kanıtlıyor; kanıtlayamazsa
+  o çalışma başarısız.
+- **Nerede koşuyor:** CI'da build öncesi ve sonrası. Bir de `git config core.hooksPath .githooks`
+  ile açılan **pre-push hook**'unda — CI ancak deploy'u durdurabilir, o noktada commit çoktan
+  GitHub'da olur; hook ise kelime daha bilgisayardan çıkmadan yakalar.
+
+**NDA'lı staj/işveren adları listede değil** (hiçbir yerde yazılı olmadıkları için).
+Fırsat buldukça `printf %s 'ad' | npm run leaks:add` ile tek tek ekle — kelime hiçbir dosyaya,
+hiçbir loga düşmez.
 
 ## 5. Sırada ne var
 
-1. **Flip günü** (Çarşamba planlı): kanıt bölümünün URL'sini doldur → bölüm ve "What I do"
-   kartı yayına girer.
-2. **Her Pazar defteri güncelle.** Sitenin tek gerçek bakımı bu; asıl bileşik faiz burada.
+1. **Her Pazar defteri güncelle.** Sitenin tek gerçek bakımı bu; asıl bileşik faiz burada.
+2. **Denetim planının kalan fazları** ([docs/audit-2026-07-22.md](docs/audit-2026-07-22.md)):
+   sitenin kendisiyle çelişen yerlerini düzeltmek, ziyaretçinin "bu adam ne satıyor"
+   sorusunun cevabını mobilde sayfanın %63'ünü kaydırmadan bulması, ana sayfanın
+   JavaScript'siz de okunabilir hale gelmesi.
 3. **E-posta listesini büyütmek** için X'ten siteye trafik: her defter haftası ayrı bir
    paylaşılabilir sayfa ve kendi görseline sahip — haftalık thread'in doğal ekidir.
 4. Opsiyonel, ücretsiz: Google Search Console'a siteyi ekle (`sitemap.xml` zaten hazır) ve
@@ -232,5 +288,3 @@ yeşil tik görürsen iş bitmiştir.
   görüntüsü alıp OG kartı üretmek için kullanılır.
 - **Vitest / lint / typecheck:** Sırasıyla otomatik testler, kod kalitesi denetimi ve tip
   denetimi. Üçü de yeşil olmadan deploy olmaz.
-</content>
-</invoke>

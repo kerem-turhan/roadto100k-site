@@ -1,0 +1,12 @@
+#!/bin/sh
+# Leak guard, before anything leaves the machine.
+#
+# CI runs the same check, but CI can only block the deploy — by the time a
+# workflow turns red the commit is already public on GitHub. This hook is the
+# half that runs while the leak is still local.
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+set -e
+
+cd "$(dirname "$0")/.."
+npm run --silent leaks -- --git

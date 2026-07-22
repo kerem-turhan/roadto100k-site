@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: `npm run leaks -- --git` scans every commit message,
+          # and a shallow clone would let it pass without seeing most of them.
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -27,7 +31,11 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test
+      # Leak guard, before the build: sources + commit messages.
+      - run: npm run leaks -- --git
       - run: npm run build
+      # And again on the generated output, which is what actually ships.
+      - run: npm run leaks -- --dist
       - uses: actions/configure-pages@v5
         with:
           enablement: true

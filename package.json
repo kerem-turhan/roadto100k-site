@@ -9,6 +9,8 @@
     "lint": "oxlint",
     "typecheck": "tsc -b",
     "test": "vitest run",
+    "leaks": "node scripts/check-leaks.ts",
+    "leaks:add": "node scripts/check-leaks.ts --add",
     "og": "node scripts/render-og.ts",
     "preview": "vite preview"
   },
@@ -23,7 +25,6 @@
     "radix-ui": "^1.6.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "shadcn": "^4.13.1",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3"
   },
@@ -33,6 +34,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "oxlint": "^1.71.0",
+    "shadcn": "^4.13.1",
     "typescript": "~6.0.2",
     "vite": "^8.1.1",
     "vitest": "^4.1.10"

@@ -1,7 +1,6 @@
-/// <reference types="vitest/config" />
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import { configDefaults, defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { staticPagesPlugin } from './scripts/static-pages.ts'
@@ -21,5 +20,9 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // The gate must only ever judge this checkout. Without this, vitest also
+    // collects tests from scratch checkouts under .claude/worktrees/ and
+    // reports red (or green) for files that are not in HEAD.
+    exclude: [...configDefaults.exclude, '.claude/**', '.playwright-mcp/**'],
   },
 })
