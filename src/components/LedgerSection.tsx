@@ -51,9 +51,20 @@ export function LedgerSection() {
           </p>
         </div>
         <p className="-mt-2 mb-10 max-w-[52ch] leading-relaxed text-ink-muted">
-          Real numbers. Nothing rounded up, nothing hidden. The green line is what actually
-          happened; the dashed one is the pace $100k demands. The gap between them is the
-          honest part.
+          Real numbers. Nothing rounded up, nothing hidden.{' '}
+          {/* One entry draws a dot, not a line — the copy has to say what is actually on
+              screen, or the page is describing a chart the reader cannot find. */}
+          {ledger.weeks.length > 1 ? (
+            <>
+              The green line is what actually happened; the dashed one is the pace $100k
+              demands. The gap between them is the honest part.
+            </>
+          ) : (
+            <>
+              The dot is where the ledger starts; the dashed line is the pace $100k demands.
+              Every Sunday adds a point.
+            </>
+          )}
         </p>
 
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-rule bg-rule md:grid-cols-4">
@@ -74,8 +85,10 @@ export function LedgerSection() {
           </p>
         </div>
 
-        {/* Mobile: stacked ledger entries, so the weekly note never hides behind a scroll. */}
-        <ul className="mt-10 sm:hidden" aria-label="Weekly ledger entries">
+        {/* Stacked entries below md, so the weekly note never hides behind a scroll. The
+            table needs 38rem plus padding; switching at sm (640px) clipped 64px of it —
+            the Note column was cut mid-word — until md (768px), where it fits whole. */}
+        <ul className="mt-10 md:hidden" aria-label="Weekly ledger entries">
           {newestFirst.map((week, idx) => (
             <li key={week.weekEnding} className="border-b border-rule py-4 first:border-t">
               <div className="flex items-baseline justify-between">
@@ -113,7 +126,12 @@ export function LedgerSection() {
           ))}
         </ul>
 
-        <div className="mt-10 hidden overflow-x-auto sm:block">
+        <div
+          className="mt-10 hidden overflow-x-auto md:block"
+          role="region"
+          aria-label="Weekly ledger table"
+          tabIndex={0}
+        >
           <table className="w-full min-w-[38rem] border-collapse text-left">
             <caption className="sr-only">
               The weekly ledger: revenue, MRR, spend and email subscribers per week, newest

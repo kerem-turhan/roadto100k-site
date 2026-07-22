@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Reveal } from '@/components/Reveal'
@@ -13,6 +14,12 @@ export function Signup({
   buttondownUrl = config.BUTTONDOWN_URL,
   xUrl = config.X_URL,
 }: SignupProps = {}) {
+  // The form posts to Buttondown in a new tab, so success and failure both
+  // happen off-page. With a blocked popup — routine on mobile Safari and in
+  // in-app browsers — the visitor clicks Subscribe and observes nothing at all.
+  // This says what is meant to happen, so a blocked tab is diagnosable.
+  const [submitted, setSubmitted] = useState(false)
+
   return (
     <section
       id="signup"
@@ -27,28 +34,39 @@ export function Signup({
           whatever the final number is.
         </p>
         {buttondownUrl ? (
-          <form
-            action={buttondownUrl}
-            method="post"
-            target="_blank"
-            className="flex max-w-md flex-col gap-3 sm:flex-row"
-          >
-            <label htmlFor="signup-email" className="sr-only">
-              Email address
-            </label>
-            <Input
-              id="signup-email"
-              type="email"
-              name="email"
-              required
-              placeholder="you@company.com"
-              className="h-11 font-mono text-sm"
-            />
-            <input type="hidden" name="embed" value="1" />
-            <Button type="submit" size="lg" className="h-11 shrink-0 px-6 font-mono uppercase tracking-widest">
-              Subscribe
-            </Button>
-          </form>
+          <>
+            <form
+              action={buttondownUrl}
+              method="post"
+              target="_blank"
+              onSubmit={() => setSubmitted(true)}
+              className="flex max-w-md flex-col gap-3 sm:flex-row"
+            >
+              <label htmlFor="signup-email" className="sr-only">
+                Email address
+              </label>
+              <Input
+                id="signup-email"
+                type="email"
+                name="email"
+                required
+                placeholder="you@company.com"
+                className="h-11 border-ink-muted font-mono text-sm"
+              />
+              <input type="hidden" name="embed" value="1" />
+              <Button type="submit" size="lg" className="h-11 shrink-0 px-6 font-mono uppercase tracking-widest">
+                Subscribe
+              </Button>
+            </form>
+            <p
+              aria-live="polite"
+              className="mt-3 max-w-md font-mono text-[0.6875rem] leading-relaxed text-ink-muted"
+            >
+              {submitted
+                ? 'Confirmation opens in a new tab — finish there. Nothing opened? Your browser blocked it; allow pop-ups and try again.'
+                : 'Confirmation opens in a new tab. No spam, one click to leave.'}
+            </p>
+          </>
         ) : (
           <div className="max-w-md rounded-sm border border-rule bg-paper-raised p-6">
             <p className="mb-4 text-sm leading-relaxed text-ink-muted">

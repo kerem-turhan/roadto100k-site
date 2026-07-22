@@ -245,6 +245,7 @@
   .hero-rise-2 { animation-delay: 0.08s; }
   .hero-rise-3 { animation-delay: 0.16s; }
   .hero-rise-4 { animation-delay: 0.24s; }
+  .hero-rise-5 { animation-delay: 0.32s; }
 }
 
 /* Scroll reveal: default fully visible; scroll-driven animation only where the

@@ -15,6 +15,12 @@ function App() {
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-2 w-[3px] border-x border-ledger-red/70 bg-ledger-red/[0.04] sm:left-4"
       />
+      <a
+        href="#ledger"
+        className="sr-only rounded-sm border border-rule bg-paper px-4 py-2 font-mono text-xs tracking-[0.18em] uppercase focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
+      >
+        Skip to the ledger
+      </a>
       <header className="flex items-center justify-between pt-6">
         <p className="font-mono text-xs tracking-[0.25em] text-ink-muted uppercase">
           roadto100k<span className="text-ledger-red">w</span>kerem

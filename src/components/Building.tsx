@@ -1,7 +1,11 @@
 import { Reveal } from '@/components/Reveal'
 import { SectionHeader } from '@/components/SectionHeader'
-import { config } from '@/config'
 
+/**
+ * No contact line here on purpose: "The work" owns the ask, so the same mailto
+ * is not rendered twice ~600px apart. If the proof gate ever hides that section
+ * the footer still carries the address.
+ */
 export function Building() {
   return (
     <section aria-label="What I'm building" className="border-t border-rule py-[2.75rem] md:py-[4.125rem]">
@@ -18,17 +22,6 @@ export function Building() {
             Second lane: I help AI teams make their agents actually reliable — evals, regression
             tests, guardrails. Consulting funds the road while the product grows.
           </p>
-          {config.CONTACT_EMAIL && (
-            <p className="font-mono text-sm">
-              <span className="text-ink-muted">For agent-reliability work → </span>
-              <a
-                href={`mailto:${config.CONTACT_EMAIL}`}
-                className="text-ledger-green underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-green"
-              >
-                {config.CONTACT_EMAIL}
-              </a>
-            </p>
-          )}
         </div>
       </Reveal>
     </section>
