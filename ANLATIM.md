@@ -173,12 +173,13 @@ yeşil tik görürsen iş bitmiştir.
 
 ---
 
-## 4. Şu an neredeyiz (22 Temmuz 2026)
+## 4. Şu an neredeyiz (26 Temmuz 2026)
 
 - Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
   bir kayıtla test edilmiş.
-- Defterde **1 hafta** var: 19 Temmuz 2026 (Gün 0) — gelir $0, MRR $0, harcama $0, abone 0.
-  Hepsi gerçek; bu tabloda henüz gösterilecek bir başarı yok, tam da olması gereken bu.
+- Defterde **2 hafta** var: 19 Temmuz (Gün 0) ve 26 Temmuz 2026 — her ikisi de gelir $0, MRR
+  $0, harcama $0, abone 0. 26 Temmuz notu: ilk tekrarlanabilir herkese açık teardown çıktı;
+  3 hedefli outreach mesajı gitti, henüz yanıt yok. Sıfırlar duruyor; abartı yok.
 - **Kanıt bölümü AÇILDI (22 Temmuz).** İlk teardown reposu public oldu; `PROOF_ITEMS[0].url`
   gerçek linkle dolduruldu, "The work" bölümü + "What I do" kartı artık sitede görünür.
   Sonraki kanıtlar da aynı yolla eklenir: config'e bir öğe yaz, `url`'i gerçek olduğu an yayında.

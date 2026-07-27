@@ -11,6 +11,15 @@
       "emailSubs": 0,
       "note": "Day 0 — plan done, site live, nothing sold yet.",
       "trNote": "Gün 0 — plan bitti, site yayında, henüz satılan bir şey yok."
+    },
+    {
+      "weekEnding": "2026-07-26",
+      "revenue": 0,
+      "mrr": 0,
+      "spend": 0,
+      "emailSubs": 0,
+      "note": "First reproducible public teardown shipped; 3 targeted outreach messages sent, no replies so far.",
+      "trNote": "İlk tekrarlanabilir herkese açık teardown yayınlandı; 3 hedefli outreach mesajı gitti, henüz yanıt yok."
     }
   ]
 }
