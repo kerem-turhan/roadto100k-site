@@ -197,12 +197,14 @@ yeşil tik görürsen iş bitmiştir.
 
 ---
 
-## 4. Şu an neredeyiz (26 Temmuz 2026)
+## 4. Şu an neredeyiz (28 Temmuz 2026)
 
 - Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
   bir kayıtla test edilmiş.
-- `5102e8a` üzerinde typecheck, lint, **23 dosyada 295 test**, build ve leak taramaları
-  geçti; 26 Temmuz EN/TR hafta sayfaları ile OG görselleri canlıda HTTP 200 verdi.
+- `39fb852` üzerinde typecheck, lint, **27 dosyada 355 test**, build ve leak taramaları
+  (kaynak + dist) geçti; iki ardışık build bayt bayt aynı çıktı verdi.
+- **Dönüşüm yolu kuruldu (28 Temmuz):** `/work/` ve `/silent-green/` canlı, newsletter vaadi
+  formun üstünde. Ayrıntı: §2.1b ve aşağıdaki "Launch öncesi dönüşüm hazırlığı".
 - Defterde **2 hafta** var: 19 Temmuz (Gün 0) ve 26 Temmuz 2026 — her ikisi de gelir $0, MRR
   $0, harcama $0, abone 0. 26 Temmuz notu: ilk tekrarlanabilir herkese açık teardown çıktı;
   3 hedefli outreach mesajı gitti, henüz yanıt yok. Sıfırlar duruyor; abartı yok.
@@ -370,7 +372,10 @@ Ekledikten sonra CI'daki secret'ı tazele:
    de okunuyor. Geriye bilinçli bırakılanlar: `№ ← → ↗` karakterleri hâlâ sistem yazı tipine
    düşüyor (kozmetik), ve sayfa üstündeki marka ile alttaki bağlantı aynı yere gidiyor (ekran
    okuyucuda ufak tekrar).
-3. **E-posta listesini büyütmek** için X'ten siteye trafik: her defter haftası ayrı bir
+3. **İlk silent-green girişini yaz.** Show HN'in üç şartından tek açık kalan bu (§4). Yol:
+   `src/data/series.json` → `entries`'e bir nesne, push. Ürün adı/mekanizması girişlerde
+   geçmez — kategori dili.
+4. **E-posta listesini büyütmek** için X'ten siteye trafik: her defter haftası ayrı bir
    paylaşılabilir sayfa ve kendi görseline sahip — haftalık thread'in doğal ekidir.
 4. Opsiyonel, ücretsiz: Google Search Console'a siteyi ekle (`sitemap.xml` zaten hazır) ve
    X kart doğrulayıcısıyla paylaşım görselini bir kez kontrol et.
