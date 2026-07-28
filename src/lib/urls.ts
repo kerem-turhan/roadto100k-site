@@ -29,6 +29,24 @@ export function weekOgPath(weekEnding: string, lang: 'en' | 'tr' = 'en'): string
   return lang === 'tr' ? `og/w/tr/${weekEnding}.png` : `og/w/${weekEnding}.png`
 }
 
+/** Absolute URL of the service page. */
+export function workUrl(siteUrl: string): string {
+  return `${siteUrl}work/`
+}
+
+/**
+ * Absolute URL of the silent-green series index. Cited from Show HN and dev.to
+ * posts, so it never moves: entries hang off this path, they do not replace it.
+ */
+export function seriesUrl(siteUrl: string): string {
+  return `${siteUrl}silent-green/`
+}
+
+/** Absolute URL of one series entry, e.g. `…/silent-green/the-missing-config/`. */
+export function seriesEntryUrl(siteUrl: string, slug: string): string {
+  return `${seriesUrl(siteUrl)}${slug}/`
+}
+
 /** Absolute URL of the Turkish summary index. */
 export function trHomeUrl(siteUrl: string): string {
   return `${siteUrl}tr/`

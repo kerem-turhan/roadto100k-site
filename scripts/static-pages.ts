@@ -6,18 +6,30 @@ import { config } from '../src/config.ts'
 import { buildFeed, buildTrFeed } from '../src/lib/feed.ts'
 import type { JournalMeta, StaticPage } from '../src/lib/journal.ts'
 import { buildJournalPages } from '../src/lib/journal.ts'
+import { OFFER_UPDATED } from '../src/lib/offer.ts'
 import { buildTrPages } from '../src/lib/journalTr.ts'
 import type { Ledger } from '../src/lib/ledger.ts'
 import { parseLedger, trWeekEntries } from '../src/lib/ledger.ts'
 import { serializeJsonLd, siteJsonLd } from '../src/lib/seo.ts'
+import type { Series } from '../src/lib/series.ts'
+import { parseSeries, seriesLastModified } from '../src/lib/series.ts'
+import { buildSeriesPages } from '../src/lib/seriesPages.ts'
+import type { SitemapEntry } from '../src/lib/sitemap.ts'
 import { buildRobots, buildSitemap } from '../src/lib/sitemap.ts'
-import { injectSiteUrl, trHomeUrl, weekOgPath } from '../src/lib/urls.ts'
+import { injectSiteUrl, seriesUrl, trHomeUrl, weekOgPath, workUrl } from '../src/lib/urls.ts'
+import { buildWorkPage } from '../src/lib/workPage.ts'
+import { liveProofItems } from '../src/lib/proof.ts'
 
 const LEDGER_PATH = fileURLToPath(new URL('../src/data/ledger.json', import.meta.url))
+const SERIES_PATH = fileURLToPath(new URL('../src/data/series.json', import.meta.url))
 const PUBLIC_DIR = fileURLToPath(new URL('../public', import.meta.url))
 
 function readLedger(): Ledger {
   return parseLedger(JSON.parse(readFileSync(LEDGER_PATH, 'utf8')))
+}
+
+function readSeries(): Series {
+  return parseSeries(JSON.parse(readFileSync(SERIES_PATH, 'utf8')))
 }
 
 /**
@@ -45,6 +57,11 @@ function metaFor(ledger: Ledger): JournalMeta {
     weekOgWeeks: committedWeekCards(ledger, 'en'),
     trWeekOgWeeks: committedWeekCards(ledger, 'tr'),
     hasTrPages: trWeekEntries(ledger).length > 0,
+    // The service page lives or dies by the same gate the homepage section uses.
+    hasWorkPage: liveProofItems(config.PROOF_ITEMS).length > 0,
+    hasSeriesPage: true,
+    buttondownUrl: config.BUTTONDOWN_URL,
+    contactEmail: config.CONTACT_EMAIL,
   }
 }
 
@@ -118,15 +135,30 @@ export function staticPagesPlugin(): Plugin {
         this.error(`static pages: refusing to write into ${outDir} — expected dist/`)
       }
       const ledger = readLedger()
+      const series = readSeries()
       const meta = metaFor(ledger)
       const trFeed = buildTrFeed(ledger, meta)
+      const workPage = buildWorkPage({ meta, items: config.PROOF_ITEMS })
+      const seriesPages = buildSeriesPages(series, meta)
+      // Only the pages this build actually wrote get advertised; a gated-out
+      // /work/ must not appear in the sitemap as a URL that 404s.
+      const extraUrls: SitemapEntry[] = [
+        ...(workPage ? [{ loc: workUrl(config.SITE_URL), lastmod: OFFER_UPDATED }] : []),
+        { loc: seriesUrl(config.SITE_URL), lastmod: seriesLastModified(series) },
+        ...series.entries.map((entry) => ({
+          loc: `${seriesUrl(config.SITE_URL)}${entry.slug}/`,
+          lastmod: entry.date,
+        })),
+      ]
       const pages: StaticPage[] = [
         { path: 'feed.xml', html: buildFeed(ledger, meta) },
-        { path: 'sitemap.xml', html: buildSitemap(ledger, config.SITE_URL) },
+        { path: 'sitemap.xml', html: buildSitemap(ledger, config.SITE_URL, extraUrls) },
         { path: 'robots.txt', html: buildRobots(config.SITE_URL) },
         ...buildJournalPages(ledger, meta),
         ...buildTrPages(ledger, meta),
         ...(trFeed ? [{ path: 'tr/feed.xml', html: trFeed }] : []),
+        ...(workPage ? [workPage] : []),
+        ...seriesPages,
       ]
       for (const page of pages) {
         const target = path.join(outDir, page.path)

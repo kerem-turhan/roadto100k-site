@@ -31,6 +31,24 @@ describe('buildSitemap', () => {
     expect(xml.match(/<url>/g)).toHaveLength(4)
   })
 
+  /*
+   * The caller lists the pages it actually wrote. A page that was gated out of
+   * the build must not be advertised anyway: a sitemap entry is a promise to a
+   * crawler that the URL is there.
+   */
+  it('adds the pages the build says it wrote, and nothing more', () => {
+    const withExtras = buildSitemap(FIXTURE_LEDGER, FIXTURE_META.siteUrl, [
+      { loc: 'https://example.test/site/work/', lastmod: '2026-07-28' },
+      { loc: 'https://example.test/site/silent-green/', lastmod: '2026-07-28' },
+    ])
+    expect(withExtras).toContain('<loc>https://example.test/site/work/</loc>')
+    expect(withExtras).toContain('<loc>https://example.test/site/silent-green/</loc>')
+    expect(withExtras.match(/<url>/g)).toHaveLength(8)
+    // …and without them the same build advertises neither
+    expect(sitemap).not.toContain('/work/')
+    expect(sitemap).not.toContain('/silent-green/')
+  })
+
   it('stamps lastmod from ledger dates only', () => {
     // Root, archive and the Turkish index move with the latest week;
     // week pages carry their own date.

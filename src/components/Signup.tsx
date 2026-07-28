@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Reveal } from '@/components/Reveal'
 import { SectionHeader } from '@/components/SectionHeader'
 import { config } from '@/config'
+import { NEWSLETTER_PROMISE, NEWSLETTER_TERMS } from '@/lib/offer'
 
 type SignupProps = {
   buttondownUrl?: string
@@ -28,10 +29,14 @@ export function Signup({
     >
       <Reveal>
         <SectionHeader eyebrow="The Sunday numbers" title="Get the ledger by email" />
-        <p className="mb-8 max-w-[52ch] leading-relaxed">
-          One email every Sunday: the full ledger, and the lesson that cost the most to learn.
-          The $0 weeks arrive on schedule too — and on Dec 31, 2026, one honest post-mortem,
-          whatever the final number is.
+        {/* The promise first, in the reader's words, before the field asks for anything. */}
+        <p className="mb-5 max-w-[52ch] border-l-2 border-ledger-red pl-5 text-[1.0625rem] leading-relaxed text-pretty">
+          {NEWSLETTER_PROMISE}
+        </p>
+        <p className="mb-8 max-w-[52ch] leading-relaxed text-ink-muted">
+          In the same email: the full ledger for the week — revenue, spend, subscribers, the $0
+          weeks included — and on Dec 31, 2026, one honest post-mortem, whatever the final
+          number is.
         </p>
         {buttondownUrl ? (
           <>
@@ -64,7 +69,7 @@ export function Signup({
             >
               {submitted
                 ? 'Confirmation opens in a new tab — finish there. Nothing opened? Your browser blocked it; allow pop-ups and try again.'
-                : 'Confirmation opens in a new tab. No spam, one click to leave.'}
+                : `${NEWSLETTER_TERMS} Confirmation opens in a new tab.`}
             </p>
           </>
         ) : (

@@ -58,8 +58,29 @@ gitmiyor (tek istisna: e-posta formunu gönderdiğinde Buttondown'a giden istek)
 | **The ledger (defter)** | Sitenin kalbi. Haftalık tablo (hafta bitişi, gelir, MRR, harcama, abone, not) + üstünde **sparkline**: yeşil çizgi gerçekleşen kümülatif gelir, kesikli çizgi $100k'nın gerektirdiği tempo. Rakamların tamamı tek bir dosyadan gelir: `src/data/ledger.json`. |
 | **What I'm building (ne inşa ediyorum)** | Ne üzerinde çalıştığın — kategori dilinde, ürün adı vermeden. Altında iletişim satırı. |
 | **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / sürekli reliability desteği; fiyat yok). **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor ve 22 Temmuz'da sıkılaştırıldı: `src/config.ts` içindeki bir öğe, linki gerçek **ve** (rakam veriyorsa) `sourceCommit`'i dolu olmadıkça HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Ayrıntı: §4, "Kanıt bölümünün iki kapısı". |
-| **Email signup (kayıt)** | Asıl hedef. Buttondown formu; "her Pazar gerçek rakamlar + yıl sonu post-mortem" vaadi. Buttondown adresi config'te boş bırakılırsa form yerine X'i takip bağlantısı gösterilir. |
-| **Footer** | X, GitHub, e-posta, RSS bağlantıları + tema (açık/koyu) düğmesi. |
+| **Email signup (kayıt)** | Asıl hedef. Buttondown formu. **28 Temmuz'da vaat netleşti:** formun hemen üstünde tek cümlelik söz duruyor — *"One silent-green finding a week — a check that couldn't look and said yes anyway."* Altında sıklık/spam/çıkış satırı. Buttondown adresi config'te boş bırakılırsa form yerine X'i takip bağlantısı gösterilir. |
+| **Footer** | Work with me, Silent green, X, GitHub, RSS (+ Türkçe) bağlantıları + tema (açık/koyu) düğmesi. "Work with me" bağlantısı yalnız kanıt kapısı açıkken görünür — olmayan sayfaya link verilmez. |
+
+### 2.1b Ana sayfanın dışındaki iki sayfa (28 Temmuz'da eklendi)
+
+Show HN postu inerse siteye birkaç bin kişi gelir ve bu tazelik **bir kez** harcanır. O
+trafiğin "peki bu adam benim için ne yapabilir?" ve "neye abone oluyorum?" sorularının cevabı
+artık kendi kalıcı adreslerinde duruyor.
+
+| Sayfa | Adres | Ne var, ne yok |
+|---|---|---|
+| **Work with me** | `/work/` | Hizmet yolu. Başlıkta konumlandırma cümlesi (*"I make AI agents fail closed. When a check can't look, it has to say no."*), altında üç somut iş (reliability audit / eval harness + CI regression gate / model-swap güvencesi), yanında **kanıt**: public teardown reposu, rakamları ve commit pini ile. Tek tık iletişim: e-posta. **Fiyat yok** — paket bedeli cevapta konuşulur, sayfada yazmaz (bir test bunu koruyor). |
+| **Silent green** | `/silent-green/` | İmza serinin kalıcı evi: haftada bir "bakamadığı hâlde evet diyen kontrol" bulgusu. Şu an **iskelet**: serinin ne olduğu + "First entry coming this week." + kayıt formu. Uydurma giriş **yok**; ilk giriş yazıldığında `src/data/series.json`'a eklenir ve `/silent-green/<slug>/` adresi, indeks satırı ve sitemap kaydı birlikte doğar. |
+
+İkisinin de altında aynı vaat ve aynı form var. Vaat metni, konumlandırma cümlesi ve üç
+hizmetin tarifi tek dosyada yaşıyor (`src/lib/offer.ts`): ana sayfa React ile, bu iki sayfa
+düz HTML ile üretiliyor — metin üç yere elle yazılsaydı okuyucuya üç farklı söz verilirdi.
+
+**`/work/` bir kapıya bağlı.** Kanıt bölümüyle **aynı** kapı: `config.PROOF_ITEMS` içinde
+canlı (gerçek link + rakam veriyorsa commit pini) bir öğe yoksa sayfa hiç yazılmaz — sitemap'e
+de girmez, footer'da bağlantısı da çıkmaz. Kanıtı olmayan bir yetkinlik iddiasını satmak,
+zaten bu sitenin karşı çıktığı şey. `/silent-green/` bu kapıya bağlı değil: adresi başka
+yerlerde anılacağı için bir hafta 404 vermektense "ilk giriş yolda" demesi doğru.
 
 ### 2.2 Görünmeyen ama işi olan şeyler
 
@@ -170,6 +191,8 @@ yeşil tik görürsen iş bitmiştir.
 | Kanıt bölümünü açmak (flip günü) | `src/config.ts` → `PROOF_ITEMS[0].url` = gerçek repo linki **+ `sourceCommit`** = o repodaki commit SHA'sı. |
 | Yeni kanıt işi eklemek | `src/config.ts` → `PROOF_ITEMS` dizisine yeni nesne ({title, description, stats, url, sourceCommit}). Rakam (`stats`) veren her öğe `sourceCommit` **zorunlu** — yoksa öğe sitede hiç görünmez. |
 | Buttondown / X / GitHub / e-posta adresi | `src/config.ts` |
+| Yeni silent-green girişi yayımlamak | `src/data/series.json` → `entries` dizisine nesne ({number, slug, date, title, dek, body[]}). Sıra numarası, slug biçimi, tarih ve dolu gövde zorunlu; biri bozuksa build patlar. Push et — giriş sayfası, indeks satırı ve sitemap kaydı birlikte doğar. |
+| Hizmet metni / vaat / seri tanıtımı | `src/lib/offer.ts` (üç yüzey de buradan okur). `/work/`'ün sitemap tarihi olan `OFFER_UPDATED`'ı da elle güncelle. |
 | Özel alan adı alınırsa | `vite.config.ts` → `base: '/'` **ve** `src/config.ts` → `SITE_URL` |
 
 ---
@@ -197,6 +220,23 @@ yeşil tik görürsen iş bitmiştir.
   yalnızca `https://` önekine bakıyordu; sahte bir link tüm testlerden geçip yayına girebiliyordu.
   Artık kapı gerçek (aşağıda), ve kalıcı kural şu: **bir bekçi bakamadığı durumda yeşil değil
   KIRMIZI verir — "bilmiyorum" = başarısız.**
+
+### Launch öncesi dönüşüm hazırlığı (28 Temmuz)
+
+Show HN postunun sert kapısı üç maddeydi; üçü de yayında:
+
+1. **Hizmet yolu** — `/work/` (yukarıda §2.1b). Konumlandırma cümlesi görünür, üç iş somut,
+   kanıt yanında, iletişim tek tık, fiyat yok.
+2. **Newsletter vaadi** — form artık neye abone olunduğunu söylüyor: *"One silent-green
+   finding a week…"* + sıklık/spam/çıkış satırı. Aynı cümle ana sayfada, `/work/`'te ve
+   `/silent-green/`'de birebir aynı; bir testi vaadi kelimesi kelimesine bir sabite karşı
+   tutuyor, metni değiştiren commit üç dosyada kırmızı alır.
+3. **`/silent-green/`** — kalıcı, indekslenen seri adresi; şu an iskelet (tanıtım + "first
+   entry coming this week" + form), uydurma giriş yok.
+
+**Kapalı olmayan tek kabul kriteri:** brief "en az 1 giriş yayımlanmış olmalı" diyordu; bu
+turda iskelet istendi. İlk giriş `series.json`'a eklenene kadar bu madde **açık** — HN
+postundan önce yazılması gereken tek şey bu.
 
 ### Kanıt bölümünün iki kapısı (22 Temmuz'da sıkılaştırıldı)
 

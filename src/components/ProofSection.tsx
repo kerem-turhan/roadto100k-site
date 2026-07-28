@@ -1,6 +1,7 @@
 import { Reveal } from '@/components/Reveal'
 import { SectionHeader } from '@/components/SectionHeader'
 import { config } from '@/config'
+import { POSITIONING, SERVICES } from '@/lib/offer'
 import type { ProofItem } from '@/lib/proof'
 import { liveProofItems, sourceCommitUrl } from '@/lib/proof'
 
@@ -8,21 +9,6 @@ interface ProofSectionProps {
   items?: readonly ProofItem[]
   contactEmail?: string
 }
-
-const SERVICES = [
-  {
-    name: 'Reliability audit',
-    text: 'A reproducible teardown of your agent: where it fails open, with receipts.',
-  },
-  {
-    name: 'Eval harness setup',
-    text: 'A deterministic corpus and a regression gate wired into your CI.',
-  },
-  {
-    name: 'Ongoing reliability support',
-    text: 'Keeping the numbers honest as the agent keeps changing.',
-  },
-] as const
 
 /**
  * Proof of work. Renders nothing at all — no heading, no empty frame — until
@@ -93,6 +79,11 @@ export function ProofSection({
           <p className="mb-4 font-mono text-[0.6875rem] tracking-[0.2em] text-ink-muted uppercase">
             What I do
           </p>
+          {/* The offer in one line, before the list of what it consists of. */}
+          <p className="mb-5 text-[1.0625rem] leading-snug font-medium text-pretty">
+            {POSITIONING.claim}{' '}
+            <span className="text-ink-muted">{POSITIONING.rule}</span>
+          </p>
           <ul className="space-y-3">
             {SERVICES.map((service) => (
               <li key={service.name} className="text-sm leading-relaxed">
@@ -112,6 +103,14 @@ export function ProofSection({
               </a>
             </p>
           )}
+          <p className="mt-3 font-mono text-xs tracking-[0.15em] text-ink-muted uppercase">
+            <a
+              href={`${import.meta.env.BASE_URL}work/`}
+              className="-my-1.5 inline-block py-1.5 underline decoration-rule underline-offset-4 transition-colors hover:decoration-ledger-red"
+            >
+              What working together looks like →
+            </a>
+          </p>
         </div>
       </Reveal>
     </section>

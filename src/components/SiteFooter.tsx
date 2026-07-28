@@ -1,12 +1,20 @@
 import { config } from '@/config'
 import rawLedger from '@/data/ledger.json'
 import { parseLedger, trWeekEntries } from '@/lib/ledger'
+import { liveProofItems } from '@/lib/proof'
 
 // The Turkish summaries exist only for weeks that have one; without any,
 // there is no /tr/ page to link to.
 const hasTurkish = trWeekEntries(parseLedger(rawLedger)).length > 0
+// /work/ is built from the same gate; with no receipts the page does not exist,
+// so neither does the link to it.
+const hasWorkPage = liveProofItems(config.PROOF_ITEMS).length > 0
 
 const LINKS: Array<{ label: string; href: string; external: boolean; lang?: string }> = [
+  ...(hasWorkPage
+    ? [{ label: 'Work', href: `${import.meta.env.BASE_URL}work/`, external: false }]
+    : []),
+  { label: 'Silent green', href: `${import.meta.env.BASE_URL}silent-green/`, external: false },
   { label: 'X', href: config.X_URL, external: true },
   { label: 'GitHub', href: config.GITHUB_URL, external: true },
   { label: 'RSS', href: `${import.meta.env.BASE_URL}feed.xml`, external: false },
@@ -22,7 +30,7 @@ export function SiteFooter() {
         <p className="font-mono text-xs tracking-[0.2em] text-ink-muted uppercase">
           Kerem Turhan · Ankara, TR
         </p>
-        <nav aria-label="Social links" className="flex gap-6">
+        <nav aria-label="Site links" className="flex flex-wrap gap-x-6 gap-y-1">
           {LINKS.map((link) => (
             <a
               key={link.label}

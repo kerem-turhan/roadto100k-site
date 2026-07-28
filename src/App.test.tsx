@@ -34,6 +34,24 @@ describe('the prerendered homepage', () => {
     expect(html).toContain('Open for agent-reliability work')
     expect(html).toContain('href="#work"')
   })
+
+  /*
+   * The three launch-gate surfaces. A visitor arriving from a link post decides
+   * in seconds, and everything they decide on has to be in the served HTML —
+   * not assembled after hydration.
+   */
+  it('states the positioning and the newsletter promise in the markup', () => {
+    expect(html).toContain('I make AI agents fail closed.')
+    expect(html).toContain(
+      'One silent-green finding a week — a check that couldn’t look and said yes anyway.',
+    )
+    expect(html).toContain('One email a week. No spam, no tracking, one click to leave.')
+  })
+
+  it('links out to the service page and the series', () => {
+    expect(html).toMatch(/href="[^"]*\/work\/"/)
+    expect(html).toMatch(/href="[^"]*\/silent-green\/"/)
+  })
 })
 
 /*
@@ -65,9 +83,13 @@ describe('the prerendered homepage with no live proof item', () => {
     // and no dead anchor left pointing at the section that is not there
     expect(html).not.toContain('href="#work"')
     expect(html).not.toContain('id="work"')
+    // nor a footer link to /work/, which the same gate keeps out of the build
+    expect(html).not.toMatch(/href="[^"]*\/work\/"/)
 
     // the rest of the page is untouched
     expect(html).toContain('The ledger')
     expect(html).toContain('Get the ledger by email')
+    // the series does not depend on that gate — it is built either way
+    expect(html).toMatch(/href="[^"]*\/silent-green\/"/)
   })
 })

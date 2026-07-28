@@ -3,15 +3,30 @@ import { trWeekEntries } from './ledger.ts'
 import { escapeMarkup } from './text.ts'
 import { archiveUrl, trHomeUrl, trWeekUrl, weekUrl } from './urls.ts'
 
+export interface SitemapEntry {
+  loc: string
+  /** ISO date; must come from real data, never from the clock. */
+  lastmod: string
+}
+
 /**
  * sitemap.xml for the root page, the journal archive, every weekly page and
- * every Turkish summary that exists. `lastmod` is driven by ledger dates only
- * — deterministic across builds.
+ * every Turkish summary that exists, plus whatever `extra` pages the build
+ * actually wrote. `lastmod` is driven by content dates only — deterministic
+ * across builds.
+ *
+ * `extra` is passed in rather than derived here so that a page which was gated
+ * out of the build cannot be advertised to search engines anyway: the caller
+ * lists what it wrote, not what it hoped to write.
  */
-export function buildSitemap(ledger: Ledger, siteUrl: string): string {
+export function buildSitemap(
+  ledger: Ledger,
+  siteUrl: string,
+  extra: readonly SitemapEntry[] = [],
+): string {
   const latest = ledger.weeks[ledger.weeks.length - 1].weekEnding
   const trEntries = trWeekEntries(ledger)
-  const entries: Array<{ loc: string; lastmod: string }> = [
+  const entries: SitemapEntry[] = [
     { loc: siteUrl, lastmod: latest },
     { loc: archiveUrl(siteUrl), lastmod: latest },
     ...ledger.weeks.map((week) => ({
@@ -30,6 +45,7 @@ export function buildSitemap(ledger: Ledger, siteUrl: string): string {
           })),
         ]
       : []),
+    ...extra,
   ]
 
   return [

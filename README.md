@@ -132,7 +132,21 @@ everything derived from the ledger:
   week, built **only** for weeks whose ledger entry has a `trNote`. No `trNote` anywhere
   means no `/tr/` at all: the site never pads a missing summary with placeholder copy.
   English and Turkish pages cross-link with `hreflang`.
+- `work/index.html` — the service page ("work with me"), built **only** while a
+  `PROOF_ITEMS` entry passes the same gate the homepage section uses
+  ([src/lib/workPage.ts](src/lib/workPage.ts)). No receipts, no page — and nothing in the
+  sitemap or the footer pointing at one.
+- `silent-green/index.html` plus `silent-green/<slug>/index.html` per published entry — the
+  permanent home of the weekly finding, driven by
+  [src/data/series.json](src/data/series.json). The index is built whether or not an entry
+  exists: the URL is cited from posts elsewhere, so it says "first entry coming this week"
+  rather than 404ing for a week. It never invents an entry to fill the space.
 - JSON-LD (Person + WebSite + Dataset) injected into `index.html`.
+
+Both new pages carry the newsletter form and the promise from
+[src/lib/offer.ts](src/lib/offer.ts) — one module holds the positioning sentence, the three
+services, the promise and the terms, because the React homepage and these static pages are
+three renderers that would otherwise drift into three slightly different promises.
 
 Every generated page carries the same theme control as the app: an inline script writes a
 `<button>` into the header, flips the `dark` class, stores the choice in `localStorage.theme`
@@ -256,3 +270,30 @@ Every external link, journey date and public claim lives in [src/config.ts](src/
 
 Moving to a custom domain means changing `base` in [vite.config.ts](vite.config.ts) to `'/'`
 **and** `SITE_URL` here. Nothing else — `index.html` and every generated page follow.
+
+Conversion copy lives one level up from config, in [src/lib/offer.ts](src/lib/offer.ts):
+`POSITIONING`, `SERVICES`, `NEWSLETTER_PROMISE`, `NEWSLETTER_TERMS`, `SERIES` and
+`OFFER_UPDATED` (the sitemap `lastmod` for `/work/` — a fixed date, bumped by hand when the
+offer changes, never read off the clock).
+
+## Publishing a silent-green entry
+
+Entries live in [src/data/series.json](src/data/series.json), oldest first:
+
+```json
+{
+  "number": 1,
+  "slug": "the-guard-that-could-not-look",
+  "date": "2026-07-29",
+  "title": "The guard that could not look",
+  "dek": "One sentence — used as the meta description and the index blurb.",
+  "body": ["First paragraph.", "Second paragraph."]
+}
+```
+
+`parseSeries` rejects an out-of-order `number`, a slug that is not lowercase-hyphenated, an
+impossible date, a duplicate slug, a blank title/dek and an empty or blank body — the build
+stops rather than shipping a dead link or a page of whitespace to somebody who followed a
+citation. Push, and the entry page, the index row and the sitemap entry appear together.
+
+Slugs are permanent: `/silent-green/<slug>/` is the address other people link to.

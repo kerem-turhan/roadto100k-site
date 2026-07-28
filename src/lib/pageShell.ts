@@ -13,6 +13,14 @@ export interface JournalMeta extends SiteIdentity, ShareCards {
   ogImage: string
   /** True when at least one week has a Turkish summary, so /tr/ exists. */
   hasTrPages?: boolean
+  /** True when the proof gate let /work/ be built — otherwise there is no page to link. */
+  hasWorkPage?: boolean
+  /** True when /silent-green/ was built. */
+  hasSeriesPage?: boolean
+  /** Buttondown embed action for the forms on generated pages. */
+  buttondownUrl?: string
+  /** Where "work with me" mail goes. */
+  contactEmail?: string
 }
 
 export interface StaticPage {
@@ -172,6 +180,29 @@ dd{font-size:1.5rem;font-weight:500}
 .weeks .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.875rem}
 .weeks .row span{color:var(--ink-muted)}
 .weeks p{margin-top:.625rem;font-size:.9375rem;color:var(--ink-muted);line-height:1.5;max-width:52ch}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.prose p{margin-top:1.25rem;max-width:62ch;line-height:1.7;text-wrap:pretty}
+.services{list-style:none;padding:0;margin-top:2rem}
+.services li{border-top:1px solid var(--rule);padding:1.125rem 0;line-height:1.6;max-width:62ch}
+.services li:last-child{border-bottom:1px solid var(--rule)}
+.services b{font-weight:600}
+.services span{color:var(--ink-muted)}
+.receipt{margin-top:2.75rem;border:1px solid var(--rule);border-radius:2px;background:var(--paper-raised);padding:1.5rem}
+.receipt h2{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.6875rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-muted)}
+.receipt h3{margin-top:1rem;font-size:1.0625rem;font-weight:500;line-height:1.4;max-width:44ch}
+.receipt p{margin-top:.5rem;max-width:56ch;line-height:1.6;color:var(--ink-muted)}
+.stats{margin-top:.75rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--green)}
+.pin{margin-top:.5rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.6875rem;color:var(--ink-muted)}
+.cta{margin-top:2.75rem;border-top:1px solid var(--rule);padding-top:1.5rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.9375rem;line-height:1.7}
+.cta a{color:var(--green)}
+.promise{margin-top:2.75rem;border-left:2px solid var(--red);padding-left:1.25rem;font-size:1.0625rem;line-height:1.6;max-width:52ch;text-wrap:pretty}
+.signup{display:flex;flex-wrap:wrap;gap:.75rem;max-width:28rem;margin-top:1.25rem}
+.signup input{flex:1 1 12rem;min-height:2.75rem;padding:.5rem .75rem;border:1px solid var(--ink-muted);border-radius:2px;background:var(--paper);color:var(--ink);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.875rem}
+.signup input::placeholder{color:var(--ink-muted)}
+.signup button{min-height:2.75rem;padding:.5rem 1.5rem;border:1px solid var(--ink);border-radius:2px;background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .15s,border-color .15s}
+.signup button:hover{background:var(--red);border-color:var(--red)}
+.terms{margin-top:.75rem;max-width:28rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.6875rem;line-height:1.5;color:var(--ink-muted)}
+.awaiting{margin-top:2.25rem;border:1px dashed var(--rule);border-radius:2px;padding:1.25rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8125rem;color:var(--ink-muted)}
 footer{margin-top:4rem;border-top:1px solid var(--rule);padding-top:1.5rem;color:var(--ink-muted);font-size:.875rem;line-height:1.5}
 footer nav{display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:.875rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase}
 `.trim()
@@ -212,7 +243,9 @@ function footerFor(lang: PageLang, meta: JournalMeta, base: string): string {
   return `        <p>Real numbers every Sunday — including the $0 weeks — and one honest post-mortem
         on ${formatDateLong(meta.goalDate)}, whatever the final number is.</p>
         <nav aria-label="Site links">
-          <a href="${base}">The ledger</a>
+          <a href="${base}">The ledger</a>${
+            meta.hasWorkPage ? `\n          <a href="${base}work/">Work with me</a>` : ''
+          }${meta.hasSeriesPage ? `\n          <a href="${base}silent-green/">Silent green</a>` : ''}
           <a href="${base}#signup">Email</a>
           <a href="${escapeMarkup(feedUrl(meta.siteUrl))}">RSS</a>${
             meta.hasTrPages ? `\n          <a href="${base}tr/" lang="tr" hreflang="tr">Türkçe</a>` : ''
