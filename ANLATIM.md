@@ -7,7 +7,8 @@
 > ritüel adımı değişimi) bu dosya **aynı commit'te** güncellenir. Dosya eskiyorsa yalan
 > söylüyor demektir.
 >
-> Son güncelleme: 22 Temmuz 2026
+> Son güncelleme: 28 Temmuz 2026 belge doğruluğu kontrolü — içerik durumu 26 Temmuz
+> haftalık kapanışına (`5102e8a`) bağlıdır.
 
 ---
 
@@ -177,6 +178,8 @@ yeşil tik görürsen iş bitmiştir.
 
 - Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
   bir kayıtla test edilmiş.
+- `5102e8a` üzerinde typecheck, lint, **23 dosyada 295 test**, build ve leak taramaları
+  geçti; 26 Temmuz EN/TR hafta sayfaları ile OG görselleri canlıda HTTP 200 verdi.
 - Defterde **2 hafta** var: 19 Temmuz (Gün 0) ve 26 Temmuz 2026 — her ikisi de gelir $0, MRR
   $0, harcama $0, abone 0. 26 Temmuz notu: ilk tekrarlanabilir herkese açık teardown çıktı;
   3 hedefli outreach mesajı gitti, henüz yanıt yok. Sıfırlar duruyor; abartı yok.
