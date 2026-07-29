@@ -317,13 +317,26 @@ Entries live in [src/data/series.json](src/data/series.json), oldest first:
   "date": "2026-07-29",
   "title": "The guard that could not look",
   "dek": "One sentence — used as the meta description and the index blurb.",
-  "body": ["First paragraph.", "Second paragraph."]
+  "body": [
+    "A paragraph.",
+    { "callout": "The rule: silence is its own state." },
+    { "list": ["Break an import.", "Run the whole pipeline.", "Read the report."] }
+  ]
 }
 ```
 
+A `body` block is one of three shapes and nothing else — no Markdown, no parser:
+
+- a **string** → a paragraph;
+- `{ "callout": "…" }` → the rule the finding produced, set against the red margin;
+- `{ "list": ["…"] }` → the numbered probe. A finding nobody can reproduce is an anecdote,
+  so entries carry the steps that find the same bug in the reader's own pipeline.
+
 `parseSeries` rejects an out-of-order `number`, a slug that is not lowercase-hyphenated, an
-impossible date, a duplicate slug, a blank title/dek and an empty or blank body — the build
-stops rather than shipping a dead link or a page of whitespace to somebody who followed a
-citation. Push, and the entry page, the index row and the sitemap entry appear together.
+impossible date, a duplicate slug, a blank title/dek, an empty body, a blank paragraph, a
+block that is neither shape, a block claiming to be both, and an empty or blank list step —
+the build stops rather than shipping a dead link or a page of whitespace to somebody who
+followed a citation. Push, and the entry page, the index row and the sitemap entry appear
+together.
 
 Slugs are permanent: `/silent-green/<slug>/` is the address other people link to.

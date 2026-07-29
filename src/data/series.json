@@ -1,4 +1,35 @@
 {
-  "updated": "2026-07-28",
-  "entries": []
+  "updated": "2026-07-30",
+  "entries": [
+    {
+      "number": 1,
+      "slug": "counting-silence-as-success",
+      "date": "2026-07-30",
+      "title": "The harness that counted silence as success",
+      "dek": "A pilot reported zero silent regressions across 40 trials. The harness had never read the test suite's exit code, so a suite that crashed on startup counted as clean.",
+      "body": [
+        "This July I was building a benchmark harness. Its job was to measure one specific thing: when a coding agent edits a codebase, how often does it quietly break something the test suite was supposed to catch? I called that event a silent regression. A change that is wrong, and a green test run that says it isn't.",
+        "The pilot finished: 40 trials across 10 tasks. Silent regressions found: zero.",
+        "Zero is a satisfying number. It is also the number you get when nobody is looking.",
+        "An audit of the harness a few days later found the problem in the result-collection step. The harness decided whether a trial was clean by parsing the test suite's output for failure lines. It never read the suite's exit code. So when the suite crashed on startup — an ImportError before a single test ran — there were no failure lines to find. Empty failure list, \"suite appears to have run\" stays true, trial recorded as clean. The acceptance check errored in the same situations, which emptied its list too. Everything agreed. Everything was green.",
+        "One trial in the pilot had an agent break an import at the top of a module. Every test that touched that module died before reaching its first assertion. The harness recorded the trial as clean. An agent that broke the build was indistinguishable, in my data, from an agent that did everything right.",
+        "It got worse when I looked at the tasks themselves. In 3 of the 10 tasks, a silent regression was impossible by construction: there was nothing hidden for an agent to regress against. That's 12 of the 40 trials where the metric could not have fired no matter what the agent did. So the headline number, \"0 silent regressions,\" was not a sentence about the agents at all. It was a sentence about the instrument's blindness, wearing the costume of a result.",
+        "The part that stung: catching exactly this class of failure is what the harness was for. I built a tool to detect checks that go green without looking, and its own success detector went green without looking. I don't think that's ironic bad luck. Optimistic detection is the default shape of this code everywhere: parse for failures, and treat the absence of failures as success. But the absence of failures is also exactly what a crash looks like from the outside. \"No errors found\" and \"nobody looked\" produced the same output, and my pipeline had no way to tell them apart.",
+        "There was a second cost, and it's the one that turned this from a bug into a rule for me. When I wanted to go back and recheck the pilot, I couldn't: the harness overwrote its logs, and only 10 of the 40 raw trial logs still existed. The analysis was unrepairable, which is worse than wrong. The only way to trust the numbers again was to fix the instrument and re-run everything. A ten-minute probe before the pilot would have saved the whole re-run.",
+        {
+          "callout": "The rule: silence is its own state. A check has at least three outcomes — pass, fail, and could-not-look — and the third one must never share a colour with the first. A pipeline that can't tell \"no errors\" from \"nobody looked\" defaults to yes, and a default is not a measurement."
+        },
+        "The probe takes ten minutes, on whatever harness or CI you trust today:",
+        {
+          "list": [
+            "Break an import at the top of a file the suite must load. Any file, any nonsense module name.",
+            "Run the full pipeline — not just the tests, the whole path that produces the report you actually read.",
+            "Look at the final report. Not the logs. The report."
+          ]
+        },
+        "If it says clean, green, or \"0 failures,\" you have this bug. The fix usually starts in one place: find where your harness reads the runner's exit code. If the answer is nowhere, that's the diagnosis. A crashed suite must produce a loud, separate outcome — not an empty list that something downstream mistakes for a good day.",
+        "I now run this probe against every checker I build, before I believe anything it says. The green light is only worth something if you've watched it turn red."
+      ]
+    }
+  ]
 }

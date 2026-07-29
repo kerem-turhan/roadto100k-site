@@ -1,3 +1,28 @@
+/** A rule worth pulling out of the prose — rendered against the red margin. */
+export interface SeriesCallout {
+  callout: string
+}
+
+/** A numbered procedure. The reproducible half of a finding. */
+export interface SeriesList {
+  list: string[]
+}
+
+/**
+ * One block of an entry: a paragraph, a pulled-out rule, or a numbered probe.
+ * Deliberately three shapes and no parser — findings are prose plus a rule plus
+ * steps you can run, and a Markdown dependency would buy nothing but escapes.
+ */
+export type SeriesBlock = string | SeriesCallout | SeriesList
+
+export function isCallout(block: SeriesBlock): block is SeriesCallout {
+  return typeof block === 'object' && 'callout' in block
+}
+
+export function isList(block: SeriesBlock): block is SeriesList {
+  return typeof block === 'object' && 'list' in block
+}
+
 export interface SeriesEntry {
   /** 1-based, in publication order. Shown as № 001 and used for the pager. */
   number: number
@@ -8,8 +33,8 @@ export interface SeriesEntry {
   title: string
   /** One-sentence summary — the dek, the meta description and the feed blurb. */
   dek: string
-  /** Body paragraphs, plain text. No markup: nothing here needs a parser yet. */
-  body: string[]
+  /** The entry itself, block by block. */
+  body: SeriesBlock[]
 }
 
 export interface Series {
@@ -72,10 +97,29 @@ export function parseSeries(raw: unknown): Series {
       if (!nonEmptyString(entry[key])) fail(`${at}.${key}`, 'expected a non-empty string')
     }
     if (!Array.isArray(entry.body) || entry.body.length === 0) {
-      fail(`${at}.body`, 'expected at least one paragraph')
+      fail(`${at}.body`, 'expected at least one block')
     }
-    entry.body.forEach((paragraph, p) => {
-      if (!nonEmptyString(paragraph)) fail(`${at}.body[${p}]`, 'expected a non-empty string')
+    entry.body.forEach((block: unknown, b) => {
+      const where = `${at}.body[${b}]`
+      if (nonEmptyString(block)) return
+      if (typeof block !== 'object' || block === null || Array.isArray(block)) {
+        fail(where, 'expected a paragraph, {callout}, or {list}')
+      }
+      const keys = Object.keys(block)
+      if (keys.length !== 1 || (keys[0] !== 'callout' && keys[0] !== 'list')) {
+        fail(where, `expected exactly one of "callout" or "list", got ${JSON.stringify(keys)}`)
+      }
+      const value = (block as Record<string, unknown>)[keys[0]]
+      if (keys[0] === 'callout') {
+        if (!nonEmptyString(value)) fail(`${where}.callout`, 'expected a non-empty string')
+        return
+      }
+      if (!Array.isArray(value) || value.length === 0) {
+        fail(`${where}.list`, 'expected at least one step')
+      }
+      value.forEach((step, s) => {
+        if (!nonEmptyString(step)) fail(`${where}.list[${s}]`, 'expected a non-empty string')
+      })
     })
 
     return {
@@ -84,7 +128,7 @@ export function parseSeries(raw: unknown): Series {
       date: entry.date,
       title: entry.title as string,
       dek: entry.dek as string,
-      body: entry.body as string[],
+      body: entry.body as SeriesBlock[],
     } satisfies SeriesEntry
   })
 

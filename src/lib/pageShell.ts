@@ -185,6 +185,10 @@ dd{font-size:1.5rem;font-weight:500}
 .weeks p{margin-top:.625rem;font-size:.9375rem;color:var(--ink-muted);line-height:1.5;max-width:52ch}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .prose p{margin-top:1.25rem;max-width:62ch;line-height:1.7;text-wrap:pretty}
+.prose .callout{margin-top:2rem;border-left:2px solid var(--red);padding-left:1.25rem;font-size:1.0625rem;line-height:1.6;max-width:56ch}
+.steps{margin-top:1.25rem;padding-left:1.5rem;max-width:62ch}
+.steps li{margin-top:.625rem;line-height:1.7;padding-left:.25rem}
+.steps li::marker{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8125rem;color:var(--red)}
 .services{list-style:none;padding:0;margin-top:2rem}
 .services li{border-top:1px solid var(--rule);padding:1.125rem 0;line-height:1.6;max-width:62ch}
 .services li:last-child{border-bottom:1px solid var(--rule)}

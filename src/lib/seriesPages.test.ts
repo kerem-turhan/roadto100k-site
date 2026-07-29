@@ -125,3 +125,48 @@ describe('the series once entries exist', () => {
     expect(index.html).not.toContain('<angles>')
   })
 })
+
+/*
+ * A finding is only useful if the reader can run it. The rule gets pulled out
+ * against the red margin and the probe is a numbered list, because "here are
+ * three steps" buried in a paragraph is a finding nobody reproduces.
+ */
+describe('an entry with a rule and a probe', () => {
+  const [entry] = buildSeriesPages(
+    parseSeries({
+      updated: '2026-07-28',
+      entries: [
+        {
+          number: 1,
+          slug: 'the-blind-gate',
+          date: '2026-07-30',
+          title: 'The blind gate',
+          dek: 'It could not look.',
+          body: [
+            'What happened.',
+            { callout: 'The rule: silence is its own state.' },
+            { list: ['Break an import.', 'Run the whole pipeline.', 'Read the <report>.'] },
+          ],
+        },
+      ],
+    }),
+    META,
+  )
+
+  it('sets the rule apart from the prose', () => {
+    expect(entry.html).toContain('<p class="callout">The rule: silence is its own state.</p>')
+  })
+
+  it('renders the probe as a numbered list, in order', () => {
+    expect(entry.html).toContain('<ol class="steps">')
+    expect(entry.html).toContain('<li>Break an import.</li>')
+    expect(entry.html.indexOf('Break an import.')).toBeLessThan(
+      entry.html.indexOf('Run the whole pipeline.'),
+    )
+  })
+
+  it('escapes steps like everything else', () => {
+    expect(entry.html).toContain('Read the &lt;report&gt;.')
+    expect(entry.html).not.toContain('<report>')
+  })
+})

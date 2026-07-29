@@ -1,7 +1,8 @@
 import { SERIES, signupFormMarkup } from './offer.ts'
 import type { JournalMeta, StaticPage } from './pageShell.ts'
 import { pageShell } from './pageShell.ts'
-import type { Series, SeriesEntry } from './series.ts'
+import type { Series, SeriesBlock, SeriesEntry } from './series.ts'
+import { isCallout, isList } from './series.ts'
 import { escapeMarkup, formatDateLong } from './text.ts'
 import { basePath, seriesEntryUrl, seriesUrl } from './urls.ts'
 
@@ -22,8 +23,21 @@ function signup(meta: JournalMeta, idPrefix: string): string {
   })
 }
 
-function prose(paragraphs: readonly string[]): string {
-  return paragraphs.map((text) => `          <p>${escapeMarkup(text)}</p>`).join('\n')
+function prose(blocks: readonly SeriesBlock[]): string {
+  return blocks
+    .map((block) => {
+      if (isCallout(block)) {
+        return `          <p class="callout">${escapeMarkup(block.callout)}</p>`
+      }
+      if (isList(block)) {
+        const steps = block.list
+          .map((step) => `            <li>${escapeMarkup(step)}</li>`)
+          .join('\n')
+        return `          <ol class="steps">\n${steps}\n          </ol>`
+      }
+      return `          <p>${escapeMarkup(block)}</p>`
+    })
+    .join('\n')
 }
 
 function entryNumber(entry: SeriesEntry): string {

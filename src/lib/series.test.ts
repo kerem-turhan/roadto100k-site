@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import rawSeries from '../data/series.json'
-import { parseSeries, seriesLastModified } from './series.ts'
+import { isCallout, isList, parseSeries, seriesLastModified } from './series.ts'
 
 const VALID = {
   updated: '2026-07-28',
@@ -32,6 +32,12 @@ describe('parseSeries', () => {
     expect(parseSeries({ updated: '2026-07-28', entries: [] }).entries).toEqual([])
   })
 
+  /* A finding is prose, the rule it produced, and steps somebody else can run. */
+  it('accepts the three block shapes an entry is made of', () => {
+    const body = ['A paragraph.', { callout: 'The rule.' }, { list: ['One.', 'Two.'] }]
+    expect(parseSeries(withEntry({ body })).entries[0].body).toEqual(body)
+  })
+
   /*
    * Entry URLs are permanent and cited from other people's posts, so every one
    * of these is a dead link, a broken pager or a page of whitespace shipped to a
@@ -54,6 +60,15 @@ describe('parseSeries', () => {
     ['a body that is not a list', withEntry({ body: 'one long string' })],
     ['an empty body', withEntry({ body: [] })],
     ['a blank paragraph', withEntry({ body: ['real', '  '] })],
+    ['a block that is neither', withEntry({ body: [{ quote: 'nope' }] })],
+    ['a block claiming to be two things', withEntry({ body: [{ callout: 'a', list: ['b'] }] })],
+    ['a blank callout', withEntry({ body: [{ callout: ' ' }] })],
+    ['a callout that is not a string', withEntry({ body: [{ callout: ['a'] }] })],
+    ['a list with no steps', withEntry({ body: [{ list: [] }] })],
+    ['a list that is not a list', withEntry({ body: [{ list: 'step one' }] })],
+    ['a blank step', withEntry({ body: [{ list: ['real', ''] }] })],
+    ['a nested array where a block belongs', withEntry({ body: [['a']] })],
+    ['a null block', withEntry({ body: [null] })],
     [
       'two entries sharing a slug',
       {
@@ -84,5 +99,27 @@ describe('seriesLastModified', () => {
 describe('the shipped series data', () => {
   it('parses — a malformed file must fail here, not in production', () => {
     expect(() => parseSeries(rawSeries)).not.toThrow()
+  })
+
+  /*
+   * The launch gate, as a test. A Show HN post cites /silent-green/, and an
+   * index that says "first entry coming this week" to a few thousand arrivals
+   * spends the one burst of attention the launch gets. Deleting this assertion
+   * to make a build pass is deleting the gate.
+   */
+  it('has the first entry published, not promised', () => {
+    const series = parseSeries(rawSeries)
+    expect(series.entries.length).toBeGreaterThanOrEqual(1)
+    const [first] = series.entries
+    expect(first.slug).toBe('counting-silence-as-success')
+    expect(first.body.length).toBeGreaterThanOrEqual(8)
+  })
+
+  /* Every entry carries the rule it produced and the probe that finds it. */
+  it('gives that entry a rule and a runnable probe', () => {
+    const [first] = parseSeries(rawSeries).entries
+    expect(first.body.filter(isCallout)).toHaveLength(1)
+    const [probe] = first.body.filter(isList)
+    expect(probe.list.length).toBeGreaterThanOrEqual(3)
   })
 })
