@@ -1,5 +1,6 @@
 import { config } from '@/config'
 import rawLedger from '@/data/ledger.json'
+import { ANALYTICS_NOTE } from '@/lib/analytics'
 import { parseLedger, trWeekEntries } from '@/lib/ledger'
 import { liveProofItems } from '@/lib/proof'
 
@@ -23,7 +24,12 @@ const LINKS: Array<{ label: string; href: string; external: boolean; lang?: stri
     : []),
 ]
 
-export function SiteFooter() {
+interface SiteFooterProps {
+  /** Defaults to config; a prop so both states are testable. See analytics.ts. */
+  analyticsCode?: string
+}
+
+export function SiteFooter({ analyticsCode = config.ANALYTICS_CODE }: SiteFooterProps = {}) {
   return (
     <footer className="border-t border-rule py-10">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-baseline">
@@ -46,8 +52,14 @@ export function SiteFooter() {
         </nav>
       </div>
       <p className="mt-4 font-mono text-xs text-ink-muted">
-        No cookies, no tracking, $0/mo hosting. Built in public.
+        No cookies, no personal data, $0/mo hosting. Built in public.
       </p>
+      {/* Only where the counter actually runs — see src/lib/analytics.ts. */}
+      {analyticsCode !== '' && (
+        <p className="mt-2 max-w-[62ch] font-mono text-[0.6875rem] leading-relaxed text-ink-muted">
+          {ANALYTICS_NOTE}
+        </p>
+      )}
     </footer>
   )
 }

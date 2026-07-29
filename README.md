@@ -259,6 +259,7 @@ Every external link, journey date and public claim lives in [src/config.ts](src/
 - `SITE_NAME`, `AUTHOR_NAME`, `SITE_DESCRIPTION` — used by the feed, JSON-LD and share cards.
 - `BUTTONDOWN_URL` — empty until the Buttondown account exists; the signup section shows a
   "follow on X" fallback while it's empty. Paste the embed action URL to switch the form on.
+- `ANALYTICS_CODE` — the visit counter, off while empty (see below).
 - `X_URL`, `GITHUB_URL`, `CONTACT_EMAIL` — footer/contact links.
 - `START_DATE` (day 0, 2026-07-19), `GOAL_DATE` and `GOAL_USD` — the journey window. These
   are also in `src/data/ledger.json`; a test pins the two files to the same values, because
@@ -275,6 +276,35 @@ Conversion copy lives one level up from config, in [src/lib/offer.ts](src/lib/of
 `POSITIONING`, `SERVICES`, `NEWSLETTER_PROMISE`, `NEWSLETTER_TERMS`, `SERIES` and
 `OFFER_UPDATED` (the sitemap `lastmod` for `/work/` — a fixed date, bumped by hand when the
 offer changes, never read off the clock).
+
+## Turning the visit counter on (two minutes, once)
+
+The site counts visits with [GoatCounter](https://www.goatcounter.com/): free at this size,
+open source, self-hostable, no cookies, and no IP address or User-Agent kept in its database.
+The stance in the footer did not soften — it got accurate. Refusing to measure is not privacy,
+it is blindness, and launch traffic arrives exactly once.
+
+1. Sign up at [goatcounter.com](https://www.goatcounter.com/) and pick a site code — the
+   subdomain of your dashboard, e.g. `roadto100k` → `roadto100k.goatcounter.com`.
+2. Set `ANALYTICS_CODE: 'roadto100k'` in [src/config.ts](src/config.ts). That is the whole
+   integration; nothing else to paste.
+3. Commit and push. Actions redeploys, and `npm run build` prints
+   `visit counter: on (roadto100k.goatcounter.com)`.
+
+Optional and very much in the spirit of the place: in GoatCounter's settings, tick
+*"Make statistics publicly available"* so the traffic numbers are as public as the ledger.
+
+What the build guarantees, so a broken counter can't read as a quiet launch:
+
+- Empty code → no script, no third-party request, **and no sentence claiming visits are
+  counted.** A page that advertises a counter it doesn't have is the same lie as a green
+  check that never ran.
+- Malformed code (a full URL, a hostname, uppercase, a placeholder) → the **build fails** with
+  `Invalid ANALYTICS_CODE`. A dead beacon would report zero, and zero visits is
+  indistinguishable from zero measurement.
+- Every build prints the counter's state, on or `OFF`.
+- The script is `async` and skips localhost, so dev and preview never pollute the numbers.
+- The counted number is a floor: readers with JavaScript off are never counted.
 
 ## Publishing a silent-green entry
 

@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { HtmlTagDescriptor, Plugin } from 'vite'
 import { config } from '../src/config.ts'
+import { counterScriptAttrs } from '../src/lib/analytics.ts'
 import { buildFeed, buildTrFeed } from '../src/lib/feed.ts'
 import type { JournalMeta, StaticPage } from '../src/lib/journal.ts'
 import { buildJournalPages } from '../src/lib/journal.ts'
@@ -62,6 +63,7 @@ function metaFor(ledger: Ledger): JournalMeta {
     hasSeriesPage: true,
     buttondownUrl: config.BUTTONDOWN_URL,
     contactEmail: config.CONTACT_EMAIL,
+    analyticsCode: config.ANALYTICS_CODE,
   }
 }
 
@@ -95,6 +97,13 @@ export function siteHeadPlugin(): Plugin {
           injectTo: 'head',
         },
       ]
+      // The counter, on the SPA page. Same tag the static shell writes; here it
+      // has to go through Vite because index.html is a template, not a string
+      // this repo renders.
+      const counter = counterScriptAttrs(config.ANALYTICS_CODE)
+      if (counter) {
+        tags.push({ tag: 'script', attrs: counter, injectTo: 'body' })
+      }
       if (trWeekEntries(ledger).length > 0) {
         tags.push(
           {
@@ -169,6 +178,14 @@ export function staticPagesPlugin(): Plugin {
       this.info(
         `week share cards: ${meta.weekOgWeeks?.length ?? 0}/${ledger.weeks.length} en, ` +
           `${meta.trWeekOgWeeks?.length ?? 0}/${trWeekEntries(ledger).length} tr`,
+      )
+      // Said out loud on every build: an unconfigured counter is a launch
+      // measured at zero, and that is the one number nobody can tell apart
+      // from failure.
+      this.info(
+        config.ANALYTICS_CODE
+          ? `visit counter: on (${config.ANALYTICS_CODE}.goatcounter.com)`
+          : 'visit counter: OFF — set ANALYTICS_CODE in src/config.ts before launch',
       )
     },
   }

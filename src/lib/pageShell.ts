@@ -1,3 +1,4 @@
+import { ANALYTICS_NOTE, ANALYTICS_NOTE_TR, counterScriptTag } from './analytics.ts'
 import { fontFaceCss } from './fonts.ts'
 import type { ShareCards, SiteIdentity } from './seo.ts'
 import { serializeJsonLd } from './seo.ts'
@@ -21,6 +22,8 @@ export interface JournalMeta extends SiteIdentity, ShareCards {
   buttondownUrl?: string
   /** Where "work with me" mail goes. */
   contactEmail?: string
+  /** GoatCounter site code. Empty or absent: no counter and no counter note. */
+  analyticsCode?: string
 }
 
 export interface StaticPage {
@@ -205,6 +208,7 @@ dd{font-size:1.5rem;font-weight:500}
 .awaiting{margin-top:2.25rem;border:1px dashed var(--rule);border-radius:2px;padding:1.25rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8125rem;color:var(--ink-muted)}
 footer{margin-top:4rem;border-top:1px solid var(--rule);padding-top:1.5rem;color:var(--ink-muted);font-size:.875rem;line-height:1.5}
 footer nav{display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:.875rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase}
+.privacy{margin-top:1rem;max-width:62ch;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.6875rem;line-height:1.5}
 `.trim()
 }
 
@@ -230,6 +234,10 @@ interface ShellOptions {
 
 function footerFor(lang: PageLang, meta: JournalMeta, base: string): string {
   const x = escapeMarkup(meta.xUrl)
+  // Shown only where the counter actually runs — see analytics.ts.
+  const note = meta.analyticsCode
+    ? `\n        <p class="privacy">${escapeMarkup(lang === 'tr' ? ANALYTICS_NOTE_TR : ANALYTICS_NOTE)}</p>`
+    : ''
   if (lang === 'tr') {
     return `        <p>Her Pazar gerçek rakamlar — $0 haftaları dahil — ve ${formatDateLongTr(meta.goalDate)}
         tarihinde, sonuç ne olursa olsun dürüst bir post-mortem.</p>
@@ -238,7 +246,7 @@ function footerFor(lang: PageLang, meta: JournalMeta, base: string): string {
           <a href="${base}" lang="en" hreflang="en">English</a>
           <a href="${escapeMarkup(trFeedUrl(meta.siteUrl))}">RSS</a>
           <a href="${x}" rel="noreferrer">X&nbsp;↗</a>
-        </nav>`
+        </nav>${note}`
   }
   return `        <p>Real numbers every Sunday — including the $0 weeks — and one honest post-mortem
         on ${formatDateLong(meta.goalDate)}, whatever the final number is.</p>
@@ -251,7 +259,7 @@ function footerFor(lang: PageLang, meta: JournalMeta, base: string): string {
             meta.hasTrPages ? `\n          <a href="${base}tr/" lang="tr" hreflang="tr">Türkçe</a>` : ''
           }
           <a href="${x}" rel="noreferrer">X&nbsp;↗</a>
-        </nav>`
+        </nav>${note}`
 }
 
 export function pageShell({
@@ -323,7 +331,11 @@ ${body}
 ${footerFor(lang, meta, base)}
       </footer>
     </div>
-  </body>
+${counterScriptTag(meta.analyticsCode ?? '')
+  .split('\n')
+  .filter(Boolean)
+  .map((line) => `    ${line}\n`)
+  .join('')}  </body>
 </html>
 `
 }

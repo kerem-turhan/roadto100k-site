@@ -13,6 +13,13 @@ export const config = {
     'A public ledger. CS senior building AI dev tools in public: $100/mo budget, $0 ads, real numbers every Sunday — including the $0 weeks.',
   /** Public Buttondown embed action URL. Empty values make signup fall back to X. */
   BUTTONDOWN_URL: 'https://buttondown.com/api/emails/embed-subscribe/mehmet_kerem',
+  /**
+   * GoatCounter site code — the subdomain of the dashboard, e.g. 'roadto100k'.
+   * Empty means the counter is off: no script, no third-party request, and no
+   * sentence claiming visits are counted. See src/lib/analytics.ts and the
+   * two-minute setup in README.md ("Turning the visit counter on").
+   */
+  ANALYTICS_CODE: '',
   X_URL: 'https://x.com/mkeremturhan',
   GITHUB_URL: 'https://github.com/kerem-turhan',
   CONTACT_EMAIL: 'keremturhan.cs@gmail.com',
