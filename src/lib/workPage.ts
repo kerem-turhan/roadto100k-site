@@ -1,4 +1,4 @@
-import { NEWSLETTER_PROMISE, POSITIONING, SERVICES } from './offer.ts'
+import { AUDIT, NEWSLETTER_PROMISE, POSITIONING, SERVICES } from './offer.ts'
 import type { JournalMeta, StaticPage } from './pageShell.ts'
 import { pageShell } from './pageShell.ts'
 import type { ProofItem } from './proof.ts'
@@ -23,6 +23,26 @@ function servicesMarkup(): string {
     (service) =>
       `          <li><b>${escapeMarkup(service.name)}</b><span> — ${escapeMarkup(service.text)}</span></li>`,
   ).join('\n')
+}
+
+/** The priced package: cost, timebox, counted deliverables, access checklist. */
+function auditMarkup(): string {
+  const steps = (items: readonly string[]) =>
+    items.map((item) => `            <li>${escapeMarkup(item)}</li>`).join('\n')
+  return `        <div class="package">
+          <h2>${escapeMarkup(AUDIT.name)}</h2>
+          <p class="price">${escapeMarkup(AUDIT.price)}</p>
+          <p class="timebox">${escapeMarkup(AUDIT.timebox)}</p>
+          <h3>${escapeMarkup(AUDIT.deliverablesLabel)}</h3>
+          <ol class="steps">
+${steps(AUDIT.deliverables)}
+          </ol>
+          <h3>${escapeMarkup(AUDIT.prerequisitesLabel)}</h3>
+          <ul class="checklist">
+${steps(AUDIT.prerequisites)}
+          </ul>
+          <p class="next">${escapeMarkup(AUDIT.next)}</p>
+        </div>`
 }
 
 function receiptMarkup(item: ProofItem): string {
@@ -55,7 +75,7 @@ export function buildWorkPage({ meta, items }: WorkPageOptions): StaticPage | nu
   const url = workUrl(meta.siteUrl)
   const base = basePath(meta.siteUrl)
   const contact = meta.contactEmail
-  const description = `${POSITIONING.claim} ${POSITIONING.rule} Reliability audits, eval harnesses and regression gates for AI agents — with a public, reproducible teardown as the reference.`
+  const description = `${POSITIONING.claim} ${POSITIONING.rule} A ${AUDIT.price} reliability audit for AI agents — one week, a counted list of deliverables, and a public reproducible teardown as the reference.`
 
   const receipts = live.map((item) => receiptMarkup(item)).join('\n')
 
@@ -80,6 +100,7 @@ export function buildWorkPage({ meta, items }: WorkPageOptions): StaticPage | nu
         <ul class="services">
 ${servicesMarkup()}
         </ul>
+${auditMarkup()}
         <div class="receipt">
           <h2>The reference — public, reproducible, still runnable</h2>
 ${receipts}

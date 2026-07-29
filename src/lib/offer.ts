@@ -24,14 +24,14 @@ export const POSITIONING_LINE = `${POSITIONING.claim} ${POSITIONING.rule}`
  * only understates the page's freshness, while a clock-derived date would claim
  * a change on every deploy and make builds non-deterministic.
  */
-export const OFFER_UPDATED = '2026-07-28'
+export const OFFER_UPDATED = '2026-07-30'
 
 export interface Service {
   name: string
   text: string
 }
 
-/** Scope, not price. What a package costs is decided in the reply, not here. */
+/** What the work is, in three lines. The priced package is AUDIT, below. */
 export const SERVICES: readonly Service[] = [
   {
     name: 'Reliability audit',
@@ -42,10 +42,48 @@ export const SERVICES: readonly Service[] = [
     text: 'A deterministic eval corpus for your agent plus a regression gate in CI, so the same failure cannot land twice.',
   },
   {
-    name: 'Ongoing reliability support',
+    name: 'Ongoing operations',
     text: 'Model swaps and prompt rewrites re-run against the corpus before they ship, so an upgrade cannot quietly cost you accuracy.',
   },
 ]
+
+/**
+ * The one thing on sale, priced.
+ *
+ * A price with no timebox, no count and no access list is not an offer, it is
+ * an invitation to negotiate — and the buyer who has to ask "how long, how
+ * many, what do you need from me" mostly just doesn't ask. So all four are on
+ * the page: what it costs, how long it takes, how many of what comes back, and
+ * exactly what access I need before day one.
+ *
+ * Two things stay off this page until there is a payment rail behind them: the
+ * money-back guarantee (you cannot promise a refund without something that can
+ * refund) and the cheaper introductory teardown. Both are decided; neither is
+ * published. A test in offer.test.tsx keeps them off.
+ */
+export const AUDIT = {
+  name: 'Agent reliability audit',
+  price: '$1,500',
+  /** From the day access lands, not from the day we start talking. */
+  timebox: 'One week, from the day access lands to the report in your inbox.',
+  deliverablesLabel: 'What comes back',
+  deliverables: [
+    'A failure-mode map: every path I find where a failed check still returns success, ranked by how long it can stay wrong before anyone notices.',
+    'At least three reproducible failures — each one a case that fails on your code as it is today, and passes once the path is closed.',
+    'A starter eval set: those cases as a suite you can run yourself, plus the one command that runs it.',
+    'A prioritised action plan: what to fix first, what can wait, and what to leave alone — with the reason for each.',
+    'One written walkthrough at the end. A call only if you want one; I work in writing by default.',
+  ],
+  prerequisitesLabel: 'What I need from you before day one',
+  prerequisites: [
+    'Read-not-write access to the repository — a read-only invite or a fork. I open pull requests; I never push to your branches.',
+    'A way to run the agent end to end: an env template, fixtures, or a sandbox key. No production credentials, ever.',
+    'One named contact who can answer a question in writing within a working day.',
+    'Your definition of wrong: one or two real outputs you would call failures.',
+  ],
+  /** The next rung, visible but unpriced — see the note above. */
+  next: 'Ongoing operations: after first delivery, priced per engagement.',
+} as const
 
 /**
  * The newsletter promise, agreed word for word with the launch brief. A reader

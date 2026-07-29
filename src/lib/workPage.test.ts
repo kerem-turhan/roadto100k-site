@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { config } from '@/config'
 import { FIXTURE_META } from './fixtures.ts'
+import { AUDIT } from './offer.ts'
 import type { ProofItem } from './proof.ts'
 import { buildWorkPage } from './workPage.ts'
 
@@ -16,6 +17,18 @@ const LIVE_ITEM: ProofItem = {
 
 const page = buildWorkPage({ meta: META, items: [LIVE_ITEM] })
 
+/*
+ * Everything the page itself says, without the shell around it: the footer's
+ * "$0 weeks" and the $100k brand figure are goals, not rates, and a price
+ * assertion that swept them in would pass for the wrong reason.
+ */
+function main(): string {
+  const html = page?.html ?? ''
+  const body = html.slice(html.indexOf('<main>'), html.indexOf('</main>'))
+  expect(body.length).toBeGreaterThan(500)
+  return body
+}
+
 describe('buildWorkPage', () => {
   it('lives at a permanent, indexable URL', () => {
     expect(page?.path).toBe('work/index.html')
@@ -28,7 +41,7 @@ describe('buildWorkPage', () => {
   })
 
   it('says what can be bought, in three concrete pieces', () => {
-    for (const name of ['Reliability audit', 'Eval harness setup', 'Ongoing reliability support']) {
+    for (const name of ['Reliability audit', 'Eval harness setup', 'Ongoing operations']) {
       expect(page?.html).toContain(name)
     }
   })
@@ -46,13 +59,54 @@ describe('buildWorkPage', () => {
     expect(page?.html).not.toContain('<form')
   })
 
-  it('quotes no price', () => {
-    // Prices are Kerem's call and are not published. Scoped to <main>: the
-    // footer's "$0 weeks" and the $100k brand figure are goals, not rates.
-    const html = page?.html ?? ''
-    const body = html.slice(html.indexOf('<main>'), html.indexOf('</main>'))
-    expect(body.length).toBeGreaterThan(500)
-    expect(body).not.toMatch(/\$\s?\d/)
+  /*
+   * The priced package. A price alone is a number to haggle over; a price with
+   * a timebox, a counted list of outputs and the access it needs is an offer
+   * somebody can say yes to without a call first.
+   */
+  it('names one price, and only one', () => {
+    const body = main()
+    expect(body).toContain('$1,500')
+    expect(body.match(/\$\s?[\d,]+/g)).toEqual(['$1,500'])
+  })
+
+  it('bounds the work in time and in count', () => {
+    const body = main()
+    expect(body).toContain('One week, from the day access lands')
+    expect(body).toContain('At least three reproducible failures')
+    const pkg = body.slice(body.indexOf('<div class="package">'), body.indexOf('</main'))
+    expect((pkg.match(/<ol class="steps">/g) ?? []).length).toBe(1)
+    expect((pkg.match(/<ul class="checklist">/g) ?? []).length).toBe(1)
+    expect((pkg.slice(0, pkg.indexOf('</div>')).match(/<li>/g) ?? []).length).toBe(
+      AUDIT.deliverables.length + AUDIT.prerequisites.length,
+    )
+  })
+
+  it('states the access it needs, read-not-write, before day one', () => {
+    const body = main()
+    expect(body).toContain('Read-not-write access to the repository')
+    expect(body).toContain('I never push to your branches')
+    expect(body).toContain('No production credentials, ever.')
+  })
+
+  it('shows the next rung without pricing it', () => {
+    expect(main()).toContain('Ongoing operations: after first delivery, priced per engagement.')
+  })
+
+  /*
+   * Decided, not published. The refund promise needs a payment rail that can
+   * actually refund, and the cheaper introductory teardown opens after the
+   * launch post — publishing either one early sells something that cannot be
+   * delivered yet. Same for the two prices the 29 Jul revision retired.
+   */
+  it.each([
+    ['the retired founding price', /\$\s?990/],
+    ['the retired retainer', /\$\s?1[.,]490/],
+    ['the unlaunched introductory tier', /\$\s?500/],
+    ['a money-back promise', /money.back|refund/i],
+    ['a guarantee', /guarantee/i],
+  ])('does not publish %s', (_label, pattern) => {
+    expect(page?.html ?? '').not.toMatch(pattern)
   })
 
   it('sends the reader to the series when they are not hiring yet', () => {

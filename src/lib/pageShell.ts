@@ -194,6 +194,15 @@ dd{font-size:1.5rem;font-weight:500}
 .services li:last-child{border-bottom:1px solid var(--rule)}
 .services b{font-weight:600}
 .services span{color:var(--ink-muted)}
+.package{margin-top:2.75rem;border:1px solid var(--rule);border-radius:2px;padding:1.5rem}
+.package h2{font-family:'Bricolage Grotesque Variable',system-ui,sans-serif;font-weight:600;font-size:1.375rem;letter-spacing:-.01em;line-height:1.2}
+.package h3{margin-top:1.75rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.6875rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-muted)}
+.price{margin-top:.5rem;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums lining-nums;font-size:2rem;font-weight:500;color:var(--red)}
+.timebox{margin-top:.375rem;max-width:52ch;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8125rem;line-height:1.6;color:var(--ink-muted)}
+.checklist{list-style:none;padding:0;margin-top:1rem;max-width:62ch}
+.checklist li{position:relative;margin-top:.625rem;padding-left:1.5rem;line-height:1.7}
+.checklist li::before{content:'—';position:absolute;left:0;font-family:'IBM Plex Mono',ui-monospace,monospace;color:var(--red)}
+.next{margin-top:1.75rem;border-top:1px solid var(--rule);padding-top:1.25rem;max-width:56ch;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.875rem;line-height:1.6}
 .receipt{margin-top:2.75rem;border:1px solid var(--rule);border-radius:2px;background:var(--paper-raised);padding:1.5rem}
 .receipt h2{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.6875rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-muted)}
 .receipt h3{margin-top:1rem;font-size:1.0625rem;font-weight:500;line-height:1.4;max-width:44ch}

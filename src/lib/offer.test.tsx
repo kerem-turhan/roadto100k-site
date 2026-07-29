@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { Signup } from '@/components/Signup'
 import { FIXTURE_META } from './fixtures.ts'
 import {
+  AUDIT,
   NEWSLETTER_PROMISE,
   NEWSLETTER_TERMS,
   OFFER_UPDATED,
@@ -67,10 +68,63 @@ describe('the services', () => {
     }
   })
 
-  it('quotes no price — what a package costs is decided in the reply', () => {
+  /* The capability lines describe the work; the price lives on AUDIT alone. */
+  it('quotes no price of their own', () => {
     for (const service of SERVICES) {
       expect(`${service.name} ${service.text}`).not.toMatch(/\$\s?\d/)
     }
+  })
+})
+
+describe('the audit package', () => {
+  const all = [
+    AUDIT.name,
+    AUDIT.price,
+    AUDIT.timebox,
+    AUDIT.deliverablesLabel,
+    AUDIT.prerequisitesLabel,
+    ...AUDIT.deliverables,
+    ...AUDIT.prerequisites,
+    AUDIT.next,
+  ].join(' ')
+
+  it('carries all four things that turn a number into an offer', () => {
+    expect(AUDIT.price).toBe('$1,500')
+    expect(AUDIT.timebox).toMatch(/One week/)
+    expect(AUDIT.deliverables.length).toBeGreaterThanOrEqual(3)
+    expect(AUDIT.prerequisites.length).toBeGreaterThanOrEqual(3)
+  })
+
+  it('asks for read access and rules out the write kind', () => {
+    expect(all).toContain('Read-not-write access')
+    expect(all).toContain('No production credentials')
+  })
+
+  it('shows the next rung in the exact words it was decided in', () => {
+    expect(AUDIT.next).toBe('Ongoing operations: after first delivery, priced per engagement.')
+  })
+
+  /*
+   * The copy module is the single source every surface renders from, so the
+   * embargo is enforced here as well as on the page: a future edit that puts
+   * the refund promise or the introductory tier into SERVICES, the meta
+   * description or a callout fails without anyone remembering why.
+   */
+  it.each([
+    ['the retired founding price', /\$\s?990/],
+    ['the retired retainer', /\$\s?1[.,]490/],
+    ['the unlaunched introductory tier', /\$\s?500/],
+    ['a money-back promise', /money.back|refund/i],
+    ['a guarantee', /guarantee/i],
+  ])('does not carry %s anywhere in the offer copy', (_label, pattern) => {
+    const everything = [all, POSITIONING_LINE, ...SERVICES.map((s) => `${s.name} ${s.text}`)].join(
+      ' ',
+    )
+    expect(everything).not.toMatch(pattern)
+  })
+
+  it('names exactly one price across the whole offer', () => {
+    expect(all.match(/\$\s?[\d,]+/g)).toEqual(['$1,500'])
   })
 })
 
