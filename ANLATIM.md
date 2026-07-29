@@ -40,9 +40,10 @@ saklamayan bir defter, iyi haftayı da inandırıcı yapar. Site bu yüzden sess
 abartısız: iddiayı metin değil, tekrar eden kayıt taşıyor.
 
 **Neden bu kadar sade / bedava:** Bütçe tavanı $100/ay ve reklam $0. Site tamamen **statik**
-(sunucu yok, veritabanı yok, çerez yok, izleme yok) ve GitHub Pages'te **ücretsiz** duruyor.
-Yazı tipleri bile kendi sunucumuzdan geliyor; sayfa açıldığında dışarıya tek bir istek bile
-gitmiyor (tek istisna: e-posta formunu gönderdiğinde Buttondown'a giden istek).
+(sunucu yok, veritabanı yok, **çerez yok**, kişisel veri toplanmıyor) ve GitHub Pages'te
+**ücretsiz** duruyor. Yazı tipleri bile kendi sunucumuzdan geliyor; dışarıya giden istek
+sayısı **ikiyi** geçmiyor: e-posta formunu gönderdiğinde Buttondown'a giden istek ve —
+sayaç açıksa — çerezsiz ziyaret sayacı (§2.2b). Başka hiçbir şey.
 
 ---
 
@@ -57,11 +58,11 @@ gitmiyor (tek istisna: e-posta formunu gönderdiğinde Buttondown'a giden istek)
 | **The rules (kurallar)** | Bahsin kuralları: $100/ay tavan, $0 reklam, her sayı public, haftalık kayıt, yıl sonunda ne olursa olsun dürüst post-mortem. Bu bölüm senin kendine koyduğun kısıt — okuyucunun sana güvenmesinin sebebi. |
 | **The ledger (defter)** | Sitenin kalbi. Haftalık tablo (hafta bitişi, gelir, MRR, harcama, abone, not) + üstünde **sparkline**: yeşil çizgi gerçekleşen kümülatif gelir, kesikli çizgi $100k'nın gerektirdiği tempo. Rakamların tamamı tek bir dosyadan gelir: `src/data/ledger.json`. |
 | **What I'm building (ne inşa ediyorum)** | Ne üzerinde çalıştığın — kategori dilinde, ürün adı vermeden. Altında iletişim satırı. |
-| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / sürekli reliability desteği; fiyat yok). **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor ve 22 Temmuz'da sıkılaştırıldı: `src/config.ts` içindeki bir öğe, linki gerçek **ve** (rakam veriyorsa) `sourceCommit`'i dolu olmadıkça HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Ayrıntı: §4, "Kanıt bölümünün iki kapısı". |
+| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / ongoing operations). Ana sayfada fiyat yok; fiyat `/work/` sayfasında. **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor ve 22 Temmuz'da sıkılaştırıldı: `src/config.ts` içindeki bir öğe, linki gerçek **ve** (rakam veriyorsa) `sourceCommit`'i dolu olmadıkça HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Ayrıntı: §4, "Kanıt bölümünün iki kapısı". |
 | **Email signup (kayıt)** | Asıl hedef. Buttondown formu. **28 Temmuz'da vaat netleşti:** formun hemen üstünde tek cümlelik söz duruyor — *"One silent-green finding a week — a check that couldn't look and said yes anyway."* Altında sıklık/spam/çıkış satırı. Buttondown adresi config'te boş bırakılırsa form yerine X'i takip bağlantısı gösterilir. |
-| **Footer** | Work with me, Silent green, X, GitHub, RSS (+ Türkçe) bağlantıları + tema (açık/koyu) düğmesi. "Work with me" bağlantısı yalnız kanıt kapısı açıkken görünür — olmayan sayfaya link verilmez. |
+| **Footer** | Work with me, Silent green, X, GitHub, RSS (+ Türkçe) bağlantıları + tema (açık/koyu) düğmesi. "Work with me" bağlantısı yalnız kanıt kapısı açıkken görünür — olmayan sayfaya link verilmez. Alt satır: *"No cookies, no personal data, $0/mo hosting."* Sayaç açıksa altında tek cümlelik sayaç açıklaması durur (§2.2b). |
 
-### 2.1b Ana sayfanın dışındaki iki sayfa (28 Temmuz'da eklendi)
+### 2.1b Ana sayfanın dışındaki iki sayfa (28 Temmuz'da eklendi, 30 Temmuz'da tamamlandı)
 
 Show HN postu inerse siteye birkaç bin kişi gelir ve bu tazelik **bir kez** harcanır. O
 trafiğin "peki bu adam benim için ne yapabilir?" ve "neye abone oluyorum?" sorularının cevabı
@@ -69,8 +70,27 @@ artık kendi kalıcı adreslerinde duruyor.
 
 | Sayfa | Adres | Ne var, ne yok |
 |---|---|---|
-| **Work with me** | `/work/` | Hizmet yolu. Başlıkta konumlandırma cümlesi (*"I make AI agents fail closed. When a check can't look, it has to say no."*), altında üç somut iş (reliability audit / eval harness + CI regression gate / model-swap güvencesi), yanında **kanıt**: public teardown reposu, rakamları ve commit pini ile. Tek tık iletişim: e-posta. **Fiyat yok** — paket bedeli cevapta konuşulur, sayfada yazmaz (bir test bunu koruyor). |
-| **Silent green** | `/silent-green/` | İmza serinin kalıcı evi: haftada bir "bakamadığı hâlde evet diyen kontrol" bulgusu. Şu an **iskelet**: serinin ne olduğu + "First entry coming this week." + kayıt formu. Uydurma giriş **yok**; ilk giriş yazıldığında `src/data/series.json`'a eklenir ve `/silent-green/<slug>/` adresi, indeks satırı ve sitemap kaydı birlikte doğar. |
+| **Work with me** | `/work/` | Hizmet yolu. Başlıkta konumlandırma cümlesi (*"I make AI agents fail closed. When a check can't look, it has to say no."*), altında üç somut iş (reliability audit / eval harness + CI regression gate / ongoing operations), sonra **paketlenmiş teklif** (aşağıda), yanında **kanıt**: public teardown reposu, rakamları ve commit pini ile. Tek tık iletişim: e-posta. |
+| **Silent green** | `/silent-green/` | İmza serinin kalıcı evi: haftada bir "bakamadığı hâlde evet diyen kontrol" bulgusu. **30 Temmuz'dan beri iskelet değil:** № 001 yayında — *"The harness that counted silence as success"* (`/silent-green/counting-silence-as-success/`). İndeks girişleri yeniden-eskiye listeler; her giriş sayfasının altında aynı vaat ve aynı form var. |
+
+**`/work/` sayfasındaki teklif (30 Temmuz, 29 Tem karar paketi K5+K6).** Sayfa artık fiyat
+söylüyor, ama yalnız fiyat değil — çünkü fiyatı tek başına yazmak pazarlık daveti, "ne kadar
+sürer / kaç şey gelir / benden ne istiyorsun" diye sormak zorunda kalan alıcı çoğunlukla hiç
+sormuyor. Dördü birden sayfada:
+
+| Parça | Sayfadaki hâli |
+|---|---|
+| **Fiyat** | **$1,500** — "Agent reliability audit". Sitedeki **tek** fiyat (bir test bunu sayıyor). |
+| **Süre kutusu** | *"One week, from the day access lands to the report in your inbox."* — sayaç konuşmanın başladığı gün değil, erişimin geldiği gün başlar. |
+| **Sayılı çıktı listesi** | 5 numaralı madde: failure-mode haritası · **en az 3** tekrar-üretilebilir hata · başlangıç eval seti + tek komut · öncelikli aksiyon planı · yazılı kapanış (çağrı isteğe bağlı — varsayılan yazılı). |
+| **Ön koşul / erişim checklist'i** | Gün birden önce ne gerektiği: **read-not-write** erişim (salt-okunur davet veya fork; PR açılır, dala push edilmez) · uçtan uca çalıştırma yolu (env şablonu / fixture / sandbox anahtarı, **asla prod kimlik bilgisi**) · yazılı yanıt verebilen tek muhatap · "yanlış"ın tanımı. |
+| **Sonraki basamak** | Tek satır, fiyatsız: *"Ongoing operations: after first delivery, priced per engagement."* |
+
+**Sayfaya GİRMEYEN iki şey** (karar verildi, yayımlanmadı): **para-iade garantisi** — ödeme
+rayı (Polar) canlı olmadan iade sözü verilemez; ve **$500 giriş teklifi (teardown)** — HN
+postundan sonra açılacak. Kalkan iki fiyat da ($990 founding, $1.490 retainer) sayfada yok.
+Beşi de teste bağlı: hem `offer.test.tsx` hem `workPage.test.ts` bu kalıpları arıyor, biri
+sayfaya sızarsa build kırmızı olur.
 
 İkisinin de altında aynı vaat ve aynı form var. Vaat metni, konumlandırma cümlesi ve üç
 hizmetin tarifi tek dosyada yaşıyor (`src/lib/offer.ts`): ana sayfa React ile, bu iki sayfa
@@ -81,6 +101,19 @@ canlı (gerçek link + rakam veriyorsa commit pini) bir öğe yoksa sayfa hiç y
 de girmez, footer'da bağlantısı da çıkmaz. Kanıtı olmayan bir yetkinlik iddiasını satmak,
 zaten bu sitenin karşı çıktığı şey. `/silent-green/` bu kapıya bağlı değil: adresi başka
 yerlerde anılacağı için bir hafta 404 vermektense "ilk giriş yolda" demesi doğru.
+
+### 2.1c Bir silent-green girişi neyden oluşur
+
+Bir giriş üç tür bloktan kuruluyor — Markdown yok, ayrıştırıcı yok:
+
+| Blok | JSON'daki hâli | Neden var |
+|---|---|---|
+| **Paragraf** | düz metin | Anlatının kendisi. |
+| **Kural** | `{ "callout": "…" }` | Bulgunun ürettiği kural, kırmızı marj çizgisine yaslanmış olarak ayrı durur. Okuyucu hikâyeyi unutur, kuralı hatırlar. |
+| **Prob** | `{ "list": ["…"] }` | Numaralı adımlar: okuyucunun **kendi** hattında aynı hatayı bulmasının yolu. Tekrar üretilemeyen bulgu anekdottur. |
+
+№ 001 bu üçünü de taşıyor ve bir test bunu şart koşuyor: yayımlanmış ilk giriş var, kuralı
+var, en az 3 adımlık probu var.
 
 ### 2.2 Görünmeyen ama işi olan şeyler
 
@@ -102,6 +135,32 @@ defter verisinden yazılır — elle bakım gerektirmez.
 | **Türkçe harf desteği** | tüm sayfalar | Yazı tiplerinin "latin" seti İ, Ş, Ğ harflerini içermiyor; bu yüzden her aileye ikinci bir "latin-ext" dosyası eklendi ve `unicode-range` ile sınırlandı. Türkçe harf içermeyen sayfalar bu ek dosyayı hiç indirmez. |
 | **Yazı tipi lisansları** | `/fonts/OFL-*.txt` | Üç yazı tipi de OFL-1.1; bu lisans "dağıtacaksan telif notunu ve lisansı yanında taşı" diyor. Font dosyalarının yanına üç lisans metni kondu. Bir aile eklenip lisansı unutulursa test kırmızıya döner. |
 | **Tema + erişilebilirlik** | her yerde | Açık/koyu mod (sistem tercihi + düğme) — **22 Temmuz'dan beri hafta ve Türkçe sayfalarında da düğme var**. Klavye odak halkaları, ekran okuyucu etiketleri, `prefers-reduced-motion` (animasyon istemeyen kullanıcıda animasyon yok). İçerik hiçbir zaman animasyona **veya JavaScript'e** bağlı değildir: 22 Temmuz'dan beri ana sayfa da build sırasında hazır HTML olarak yazılıyor (aşağıya bak), hafta ve Türkçe sayfaları zaten öyleydi. |
+
+### 2.2b Ziyaret sayacı (30 Temmuz'da eklendi, 29 Tem karar paketi K9)
+
+Site bugüne kadar **hiçbir şey ölçmüyordu**. Duruş "no cookies, no tracking"ti ve ikinci
+yarısı kazandırdığından fazlasına mal oluyordu: launch trafiği **bir kez** gelir, sayılmayan
+trafikten kimse bir şey öğrenemez. Ölçmemek gizlilik değil, kibar bir körlük. Sayaç bu yüzden
+var — duruşu yumuşatmadan, doğru hâline getirerek.
+
+- **Kim:** [GoatCounter](https://www.goatcounter.com/). Bu ölçekte ücretsiz, açık kaynak,
+  gerekirse kendi sunucunda barındırılabilir; **çerez koymuyor**, veritabanında **IP adresi
+  veya User-Agent tutmuyor**. İstatistik sayfası istenirse **herkese açık** yapılabilir — bu
+  sitenin zaten savunduğu şey.
+- **Nerede yazıyor:** her sayfanın altında tek cümle — *"Visits are counted without cookies,
+  fingerprints, or anything that identifies you — because not measuring isn't privacy, it's
+  blindness."* (Türkçe sayfalarda Türkçesi.)
+- **Açma/kapama:** `src/config.ts` → `ANALYTICS_CODE`. Boşken sayaç **yok** — script yok, dış
+  istek yok **ve o cümle de yok**. Sayıyorum diyip saymayan sayfa, hiç koşmamış yeşil kontrolle
+  aynı yalandır.
+- **Bozuk ayarda build patlar.** Kod dolu ama biçimi yanlışsa (tam URL, host adı, büyük harf,
+  yer tutucu) build `Invalid ANALYTICS_CODE` diyerek durur. Ölü bir beacon sıfır rapor eder ve
+  "sıfır ziyaret" ile "sıfır ölçüm" panoda birbirinden ayırt edilemez.
+- Her build sayacın durumunu yazdırır: `visit counter: on (…)` veya `OFF`.
+- Sayaç `async` yüklenir ve localhost'u atlar; JavaScript'i kapalı okur sayılmaz — yani rakam
+  bir **taban**, manşet değil.
+
+Hesabı açma adımları: README, *"Turning the visit counter on"*.
 
 ### 2.3 Rakamlar nereden geliyor
 
@@ -191,20 +250,22 @@ yeşil tik görürsen iş bitmiştir.
 | Kanıt bölümünü açmak (flip günü) | `src/config.ts` → `PROOF_ITEMS[0].url` = gerçek repo linki **+ `sourceCommit`** = o repodaki commit SHA'sı. |
 | Yeni kanıt işi eklemek | `src/config.ts` → `PROOF_ITEMS` dizisine yeni nesne ({title, description, stats, url, sourceCommit}). Rakam (`stats`) veren her öğe `sourceCommit` **zorunlu** — yoksa öğe sitede hiç görünmez. |
 | Buttondown / X / GitHub / e-posta adresi | `src/config.ts` |
-| Yeni silent-green girişi yayımlamak | `src/data/series.json` → `entries` dizisine nesne ({number, slug, date, title, dek, body[]}). Sıra numarası, slug biçimi, tarih ve dolu gövde zorunlu; biri bozuksa build patlar. Push et — giriş sayfası, indeks satırı ve sitemap kaydı birlikte doğar. |
-| Hizmet metni / vaat / seri tanıtımı | `src/lib/offer.ts` (üç yüzey de buradan okur). `/work/`'ün sitemap tarihi olan `OFFER_UPDATED`'ı da elle güncelle. |
+| Yeni silent-green girişi yayımlamak | `src/data/series.json` → `entries` dizisine nesne ({number, slug, date, title, dek, body[]}). Gövde blokları: düz metin, `{callout}`, `{list}` (§2.1c). Sıra numarası, slug biçimi, tarih ve dolu gövde zorunlu; biri bozuksa build patlar. Push et — giriş sayfası, indeks satırı ve sitemap kaydı birlikte doğar. |
+| Hizmet metni / vaat / fiyat paketi / seri tanıtımı | `src/lib/offer.ts` (üç yüzey de buradan okur; fiyat, süre kutusu, çıktı ve ön koşul listeleri `AUDIT` içinde). `/work/`'ün sitemap tarihi olan `OFFER_UPDATED`'ı da elle güncelle. |
+| Ziyaret sayacını açmak | `src/config.ts` → `ANALYTICS_CODE` = GoatCounter site kodu. Tek satır; gerisi otomatik (§2.2b). |
 | Özel alan adı alınırsa | `vite.config.ts` → `base: '/'` **ve** `src/config.ts` → `SITE_URL` |
 
 ---
 
-## 4. Şu an neredeyiz (28 Temmuz 2026)
+## 4. Şu an neredeyiz (30 Temmuz 2026)
 
 - Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
   bir kayıtla test edilmiş.
-- `39fb852` üzerinde typecheck, lint, **27 dosyada 355 test**, build ve leak taramaları
-  (kaynak + dist) geçti; iki ardışık build bayt bayt aynı çıktı verdi.
-- **Dönüşüm yolu kuruldu (28 Temmuz):** `/work/` ve `/silent-green/` canlı, newsletter vaadi
-  formun üstünde. Ayrıntı: §2.1b ve aşağıdaki "Launch öncesi dönüşüm hazırlığı".
+- Typecheck, lint, **29 dosyada 405 test**, build ve leak taramaları (kaynak + dist) geçti.
+- **Dönüşüm yolu kuruldu (28 Temmuz), 30 Temmuz'da tamamlandı:** `/work/` fiyatı ve paketiyle
+  birlikte canlı, `/silent-green/` № 001 yayında, newsletter vaadi formun üstünde, ziyaret
+  sayacı koda bağlandı. Ayrıntı: §2.1b, §2.1c, §2.2b ve aşağıdaki "Launch öncesi dönüşüm
+  hazırlığı".
 - Defterde **2 hafta** var: 19 Temmuz (Gün 0) ve 26 Temmuz 2026 — her ikisi de gelir $0, MRR
   $0, harcama $0, abone 0. 26 Temmuz notu: ilk tekrarlanabilir herkese açık teardown çıktı;
   3 hedefli outreach mesajı gitti, henüz yanıt yok. Sıfırlar duruyor; abartı yok.
@@ -223,22 +284,28 @@ yeşil tik görürsen iş bitmiştir.
   Artık kapı gerçek (aşağıda), ve kalıcı kural şu: **bir bekçi bakamadığı durumda yeşil değil
   KIRMIZI verir — "bilmiyorum" = başarısız.**
 
-### Launch öncesi dönüşüm hazırlığı (28 Temmuz)
+### Launch öncesi dönüşüm hazırlığı (28 → 30 Temmuz)
 
-Show HN postunun sert kapısı üç maddeydi; üçü de yayında:
+Show HN'in sert kapısı **beş** maddeye çıktı (29 Tem, K-HN). Bu repoya düşen **dördü**:
 
-1. **Hizmet yolu** — `/work/` (yukarıda §2.1b). Konumlandırma cümlesi görünür, üç iş somut,
-   kanıt yanında, iletişim tek tık, fiyat yok.
+1. **Hizmet yolu** — `/work/` (§2.1b). Konumlandırma cümlesi görünür, üç iş somut, kanıt
+   yanında, iletişim tek tık. **30 Temmuz'dan beri fiyatlı ve paketli:** $1,500, bir hafta,
+   sayılı çıktı listesi, erişim checklist'i, sonraki basamak.
 2. **Newsletter vaadi** — form artık neye abone olunduğunu söylüyor: *"One silent-green
    finding a week…"* + sıklık/spam/çıkış satırı. Aynı cümle ana sayfada, `/work/`'te ve
    `/silent-green/`'de birebir aynı; bir testi vaadi kelimesi kelimesine bir sabite karşı
    tutuyor, metni değiştiren commit üç dosyada kırmızı alır.
-3. **`/silent-green/`** — kalıcı, indekslenen seri adresi; şu an iskelet (tanıtım + "first
-   entry coming this week" + form), uydurma giriş yok.
+3. **`/silent-green/`** — kalıcı, indekslenen seri adresi. **№ 001 yayında** (30 Temmuz):
+   *"The harness that counted silence as success"* — 40 denemede sıfır sessiz gerileme rapor
+   eden, ama test paketinin çıkış kodunu hiç okumayan bir ölçüm hattı. Brief'in "en az 1 giriş"
+   şartı böylece **kapandı**; 28 Temmuz'da açık kalan tek kabul kriteri buydu.
+4. **Ziyaret sayacı** — kodda **tamamen bitti**, açılması Kerem'in iki dakikalık hesap adımına
+   bağlı (§2.2b + README). `ANALYTICS_CODE` boş kaldığı sürece madde **açık**.
 
-**Kapalı olmayan tek kabul kriteri:** brief "en az 1 giriş yayımlanmış olmalı" diyordu; bu
-turda iskelet istendi. İlk giriş `series.json`'a eklenene kadar bu madde **açık** — HN
-postundan önce yazılması gereken tek şey bu.
+Beşinci madde bu repoda değil: teardown reposunun README'sindeki ve `verify` çıktısındaki
+dönüşüm halkası.
+
+**Şu an açık kalan tek şart:** sayacın hesabı. Kod tarafında yapılacak bir şey kalmadı.
 
 ### Kanıt bölümünün iki kapısı (22 Temmuz'da sıkılaştırıldı)
 
@@ -372,9 +439,12 @@ Ekledikten sonra CI'daki secret'ı tazele:
    de okunuyor. Geriye bilinçli bırakılanlar: `№ ← → ↗` karakterleri hâlâ sistem yazı tipine
    düşüyor (kozmetik), ve sayfa üstündeki marka ile alttaki bağlantı aynı yere gidiyor (ekran
    okuyucuda ufak tekrar).
-3. **İlk silent-green girişini yaz.** Show HN'in üç şartından tek açık kalan bu (§4). Yol:
-   `src/data/series.json` → `entries`'e bir nesne, push. Ürün adı/mekanizması girişlerde
-   geçmez — kategori dili.
+3. **Sayacın hesabını aç** — HN kapısının bu repoda açık kalan tek maddesi (§4). İki dakika:
+   goatcounter.com'da hesap → site kodu → `src/config.ts` → `ANALYTICS_CODE`, push. Yol
+   tarifi README'de.
+4. **Silent green № 002'yi yaz.** Vaat "haftada bir"; ikinci girişin gecikmesi vaadin
+   kendisini yalanlar. Yol: `src/data/series.json` → `entries`'e bir nesne, push. Ürün
+   adı/mekanizması girişlerde geçmez — kategori dili.
 4. **E-posta listesini büyütmek** için X'ten siteye trafik: her defter haftası ayrı bir
    paylaşılabilir sayfa ve kendi görseline sahip — haftalık thread'in doğal ekidir.
 4. Opsiyonel, ücretsiz: Google Search Console'a siteyi ekle (`sitemap.xml` zaten hazır) ve
@@ -392,7 +462,8 @@ Ekledikten sonra CI'daki secret'ı tazele:
 | **Sahte içerik cazibesi** | Kimse "abone sayısını yuvarlama" veya "yakında" doldurma metni eklemeyecek. Boş olan şey görünmez (kanıt bölümü, TR haftası) — yalan söylemez. |
 | **Paylaşım görselinin eski kalması** | X ve benzeri platformlar OG görselini önbelleğe alır; kart değişince ilk paylaşımda eski görsel çıkabilir. Çözüm: platformun kart doğrulayıcısından bir kez geçir. |
 | **GitHub Pages sınırları** | Ücretsiz katman, statik dosya; soft limit ~100GB/ay bant genişliği — bu ölçekte sorun değil. Sunucu tarafı mantık (form işleme, veritabanı) mümkün değil; e-posta kaydı bu yüzden Buttondown'da. |
-| **Analitik yok** | Bilinçli: çerez yok, izleme yok, $0. Karşılığında "kaç kişi geldi" verisi de yok. Sinyal olarak e-posta kaydı ve X etkileşimi kullanılır. |
+| **Sayaç kapalıyken launch** | 30 Temmuz'a kadar site hiçbir şey ölçmüyordu; artık ölçebiliyor ama **hesap açılmadan sayaç kapalı** (§2.2b). Launch trafiği bir kez gelir: kapalı sayaçla atılan post, geri alınamaz biçimde ölçüsüz kalır. Bu yüzden HN kapısının maddesi. |
+| **Sayacın kendi körlüğü** | JavaScript'i kapalı okur sayılmaz, bot filtresi mükemmel değil — rakam bir **taban**. Dışarıya sayı verilecekse bu şerhle verilir. |
 | **Tek kişilik bakım** | Kod sade ve test edilmiş; ama devamlılık sana bağlı. Bu dosya tam olarak bu yüzden var. |
 
 ## 7. Mini sözlük
