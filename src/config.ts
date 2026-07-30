@@ -46,8 +46,24 @@ export const config = {
         'cases this teardown designed, baseline passed 2.',
       stats: ['2 fail-open paths', '1-file patch', '4/6 → 6/6'],
       url: 'https://github.com/kerem-turhan/agent-reliability-teardown-openai-agents-js',
-      /** The tree these numbers were read from, verified 22 Jul 2026. */
-      sourceCommit: '7dcc0d3',
+      /**
+       * The tree these numbers were read from, verified 30 Jul 2026. The repo was
+       * republished that day with a clean parentless history, so earlier pins
+       * (e.g. 7dcc0d3) no longer resolve publicly.
+       */
+      sourceCommit: 'b0c5e41',
+    },
+    {
+      title: 'Agent reliability teardown: Google ADK stale-issue automation',
+      description:
+        'Second vendor, same failure class: a scheduled maintenance agent in ' +
+        'google/adk-python logs an error for every issue it failed to audit, then reports ' +
+        'all of them as successfully processed and exits 0. One-file patch makes the same ' +
+        'run fail closed: 0 processed, 3 failures listed, exit 1. Reported upstream first.',
+      stats: ['exit 0 → exit 1', '1-file patch', 'reported upstream first'],
+      url: 'https://github.com/kerem-turhan/agent-reliability-teardown-google-adk-python',
+      /** The tree these numbers were read from, verified 30 Jul 2026. */
+      sourceCommit: 'd4eaea5',
     },
   ],
 } as const
