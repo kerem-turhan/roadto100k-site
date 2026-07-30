@@ -19,7 +19,7 @@ export const config = {
    * sentence claiming visits are counted. See src/lib/analytics.ts and the
    * two-minute setup in README.md ("Turning the visit counter on").
    */
-  ANALYTICS_CODE: '',
+  ANALYTICS_CODE: 'roadto100k',
   X_URL: 'https://x.com/mkeremturhan',
   GITHUB_URL: 'https://github.com/kerem-turhan',
   CONTACT_EMAIL: 'keremturhan.cs@gmail.com',
