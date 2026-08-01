@@ -36,9 +36,9 @@ describe('sparklineModel', () => {
         { weekEnding: '2026-07-19', revenue: 0, mrr: 0, spend: 0, emailSubs: 0, note: 'zero' },
       ],
     })
-    const flat = sparklineModel(zeros, now, W, H)
-    expect(flat.actualPath).toBe(`M0 ${H} L0 ${H}`)
-    expect(flat.last).toEqual({ x: 0, y: H })
+    const flatModel = sparklineModel(zeros, now, W, H)
+    expect(flatModel.actualPath).toBe(`M0 ${H} L0 ${H}`)
+    expect(flatModel.last).toEqual({ x: 0, y: H })
   })
 
   it('marks today on the axis, clamped to the plot', () => {
