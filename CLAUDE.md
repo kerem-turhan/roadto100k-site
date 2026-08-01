@@ -21,9 +21,10 @@ Full plan & copy: [docs/plan.md](docs/plan.md).
   Any significant change (new section, new page type, new/changed ritual step, new config
   knob) updates it **in the same commit**. A stale handbook is a lying handbook.
 - **Budget $0:** free tiers only — no paid fonts, APIs, analytics, or CDNs. Fonts are
-  self-hosted via @fontsource. Exactly two external requests at runtime are allowed: the
-  Buttondown form action and the cookieless visit counter (`src/lib/analytics.ts`, off unless
-  `config.ANALYTICS_CODE` is set). Anything else is a new dependency — ask first.
+  self-hosted via @fontsource. Exactly two external runtime surfaces are allowed: the
+  Buttondown form action on submit and the cookieless GoatCounter script plus count endpoint
+  (`src/lib/analytics.ts`, off unless `config.ANALYTICS_CODE` is set). Anything else is a new
+  dependency — ask first.
 - **Measurement is honest or absent.** The counter sets no cookies and stores no personal
   data, and the one-sentence disclosure ships on every page it runs on — never one without
   the other. A misconfigured counter fails the build rather than reporting zero.

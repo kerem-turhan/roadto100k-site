@@ -99,13 +99,13 @@ Boldness is spent in exactly one place: the hero-as-ledger-sheet. Everything els
 - Empty-URL fallback: *"The list isn't open yet — follow along on X."* (X link also from config.)
 
 ### Footer
-`X · GitHub` + *No cookies, no tracking, $0/mo hosting. Built in public.*
+`X · GitHub` + *No cookies, no personal data, cookieless visit count, $0/mo hosting. Built in public.*
 
 ---
 
 ## 3. Config (single source of truth — `src/config.ts`)
 ```ts
-BUTTONDOWN_URL = ""   // Kerem fills after creating the Buttondown account
+BUTTONDOWN_URL = "<public Buttondown embed action>" // empty uses the X fallback
 X_URL          = "https://x.com/mkeremturhan"
 GITHUB_URL     = "https://github.com/kerem-turhan"
 CONTACT_EMAIL  = "keremturhan.cs@gmail.com"
@@ -129,7 +129,7 @@ GOAL_DATE      = "2026-12-31"
 13. Verify live URL myself; run design-reviewer (Opus 4.8 high); fix findings; re-run if needed
 
 ## 5. Risks / open points
-- **Buttondown URL is empty at launch** — fallback (follow on X) handles it; Kerem plugs the
-  URL in later (one-line config edit).
+- **Buttondown URL is configurable** — the current public embed action is in `src/config.ts`;
+  clearing it intentionally restores the follow-on-X fallback.
 - **GH Pages project path** (`/roadto100k-site/`): asset base is set; switch `base` to `'/'` if a custom domain arrives later.
 - **All-zero ledger**: charts deferred by design until data exists — honesty over decoration.

@@ -20,9 +20,10 @@ import { escapeMarkup } from './text.ts'
  *                               tracker IDs are stored in the database"
  *
  * Nothing here fires unless config.ANALYTICS_CODE is filled in. Empty means no
- * script, no third-party request and — importantly — no disclosure sentence
+ * GoatCounter script, no count request and — importantly — no disclosure sentence
  * either: a page that says it counts visits while counting nothing is the exact
- * kind of green light this site exists to argue against.
+ * kind of green light this site exists to argue against. The Buttondown form action
+ * is a separate, submit-time surface.
  */
 
 /** GoatCounter's shared endpoint script. Self-hosted swaps only this constant. */

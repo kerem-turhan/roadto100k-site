@@ -137,7 +137,8 @@ interface SignupFormOptions {
  *
  * Kept beside the copy rather than in pageShell so that the promise, the terms
  * and the markup that carries them cannot drift apart. The action is Buttondown's
- * public embed endpoint: the only external request this site makes at all.
+ * public embed endpoint. It is one runtime external surface; the other is the
+ * GoatCounter script and count endpoint when the counter is configured.
  */
 export function signupFormMarkup({
   buttondownUrl,

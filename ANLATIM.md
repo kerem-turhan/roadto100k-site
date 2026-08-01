@@ -41,9 +41,9 @@ abartısız: iddiayı metin değil, tekrar eden kayıt taşıyor.
 
 **Neden bu kadar sade / bedava:** Bütçe tavanı $100/ay ve reklam $0. Site tamamen **statik**
 (sunucu yok, veritabanı yok, **çerez yok**, kişisel veri toplanmıyor) ve GitHub Pages'te
-**ücretsiz** duruyor. Yazı tipleri bile kendi sunucumuzdan geliyor; dışarıya giden istek
-sayısı **ikiyi** geçmiyor: e-posta formunu gönderdiğinde Buttondown'a giden istek ve —
-sayaç açıksa — çerezsiz ziyaret sayacı (§2.2b). Başka hiçbir şey.
+**ücretsiz** duruyor. Yazı tipleri bile kendi sunucumuzdan geliyor; runtime dış yüzeyi
+**iki** tane: (1) sayaç açıksa GoatCounter script'i ve count endpoint'i, (2) e-posta formunu
+gönderdiğinde Buttondown form action'ı (§2.2b). Başka hiçbir şey.
 
 ---
 
@@ -150,9 +150,10 @@ var — duruşu yumuşatmadan, doğru hâline getirerek.
 - **Nerede yazıyor:** her sayfanın altında tek cümle — *"Visits are counted without cookies,
   fingerprints, or anything that identifies you — because not measuring isn't privacy, it's
   blindness."* (Türkçe sayfalarda Türkçesi.)
-- **Açma/kapama:** `src/config.ts` → `ANALYTICS_CODE`. Boşken sayaç **yok** — script yok, dış
-  istek yok **ve o cümle de yok**. Sayıyorum diyip saymayan sayfa, hiç koşmamış yeşil kontrolle
-  aynı yalandır.
+- **Açma/kapama:** `src/config.ts` → `ANALYTICS_CODE`. Boşken GoatCounter sayaç yüzeyi **yok**
+  — script/count isteği yok **ve o cümle de yok**. Buttondown form action'ı ayrı ve yalnızca
+  form gönderildiğinde çalışır. Sayıyorum diyip saymayan sayfa, hiç koşmamış yeşil kontrolle aynı
+  yalandır.
 - **Bozuk ayarda build patlar.** Kod dolu ama biçimi yanlışsa (tam URL, host adı, büyük harf,
   yer tutucu) build `Invalid ANALYTICS_CODE` diyerek durur. Ölü bir beacon sıfır rapor eder ve
   "sıfır ziyaret" ile "sıfır ölçüm" panoda birbirinden ayırt edilemez.

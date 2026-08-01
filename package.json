@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/prerender.ts",
+    "build": "tsc -b && vite build && node --experimental-strip-types scripts/prerender.ts",
     "lint": "oxlint",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "leaks": "node scripts/check-leaks.ts",
-    "leaks:add": "node scripts/check-leaks.ts --add",
+    "leaks": "node --experimental-strip-types scripts/check-leaks.ts",
+    "leaks:add": "node --experimental-strip-types scripts/check-leaks.ts --add",
     "og": "node scripts/render-og.ts",
     "preview": "vite preview"
   },

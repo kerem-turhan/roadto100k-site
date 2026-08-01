@@ -2,7 +2,7 @@
 
 /*
  * Self-hosted font subsets served from public/fonts with stable names so
- * index.html can preload them — no FOUT, no external requests. Each family
+ * index.html can preload them — no FOUT, and no font request leaves the site origin. Each family
  * ships latin + latin-ext: the ext file carries İ, Ş, Ğ and friends, and its
  * unicode-range means English-only readers never download it.
  */

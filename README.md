@@ -10,7 +10,8 @@ ledger of real revenue/spend figures (including the $0 weeks).
 
 Vite · React 19 · TypeScript (strict) · Tailwind CSS v4 · shadcn/ui · Motion · Vitest.
 Static site, deployed to GitHub Pages by [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
-on every push to `main`. No backend, no analytics, no cookies.
+on every push to `main`. No backend, no cookies. Runtime has two external surfaces: the
+cookieless GoatCounter visit counter and the Buttondown form action on submit.
 
 ## Development
 
@@ -257,8 +258,8 @@ Every external link, journey date and public claim lives in [src/config.ts](src/
   hreflang, sitemap, feed and every `og:` URL, including `index.html`'s (which carries a
   `%SITE_URL%` token the build fills — never paste an absolute URL back in).
 - `SITE_NAME`, `AUTHOR_NAME`, `SITE_DESCRIPTION` — used by the feed, JSON-LD and share cards.
-- `BUTTONDOWN_URL` — empty until the Buttondown account exists; the signup section shows a
-  "follow on X" fallback while it's empty. Paste the embed action URL to switch the form on.
+- `BUTTONDOWN_URL` — the public Buttondown embed action; if empty, the signup section shows a
+  "follow on X" fallback.
 - `ANALYTICS_CODE` — the visit counter, off while empty (see below).
 - `X_URL`, `GITHUB_URL`, `CONTACT_EMAIL` — footer/contact links.
 - `START_DATE` (day 0, 2026-07-19), `GOAL_DATE` and `GOAL_USD` — the journey window. These
@@ -296,9 +297,9 @@ Optional and very much in the spirit of the place: in GoatCounter's settings, ti
 
 What the build guarantees, so a broken counter can't read as a quiet launch:
 
-- Empty code → no script, no third-party request, **and no sentence claiming visits are
-  counted.** A page that advertises a counter it doesn't have is the same lie as a green
-  check that never ran.
+- Empty code → no GoatCounter script or count request, **and no sentence claiming visits are
+  counted.** The Buttondown form action remains the separate submit-time surface. A page that
+  advertises a counter it doesn't have is the same lie as a green check that never ran.
 - Malformed code (a full URL, a hostname, uppercase, a placeholder) → the **build fails** with
   `Invalid ANALYTICS_CODE`. A dead beacon would report zero, and zero visits is
   indistinguishable from zero measurement.

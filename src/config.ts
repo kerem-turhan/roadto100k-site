@@ -15,9 +15,9 @@ export const config = {
   BUTTONDOWN_URL: 'https://buttondown.com/api/emails/embed-subscribe/mehmet_kerem',
   /**
    * GoatCounter site code — the subdomain of the dashboard, e.g. 'roadto100k'.
-   * Empty means the counter is off: no script, no third-party request, and no
-   * sentence claiming visits are counted. See src/lib/analytics.ts and the
-   * two-minute setup in README.md ("Turning the visit counter on").
+   * Empty means the GoatCounter surface is off: no script, no count request, and no
+   * sentence claiming visits are counted. The Buttondown form action is separate.
+   * See src/lib/analytics.ts and the two-minute setup in README.md ("Turning the visit counter on").
    */
   ANALYTICS_CODE: 'roadto100k',
   X_URL: 'https://x.com/mkeremturhan',

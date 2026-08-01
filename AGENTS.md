@@ -21,8 +21,9 @@ Full plan & copy: [docs/plan.md](docs/plan.md).
   Any significant change (new section, new page type, new/changed ritual step, new config
   knob) updates it **in the same commit**. A stale handbook is a lying handbook.
 - **Budget $0:** free tiers only — no paid fonts, APIs, analytics, or CDNs. Fonts are
-  self-hosted via @fontsource. No external requests at runtime except the Buttondown form
-  action.
+  self-hosted via @fontsource. Runtime has exactly two external surfaces: the cookieless
+  GoatCounter script plus count endpoint, and the Buttondown form action on submit. There is
+  no backend or cookie layer.
 
 ## Design tokens (locked — see docs/plan.md §1 for rationale)
 - Palette (light / dark): paper `#EDF2E7`/`#0F1511` · rule `#C7D6C2`/`#26332A` · ink
