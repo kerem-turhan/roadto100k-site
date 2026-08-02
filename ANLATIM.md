@@ -7,8 +7,8 @@
 > ritüel adımı değişimi) bu dosya **aynı commit'te** güncellenir. Dosya eskiyorsa yalan
 > söylüyor demektir.
 >
-> Son güncelleme: 28 Temmuz 2026 belge doğruluğu kontrolü — içerik durumu 26 Temmuz
-> haftalık kapanışına (`5102e8a`) bağlıdır.
+> Son güncelleme: 2 Ağustos 2026 belge doğruluğu kontrolü — içerik durumu 2 Ağustos
+> haftalık kapanışına bağlıdır.
 
 ---
 
@@ -186,7 +186,7 @@ birlikte ~6).
 
 ```json
 {
-  "weekEnding": "2026-07-26",
+  "weekEnding": "2026-08-02",
   "revenue": 0,
   "mrr": 0,
   "spend": 0,
@@ -227,7 +227,7 @@ sonra `public/`e kopyalanır — yarım kalan bir çalıştırma mevcut kartı b
 
 ```sh
 git add src/data/ledger.json public/og
-git commit -m "chore(ledger): week of 2026-07-26"
+git commit -m "chore(ledger): week of 2026-08-02"
 git push
 ```
 
@@ -237,8 +237,8 @@ Push'tan sonra GitHub Actions ~1 dakikada: tip kontrolü → lint → testler �
 sonra siteyi yeniden yayınlar. Bu build sırasında **kendiliğinden** güncellenir:
 
 - ana sayfadaki tablo ve sparkline,
-- `/w/2026-07-26/` hafta sayfası + `/w/` arşivi,
-- varsa `/tr/w/2026-07-26/` ve `/tr/`,
+- `/w/2026-08-02/` hafta sayfası + `/w/` arşivi,
+- varsa `/tr/w/2026-08-02/` ve `/tr/`,
 - `feed.xml`, `tr/feed.xml`, `sitemap.xml`, JSON-LD, hafta sayfasının OG etiketleri.
 
 Testler kırmızıysa deploy **olmaz** — bozuk veri yayına çıkamaz. GitHub'da Actions sekmesinde
@@ -258,18 +258,19 @@ yeşil tik görürsen iş bitmiştir.
 
 ---
 
-## 4. Şu an neredeyiz (30 Temmuz 2026)
+## 4. Şu an neredeyiz (2 Ağustos 2026)
 
 - Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
   bir kayıtla test edilmiş.
-- Typecheck, lint, **29 dosyada 405 test**, build ve leak taramaları (kaynak + dist) geçti.
+- Typecheck, lint, **29 dosyada 406 test**, build ve leak taramaları (kaynak + dist) geçti.
 - **Dönüşüm yolu kuruldu (28 Temmuz), 30 Temmuz'da tamamlandı:** `/work/` fiyatı ve paketiyle
   birlikte canlı, `/silent-green/` № 001 yayında, newsletter vaadi formun üstünde, ziyaret
   sayacı koda bağlandı. Ayrıntı: §2.1b, §2.1c, §2.2b ve aşağıdaki "Launch öncesi dönüşüm
   hazırlığı".
-- Defterde **2 hafta** var: 19 Temmuz (Gün 0) ve 26 Temmuz 2026 — her ikisi de gelir $0, MRR
-  $0, harcama $0, abone 0. 26 Temmuz notu: ilk tekrarlanabilir herkese açık teardown çıktı;
-  3 hedefli outreach mesajı gitti, henüz yanıt yok. Sıfırlar duruyor; abartı yok.
+- Defterde **3 hafta** var: 19 Temmuz (Gün 0), 26 Temmuz ve 2 Ağustos 2026. 2 Ağustos
+  kapanışı: gelir $0, MRR $0, harcama $2, abone 0. Not: tekrarlanabilir bir fail-open raporu
+  upstream'de yaklaşık 10 saatte düzeltildi; ayrı bir temizlenmiş yayın adayı tüm yerel
+  kapılardan geçti ve private kaldı. Sıfırlar duruyor; abartı yok.
 - **Kanıt bölümü AÇILDI (22 Temmuz).** İlk teardown reposu public oldu; `PROOF_ITEMS[0].url`
   gerçek linkle dolduruldu, "The work" bölümü + "What I do" kartı artık sitede görünür.
   Sonraki kanıtlar da aynı yolla eklenir: config'e bir öğe yaz, `url`'i gerçek olduğu an yayında.

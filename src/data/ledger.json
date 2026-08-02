@@ -20,6 +20,15 @@
       "emailSubs": 0,
       "note": "First reproducible public teardown shipped; 3 targeted outreach messages sent, no replies so far.",
       "trNote": "İlk tekrarlanabilir herkese açık teardown yayınlandı; 3 hedefli outreach mesajı gitti, henüz yanıt yok."
+    },
+    {
+      "weekEnding": "2026-08-02",
+      "revenue": 0,
+      "mrr": 0,
+      "spend": 2,
+      "emailSubs": 0,
+      "note": "A reproducible fail-open report was fixed upstream in about 10 hours; a separate sanitized release candidate passed every local gate and stayed private.",
+      "trNote": "Tekrarlanabilir fail-open raporu upstream'de yaklaşık 10 saatte düzeltildi; ayrı bir temizlenmiş yayın adayı tüm yerel kapılardan geçti ve private kaldı."
     }
   ]
 }

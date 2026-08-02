@@ -63,6 +63,7 @@ describe('the Turkish card', () => {
 
   it('is built from the Turkish note and Turkish labels', () => {
     expect(tr).toContain('<html lang="tr">')
+    expect(tr).toContain('html[lang="tr"] .label')
     expect(tr).toContain('Hafta 1')
     expect(tr).toContain('26 Temmuz 2026 haftası · gün 7/165')
     expect(tr).toContain('Gelir (hafta)')

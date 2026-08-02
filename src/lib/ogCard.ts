@@ -189,6 +189,10 @@ ${cardFontFaces(fonts)}
         text-transform: uppercase;
         color: var(--ink-muted);
       }
+      html[lang="tr"] .label {
+        font-size: 16px;
+        letter-spacing: 0.12em;
+      }
       .value {
         margin-top: 8px;
         font-family: 'IBM Plex Mono', monospace;
