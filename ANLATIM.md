@@ -342,6 +342,66 @@ içeriğini ve ziyaret sayacını aynı yerde sunar. Lansman öncesi kontrol lis
 Lansman tutmazsa X'te sonradan “başarılı oldu” izlenimi veren bir paylaşım yapılmaz. Sonuç,
 hangi yönde olursa olsun ledger ve kanal tezi içinde dürüstçe değerlendirilir.
 
+### Teknik tarihçe — hâlâ geçerli dersler
+
+Bu bölüm, eski kararların “neden var?” kısmını korur. Buradaki tarihsel notlar güncel durum
+değildir; güncel durumun hangi hatalardan sonra oluştuğunu anlatır.
+
+#### 22 Temmuz: ana sayfa JavaScript beklemez
+
+İlk sürümde ana sayfa, tarayıcıda JavaScript çalışana kadar boş bir kabuk gibi davranıyordu.
+Bu; arama motoru, paylaşım önizlemesi ve JavaScript kapalı okuyucu için asıl içeriğin
+ulaşılamaz olması demekti. Şimdi build sonunda hazır HTML üretiliyor; tarayıcı sonra bu HTML'i
+devralıyor. Sonuç:
+
+- ana sayfa JavaScript kapalıyken de ledger ve ana mesajı taşır;
+- hafta ve Türkçe sayfaları zaten statik üretilir;
+- içerik sayfaya sonradan gizlenip gösterilmez;
+- aynı girdilerle arka arkaya build'ler aynı çıktıyı üretir.
+
+Bu davranış değişirse test ve yerel sayfa kontrolü birlikte yapılır. Hızlı görünen ama
+paylaşım botuna boş dönen bir ana sayfa, çalışıyor kabul edilmez.
+
+#### 22 Temmuz: kanıt, iddia değil kaynak bağlantısıdır
+
+Yayımlanmış iş kartı yalnız canlı bir bağlantısı olduğunda görünür. Rakam taşıyan bir kartın
+dayandığı kaynak commit'i de tanımlı olmalıdır. Amaç, karttaki sayının zamanla sessizce
+anlamsızlaşmasını önlemektir: okuyucu, iddianın hangi açık kaynak anlık görüntüsüne dayandığını
+görebilir. Bu kapı açıkken:
+
+1. Kanıt bölümü ve hizmet bağlantısı beraber görünür.
+2. Geçerli kanıt yokken ikisi de görünmez; boş vaat için yer tutucu yazılmaz.
+3. Yeni bir kanıt eklenince link, rakam ve kaynak kapsamı aynı değişiklikte denetlenir.
+
+#### 22 Temmuz: erişilebilirlik yüzeyin parçasıdır
+
+Açık/koyu tema seçeneği ana sayfa, hafta sayfaları ve Türkçe sayfalarda aynı mantıkla çalışır.
+Klavye odağı görünür olmalı; ekran okuyucu etiketleri anlam taşımalı; hareket azaltma tercihi
+olan kullanıcıda gereksiz animasyon durmalıdır. Tema düğmesi JavaScript varken üretilir; kapalı
+tarayıcıya işlevsiz düğme verilmez. Paylaşılmış bir hafta linki, ana sayfadan daha az erişilebilir
+olamaz.
+
+#### 28–30 Temmuz: dönüşüm yüzeyleri tamamlandı
+
+Bu tarihlerde üç kalıcı yüzey birlikte kuruldu: hizmet sayfası, silent-green arşivi ve
+newsletter vaadi. Bunun nedeni, tek seferlik dış trafik geldiğinde okuyucunun hem “bu kişi ne
+yapıyor?” hem “burada kalırsam ne alırım?” sorusuna aynı ziyarette cevap bulmasıdır. Ziyaret
+sayacı da bu turda eklendi; 3 Ağustos itibarıyla yalnız kodda değil canlı ölçümde de doğrulandı.
+
+#### Paylaşım ve arama yüzeyleri
+
+Build aşağıdaki yüzeyleri tek kaynaktaki veriden üretir. Bunlar ayrı “içerik işleri” değildir;
+haftalık ledger kaydının doğal çıktılarıdır:
+
+| Yüzey | Güncellemede kontrol sorusu |
+|---|---|
+| Ana sayfa ledger'ı | Yeni hafta ve toplamlar doğru mu? |
+| Hafta arşivi | Yeni haftanın kalıcı URL'si açılıyor mu? |
+| Türkçe özet | `trNote` varsa Türkçe sayfa ve kart oluştu mu? |
+| RSS ve sitemap | Yeni URL otomatik listelendi mi? |
+| JSON-LD / canonical / hreflang | Sayfanın gerçek adresi ve dili doğru mu? |
+| OG kartı | Paylaşım görseli doğru tarih, dil ve rakam taşıyor mu? |
+
 ## 6. Sırada ne var
 
 1. **Show HN'i doğru işlet.** GO/NO-GO'nun iki canlı şartını doğrula, ilk iki saati izle ve
