@@ -7,8 +7,10 @@
 > ritüel adımı değişimi) bu dosya **aynı commit'te** güncellenir. Dosya eskiyorsa yalan
 > söylüyor demektir.
 >
-> Son güncelleme: 2 Ağustos 2026 belge doğruluğu kontrolü — içerik durumu 2 Ağustos
-> haftalık kapanışına bağlıdır.
+> **Son güncelleme: 3 Ağustos 2026.** Üç haftalık ledger canlı; gelir $0, MRR $0, kümülatif
+> harcama $2 ve e-posta abonesi 0. Site 406 otomatik testten geçiyor; çerezsiz ziyaret sayacı,
+> kayıt sayfaları, paylaşım kartları ve haftalık silent-green vaadi canlı. Şu an tek öncelik,
+> 4 Ağustos'taki Show HN lansmanında gelen trafiği dürüstçe karşılamak.
 
 ---
 
@@ -53,12 +55,12 @@ gönderdiğinde Buttondown form action'ı (§2.2b). Başka hiçbir şey.
 
 | Bölüm | Ne yapar |
 |---|---|
-| **Üst şerit + gün damgası** | "DAY 2 · 163 DAYS LEFT" — 19 Tem 2026'dan bu yana geçen gün ve hedefe kalan süre. Tarayıcının saatinden **canlı hesaplanır**, elle güncellenmez. |
+| **Üst şerit + gün damgası** | "DAY … · … DAYS LEFT" — 19 Tem 2026'dan bu yana geçen gün ve hedefe kalan süre. Tarayıcının saatinden **canlı hesaplanır**, elle güncellenmez. |
 | **Hero (giriş)** | Tek cümlelik iddia: $0 → $100k, 31 Aralık 2026. Yanında ne yaptığın ve bunun neden halka açık olduğu. |
 | **The rules (kurallar)** | Bahsin kuralları: $100/ay tavan, $0 reklam, her sayı public, haftalık kayıt, yıl sonunda ne olursa olsun dürüst post-mortem. Bu bölüm senin kendine koyduğun kısıt — okuyucunun sana güvenmesinin sebebi. |
 | **The ledger (defter)** | Sitenin kalbi. Haftalık tablo (hafta bitişi, gelir, MRR, harcama, abone, not) + üstünde **sparkline**: yeşil çizgi gerçekleşen kümülatif gelir, kesikli çizgi $100k'nın gerektirdiği tempo. Rakamların tamamı tek bir dosyadan gelir: `src/data/ledger.json`. |
 | **What I'm building (ne inşa ediyorum)** | Ne üzerinde çalıştığın — kategori dilinde, ürün adı vermeden. Altında iletişim satırı. |
-| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / ongoing operations). Ana sayfada fiyat yok; fiyat `/work/` sayfasında. **22 Temmuz'da açıldı** (ilk teardown reposu public). Kural aynen duruyor ve 22 Temmuz'da sıkılaştırıldı: `src/config.ts` içindeki bir öğe, linki gerçek **ve** (rakam veriyorsa) `sourceCommit`'i dolu olmadıkça HTML'e hiç basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. Ayrıntı: §4, "Kanıt bölümünün iki kapısı". |
+| **The work / proof (kanıt)** | Yayımlanmış işlerin listesi + "What I do" kartı (audit / eval-harness kurulumu / ongoing operations). Ana sayfada fiyat yok; fiyat `/work/` sayfasında. **22 Temmuz'da açıldı** (ilk teardown reposu public). `src/config.ts` içindeki bir öğe, linki gerçek ve rakam veriyorsa kaynak commit'i dolu olmadıkça HTML'e basılmaz; hiçbiri canlı değilse bölüm tamamen kaybolur. |
 | **Email signup (kayıt)** | Asıl hedef. Buttondown formu. **28 Temmuz'da vaat netleşti:** formun hemen üstünde tek cümlelik söz duruyor — *"One silent-green finding a week — a check that couldn't look and said yes anyway."* Altında sıklık/spam/çıkış satırı. Buttondown adresi config'te boş bırakılırsa form yerine X'i takip bağlantısı gösterilir. |
 | **Footer** | Work with me, Silent green, X, GitHub, RSS (+ Türkçe) bağlantıları + tema (açık/koyu) düğmesi. "Work with me" bağlantısı yalnız kanıt kapısı açıkken görünür — olmayan sayfaya link verilmez. Alt satır: *"No cookies, no personal data, $0/mo hosting."* Sayaç açıksa altında tek cümlelik sayaç açıklaması durur (§2.2b). |
 
@@ -136,24 +138,19 @@ defter verisinden yazılır — elle bakım gerektirmez.
 | **Yazı tipi lisansları** | `/fonts/OFL-*.txt` | Üç yazı tipi de OFL-1.1; bu lisans "dağıtacaksan telif notunu ve lisansı yanında taşı" diyor. Font dosyalarının yanına üç lisans metni kondu. Bir aile eklenip lisansı unutulursa test kırmızıya döner. |
 | **Tema + erişilebilirlik** | her yerde | Açık/koyu mod (sistem tercihi + düğme) — **22 Temmuz'dan beri hafta ve Türkçe sayfalarında da düğme var**. Klavye odak halkaları, ekran okuyucu etiketleri, `prefers-reduced-motion` (animasyon istemeyen kullanıcıda animasyon yok). İçerik hiçbir zaman animasyona **veya JavaScript'e** bağlı değildir: 22 Temmuz'dan beri ana sayfa da build sırasında hazır HTML olarak yazılıyor (aşağıya bak), hafta ve Türkçe sayfaları zaten öyleydi. |
 
-### 2.2b Ziyaret sayacı (30 Temmuz'da eklendi, 29 Tem karar paketi K9)
+### 2.2b Ziyaret sayacı (30 Temmuz'da eklendi, canlı)
 
-Site bugüne kadar **hiçbir şey ölçmüyordu**. Duruş "no cookies, no tracking"ti ve ikinci
-yarısı kazandırdığından fazlasına mal oluyordu: launch trafiği **bir kez** gelir, sayılmayan
-trafikten kimse bir şey öğrenemez. Ölçmemek gizlilik değil, kibar bir körlük. Sayaç bu yüzden
-var — duruşu yumuşatmadan, doğru hâline getirerek.
+Site, lansman trafiğinden öğrenebilmek için çerezsiz bir sayaç kullanıyor. Sayaç canlıdır:
+yükleme isteğinin ve sayım isteğinin başarılı döndüğü doğrulandı. Ölçüm, kişiyi tanımak için
+değil, hangi sayfaların gerçekten görüldüğünü anlamak içindir.
 
-- **Kim:** [GoatCounter](https://www.goatcounter.com/). Bu ölçekte ücretsiz, açık kaynak,
-  gerekirse kendi sunucunda barındırılabilir; **çerez koymuyor**, veritabanında **IP adresi
-  veya User-Agent tutmuyor**. İstatistik sayfası istenirse **herkese açık** yapılabilir — bu
-  sitenin zaten savunduğu şey.
+- **Kim:** [GoatCounter](https://www.goatcounter.com/). Sayaç sayfası `roadto100k.goatcounter.com`
+  adresinde herkese açık görünürlüktedir. Çerez koymaz ve kişisel veri toplamaz.
 - **Nerede yazıyor:** her sayfanın altında tek cümle — *"Visits are counted without cookies,
   fingerprints, or anything that identifies you — because not measuring isn't privacy, it's
   blindness."* (Türkçe sayfalarda Türkçesi.)
-- **Açma/kapama:** `src/config.ts` → `ANALYTICS_CODE`. Boşken GoatCounter sayaç yüzeyi **yok**
-  — script/count isteği yok **ve o cümle de yok**. Buttondown form action'ı ayrı ve yalnızca
-  form gönderildiğinde çalışır. Sayıyorum diyip saymayan sayfa, hiç koşmamış yeşil kontrolle aynı
-  yalandır.
+- **Açma/kapama:** `src/config.ts` → `ANALYTICS_CODE`. Boşken sayaç yüzeyi **yok**; kayıt formu
+  ayrı çalışır ve yalnız form gönderildiğinde istekte bulunur.
 - **Bozuk ayarda build patlar.** Kod dolu ama biçimi yanlışsa (tam URL, host adı, büyük harf,
   yer tutucu) build `Invalid ANALYTICS_CODE` diyerek durur. Ölü bir beacon sıfır rapor eder ve
   "sıfır ziyaret" ile "sıfır ölçüm" panoda birbirinden ayırt edilemez.
@@ -175,317 +172,230 @@ e-posta, Buttondown, başlangıç tarihi, hedef tarihi, hedef tutar, kanıt öğ
 
 ---
 
-## 3. Nasıl güncellenir — Kerem'in Pazar rutini
+## 3. Nasıl güncellenir — Pazar rutini
 
-Haftalık iş **tek dosyaya birkaç satır** eklemek. Toplam ~5 dakika (haftalık OG kartıyla
-birlikte ~6).
+Bu ritüel haftada yaklaşık 30 dakika sürer. Amaç güzel bir rapor yazmak değil, o haftanın
+gerçeğini değiştirilemez biçimde kayda almaktır. Her Pazar aynı sırayı izle; gelir yoksa da
+aynı kayıt yapılır.
 
-### Adım 1 — Haftayı yaz
+### 3.1 Önce kaynakları topla (10 dakika)
 
-`site/src/data/ledger.json` içindeki `weeks` dizisinin **sonuna** yeni bir nesne ekle:
+1. **Ledger:** o Pazar biten hafta için gelir, harcama, MRR ve toplam e-posta abonesini not et.
+   Gelir ve harcama USD tam dolar; MRR ve abone sayısı hafta sonundaki toplamdır.
+2. **Kayıt:** `src/data/ledger.json` dosyasını aç; `weeks` dizisinin son kaydını ve tarih
+   sırasını kontrol et. Yeni tarih bir Pazar olmalı ve önceki kayıttan sonra gelmelidir.
+3. **E-posta:** Buttondown panelindeki toplam abone sayısını al. Kendi test kaydın da gerçek
+   abonedir; silinmişse ancak o zaman toplamdan çıkar.
+4. **Ziyaret:** GoatCounter'da önceki haftanın sayfa görüntüleme yönünü not et. Bu sayı
+   ledger'a yazılmaz; içerik ve dağıtım kararına yardımcı bir bağlamdır.
+5. **İçerik:** o hafta yayımlanan silent-green girişi, yayınlanan kanıt ve önemli dış
+   konuşmaları bir cümlelik not için gözden geçir. Not, vaat veya başarı hikâyesi değildir;
+   doğrulanabilir haftalık kayıttır.
+
+Yeni kayıt kalıbı:
 
 ```json
 {
-  "weekEnding": "2026-08-02",
+  "weekEnding": "2026-08-09",
   "revenue": 0,
   "mrr": 0,
   "spend": 0,
   "emailSubs": 0,
-  "note": "One honest sentence about the week.",
+  "note": "One honest English sentence about the week.",
   "trNote": "Haftanın tek cümlelik Türkçe özeti (opsiyonel)."
 }
 ```
 
-- `weekEnding`: o haftayı kapatan **Pazar** (YYYY-AA-GG).
-- `revenue` / `spend`: o haftanın tutarları (USD, tam dolar).
-- `mrr` / `emailSubs`: o Pazar itibarıyla **toplam** durum.
-- `note`: İngilizce, tek cümle, dürüst. Sitede, RSS'te, arama sonucunda bu görünür.
-- `trNote`: **opsiyonel.** Yazarsan `/tr/` altında o hafta görünür; yazmazsan Türkçe tarafta
-  o hafta **hiç** görünmez. Boş string ("") yazmak da "yok" demektir.
+`note` İngilizce ve tek cümledir; RSS, arama sonucu ve hafta sayfasında görünür. `trNote`
+opsiyoneldir: boş bırakırsan Türkçe haftası üretilmez. Rakam veya tarih belirsizse tahmin
+etme: kaynağa dön, sonuç netleşene kadar değişikliği gönderme.
 
-Kural: uydurma yok. $0 haftası $0 yazılır.
-
-### Adım 2 — Haftanın paylaşım kartını üret (opsiyonel ama tavsiye)
+### 3.2 Kartı üret ve yerelde kontrol et (5 dakika)
 
 ```sh
 cd site
 npm run og
+npm run lint
+npm run typecheck
+npm test
+npm run build
 ```
 
-Bu komut, **bilgisayarındaki Chrome'u** görünmez modda çalıştırıp her hafta için 1200×630 bir
-PNG üretir: İngilizce kart `public/og/w/<hafta>.png`, `trNote` yazdıysan Türkçe kart da
-`public/og/w/tr/<hafta>.png`. Zaten var olan kartlara dokunmaz (yeniden üretmek için
-`npm run og -- --force`). Kart önce geçici klasöre çizilir, boyutu doğrulanır, ancak ondan
-sonra `public/`e kopyalanır — yarım kalan bir çalıştırma mevcut kartı bozamaz.
+`npm run og`, her hafta için 1200×630 paylaşım kartı üretir; Türkçe not varsa Türkçe kart da
+üretir. Kart üretimi başarısız olursa genel kart kullanılabilir, ama nedenini kayda geçir.
+Lint, tip denetimi, test ve build'in dördü de sıfır çıkış koduyla bitmelidir. Build sonrası
+yerelde `/`, yeni `/w/<tarih>/`, varsa `/tr/w/<tarih>/`, `/silent-green/` ve `/work/`
+sayfalarını aç: yeni tarih, rakam, kart etiketi ve kayıt formu görünmelidir.
 
-- Chrome yoksa komut anlamlı bir hata verir; kart üretilmezse hafta sayfası genel `og.png`'ye
-  düşer — hiçbir şey kırılmaz, sadece paylaşım görseli jenerik olur.
-- Bu adım **sadece senin bilgisayarında** çalışır; sunucuda (GitHub Actions) tarayıcı
-  çalıştırılmaz, orada yalnız commit'lediğin PNG kopyalanır. Bütçe $0 kalır.
+### 3.3 KIRMIZI kararı
 
-### Adım 3 — Commit + push
+Aşağıdakilerden biri olursa yayınlama; önce KIRMIZI nedenini yaz:
+
+- ledger tarihi, sırası veya sayı kaynağı belirsiz;
+- lint, typecheck, test ya da build başarısız;
+- yeni hafta sayfası ve ana sayfa farklı rakam gösteriyor;
+- kayıt formu veya sayaç beklenen yüzeyde görünmüyor;
+- paylaşım kartı yanlış tarih/rakam taşıyor;
+- başkasına ait hiçbir ad, adres veya ayrıntı buradan çıkmaz ilkesiyle çelişme şüphesi var.
+
+KIRMIZI, “kötü hafta” demek değildir. $0 gelir yeşil bir kayıttır; doğrulanamayan veya
+bozuk bir kayıt KIRMIZI'dır.
+
+### 3.4 Commit, deploy ve kanıt (5 dakika)
 
 ```sh
 git add src/data/ledger.json public/og
-git commit -m "chore(ledger): week of 2026-08-02"
+git commit -m "chore(ledger): week of 2026-08-09"
 git push
 ```
 
-### Adım 4 — Otomatik olan kısım (sen bir şey yapmıyorsun)
+Push sonrasında GitHub Actions sırasıyla kalite kontrollerini, testleri ve build'i çalıştırır;
+başarılı çalıştırma Pages deploy'u tetikler. Deploy kanıtı üç parçadır:
 
-Push'tan sonra GitHub Actions ~1 dakikada: tip kontrolü → lint → testler → build çalıştırır,
-sonra siteyi yeniden yayınlar. Bu build sırasında **kendiliğinden** güncellenir:
+1. Actions çalıştırması yeşil.
+2. Canlı ana sayfa ve yeni hafta URL'si HTTP 200 döndürüyor.
+3. Canlı sayfada yeni ledger rakamı ve güncel OG kartı var.
 
-- ana sayfadaki tablo ve sparkline,
-- `/w/2026-08-02/` hafta sayfası + `/w/` arşivi,
-- varsa `/tr/w/2026-08-02/` ve `/tr/`,
-- `feed.xml`, `tr/feed.xml`, `sitemap.xml`, JSON-LD, hafta sayfasının OG etiketleri.
+Birinci madde yoksa “deploy oldu” denmez. İkinci veya üçüncü madde yoksa, Actions yeşil olsa
+bile dağıtım sorunu olarak açılır.
 
-Testler kırmızıysa deploy **olmaz** — bozuk veri yayına çıkamaz. GitHub'da Actions sekmesinde
-yeşil tik görürsen iş bitmiştir.
+### 3.5 Rutin dışı değişikliklerin haritası
 
-### Diğer rutin dışı değişiklikler
-
-| Ne | Nerede |
+| Değişiklik | Tek kaynak / kontrol |
 |---|---|
-| Kanıt bölümünü açmak (flip günü) | `src/config.ts` → `PROOF_ITEMS[0].url` = gerçek repo linki **+ `sourceCommit`** = o repodaki commit SHA'sı. |
-| Yeni kanıt işi eklemek | `src/config.ts` → `PROOF_ITEMS` dizisine yeni nesne ({title, description, stats, url, sourceCommit}). Rakam (`stats`) veren her öğe `sourceCommit` **zorunlu** — yoksa öğe sitede hiç görünmez. |
-| Buttondown / X / GitHub / e-posta adresi | `src/config.ts` |
-| Yeni silent-green girişi yayımlamak | `src/data/series.json` → `entries` dizisine nesne ({number, slug, date, title, dek, body[]}). Gövde blokları: düz metin, `{callout}`, `{list}` (§2.1c). Sıra numarası, slug biçimi, tarih ve dolu gövde zorunlu; biri bozuksa build patlar. Push et — giriş sayfası, indeks satırı ve sitemap kaydı birlikte doğar. |
-| Hizmet metni / vaat / fiyat paketi / seri tanıtımı | `src/lib/offer.ts` (üç yüzey de buradan okur; fiyat, süre kutusu, çıktı ve ön koşul listeleri `AUDIT` içinde). `/work/`'ün sitemap tarihi olan `OFFER_UPDATED`'ı da elle güncelle. |
-| Ziyaret sayacını açmak | `src/config.ts` → `ANALYTICS_CODE` = GoatCounter site kodu. Tek satır; gerisi otomatik (§2.2b). |
-| Özel alan adı alınırsa | `vite.config.ts` → `base: '/'` **ve** `src/config.ts` → `SITE_URL` |
+| Haftalık sayılar ve not | `src/data/ledger.json`; tam test + build |
+| Yeni silent-green girişi | `src/data/series.json`; giriş, indeks ve sitemap'i yerelde aç |
+| Hizmet metni, vaat veya paket | `src/lib/offer.ts`; üç yüzeyin aynı metni gösterdiğini kontrol et |
+| Dış bağlantı, tarih veya sayaç ayarı | `src/config.ts`; canlı link ve ilgili yüzeyi kontrol et |
+| Alan adı değişikliği | `vite.config.ts` ve `src/config.ts`; canonical, sitemap ve OG URL'lerini kontrol et |
 
----
+## 4. X ölçüm paneli — 3 Ağustos 2026
 
-## 4. Şu an neredeyiz (2 Ağustos 2026)
+Bu panel, 7 Temmuz–3 Ağustos dışa aktarma penceresinin toplamıdır. X'teki gösterim platformun
+verdiği bir dağıtım sayısıdır; gelir, ilgi veya doğru kitle demek değildir.
 
-- Site **canlı**: HTTP 200, GitHub Actions deploy'u yeşil, Buttondown formu bağlı ve gerçek
-  bir kayıtla test edilmiş.
-- Typecheck, lint, **29 dosyada 406 test**, build ve leak taramaları (kaynak + dist) geçti.
-- **Dönüşüm yolu kuruldu (28 Temmuz), 30 Temmuz'da tamamlandı:** `/work/` fiyatı ve paketiyle
-  birlikte canlı, `/silent-green/` № 001 yayında, newsletter vaadi formun üstünde, ziyaret
-  sayacı koda bağlandı. Ayrıntı: §2.1b, §2.1c, §2.2b ve aşağıdaki "Launch öncesi dönüşüm
-  hazırlığı".
-- Defterde **3 hafta** var: 19 Temmuz (Gün 0), 26 Temmuz ve 2 Ağustos 2026. 2 Ağustos
-  kapanışı: gelir $0, MRR $0, harcama $2, abone 0. Not: tekrarlanabilir bir fail-open raporu
-  upstream'de yaklaşık 10 saatte düzeltildi; ayrı bir temizlenmiş yayın adayı tüm yerel
-  kapılardan geçti ve private kaldı. Sıfırlar duruyor; abartı yok.
-- **Kanıt bölümü AÇILDI (22 Temmuz).** İlk teardown reposu public oldu; `PROOF_ITEMS[0].url`
-  gerçek linkle dolduruldu, "The work" bölümü + "What I do" kartı artık sitede görünür.
-  Sonraki kanıtlar da aynı yolla eklenir: config'e bir öğe yaz, `url`'i gerçek olduğu an yayında.
-- Teknik taban tamam: JSON-LD, sitemap, robots, canonical, RSS, haftalık statik sayfalar,
-  sparkline, haftalık OG kartları, Türkçe özet sayfaları, açık/koyu tema, erişilebilirlik.
-- Otomatik testler (Vitest) mantığın tamamını koruyor: gün sayacı, defter doğrulama, feed,
-  sitemap, JSON-LD, hafta sayfaları, sparkline, kanıt görünürlüğü, OG kartı, TR sayfaları.
-- **22 Temmuz denetimi:** site düşman gözüyle baştan aşağı denetlendi (canlı tarayıcı +
-  erişilebilirlik, testlerin gerçekten koruyup korumadığı, SEO/paylaşım, kanıt doğruluğu,
-  sızıntı taraması). Bulgular ve sıralı plan: [docs/audit-2026-07-22.md](docs/audit-2026-07-22.md).
-  Denetimin en önemli dersi: **bir "kapı" belgede yazıyor diye kapı olmuyor.** Kanıt kapısı
-  yalnızca `https://` önekine bakıyordu; sahte bir link tüm testlerden geçip yayına girebiliyordu.
-  Artık kapı gerçek (aşağıda), ve kalıcı kural şu: **bir bekçi bakamadığı durumda yeşil değil
-  KIRMIZI verir — "bilmiyorum" = başarısız.**
+| İçerik türü | İçerik | Gösterim | Beğeni | Engagement | Profil ziyareti | Yeni takip | URL tıklaması | Bookmark |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Toplam | 96 | 8.514 | 64 | 190 | 43 | 2 | 8 | 5 |
+| Reply | 63 | 7.769 | — | — | 40 | 1 | 0 | — |
+| Özgün post | 33 | 745 | — | — | 3 | 1 | 8 | — |
 
-### Launch öncesi dönüşüm hazırlığı (28 → 30 Temmuz)
+Reply başına ortalama gösterim yaklaşık 123, özgün post başına yaklaşık 23'tür. Buna rağmen
+sekiz URL tıklamasının tamamı ve alınan 26 reply'ın 21'i özgün postlardan geldi. Bu ayrım,
+hangi sayının karar için değerli olduğunu gösterir.
 
-Show HN'in sert kapısı **beş** maddeye çıktı (29 Tem, K-HN). Bu repoya düşen **dördü**:
+### Hangi metriğe neden bakıyoruz?
 
-1. **Hizmet yolu** — `/work/` (§2.1b). Konumlandırma cümlesi görünür, üç iş somut, kanıt
-   yanında, iletişim tek tık. **30 Temmuz'dan beri fiyatlı ve paketli:** $1,500, bir hafta,
-   sayılı çıktı listesi, erişim checklist'i, sonraki basamak.
-2. **Newsletter vaadi** — form artık neye abone olunduğunu söylüyor: *"One silent-green
-   finding a week…"* + sıklık/spam/çıkış satırı. Aynı cümle ana sayfada, `/work/`'te ve
-   `/silent-green/`'de birebir aynı; bir testi vaadi kelimesi kelimesine bir sabite karşı
-   tutuyor, metni değiştiren commit üç dosyada kırmızı alır.
-3. **`/silent-green/`** — kalıcı, indekslenen seri adresi. **№ 001 yayında** (30 Temmuz):
-   *"The harness that counted silence as success"* — 40 denemede sıfır sessiz gerileme rapor
-   eden, ama test paketinin çıkış kodunu hiç okumayan bir ölçüm hattı. Brief'in "en az 1 giriş"
-   şartı böylece **kapandı**; 28 Temmuz'da açık kalan tek kabul kriteri buydu.
-4. **Ziyaret sayacı** — kodda **tamamen bitti**, açılması Kerem'in iki dakikalık hesap adımına
-   bağlı (§2.2b + README). `ANALYTICS_CODE` boş kaldığı sürece madde **açık**.
+| Metrik | Ne söyler | Tek başına neden yetmez? |
+|---|---|---|
+| Gösterim | İçeriğin kaç kez ekranda belirdiğini | Yanlış kitle de yüksek gösterim üretebilir. |
+| Profil ziyareti | Birinin “bu kim?” diye ikinci adım attığını | Tek başına siteye veya e-postaya dönüşüm değildir. |
+| URL tıklaması | Siteye giden gerçek niyeti | Tıklama, kayıt veya konuşma garantisi vermez. |
+| Gerçek konuşma | Doğru insanla bağ ve öğrenme ihtimalini | Sayması zordur; bağlamla birlikte okunur. |
+| Nitelikli takip | Gelecekte erişilebilecek uygun kişiyi | Sayı küçük olabilir; kalitesi isimden önemlidir. |
 
-Beşinci madde bu repoda değil: teardown reposunun README'sindeki ve `verify` çıktısındaki
-dönüşüm halkası.
+**Ders: erişim ile ilgi neredeyse ilişkisiz.** En yüksek erişimli iki içerik büyük bir hesap
+altındaki tek satırlık şakalardı: 1.088 ve 1.082 gösterim, toplam yalnız 4 profil ziyareti
+(yaklaşık %0,2). En yüksek dönüşümlü içerik ise 284 gösterimden 14 profil ziyareti üretti
+(%4,93): bir builder'a düzenli ortaya çıkışının ilham verdiğini söyleyen kısa, insani bir
+reply. İkinci sıradaki teknik eval sohbeti 159 gösterimden 3 ziyaret üretti (%1,89).
 
-**Şu an açık kalan tek şart:** sayacın hesabı. Kod tarafında yapılacak bir şey kalmadı.
+Kadans da tam oturmadı: 19 Temmuz–3 Ağustos arasındaki 16 günün 13'ünde içerik var; 24–26
+Temmuz tamamen boş, özgün post yalnız 10 günde yayımlandı. “Her gün en az bir özgün post”
+tabanı henüz tutulmuş değil. Thread de çalışmıyor: 23 Temmuz dersi, ikinci ve sonrası
+tweetlerin ilk tweetin yaklaşık %10–50'sini gördüğünü gösterdi. Fikir içeriği bu nedenle
+tek uzun post olarak yayımlanır.
 
-### Kanıt bölümünün iki kapısı (22 Temmuz'da sıkılaştırıldı)
+X birincil kanal değil, **amplifikatördür**. Birincil kanal upstream katkılar, Hacker News ve
+kendi sitedir. Canlı X keşfi, X içindeki Web Grok radarıyla yapılır; nihai konu, metin ve
+dağıtım kararı strateji chatindedir. `LIVE GKK` ile `SOURCE-LED` ayrımı zorunludur; yanlış
+kitleli yüksek erişim, reply adayı değildir.
 
-1. **Link gerçek olacak.** Sadece `https://` yetmez: gerçek bir alan adı + en az bir yol
-   parçası şart; `example.com`, `localhost`, IP adresi, `TODO/TBD/WIP` gibi doldurma
-   kelimeleri, `http://` ve şifreli linkler reddedilir. Reddedilen öğe HTML'e hiç basılmaz.
-2. **Rakam veren iddia commit'e sabitlenecek** (`sourceCommit`). Kartın rakamları bizim
-   config'imizde duruyor ama gerçek başka repoda; o repo değişince bizim cümle sessizce
-   yalan olur. Pin bunu tarihsel bir cümleye çevirir: "şu commit'te 6/6'ydı" — kartın altındaki
-   `verified against commit …` satırı okuyucuyu tam o ağaca götürür. `stats` dolu ve
-   `sourceCommit` yoksa öğe **görünmez**.
+## 5. Şu an neredeyiz — 3 Ağustos 2026
 
-### Ana sayfa artık JavaScript'siz de okunuyor
+- Site HEAD'i `c08813e`; 2 Ağustos haftalık kapanışı yayımlandı.
+- Ledger'da 19 Temmuz, 26 Temmuz ve 2 Ağustos olmak üzere üç hafta var. Son kapanış:
+  gelir $0, MRR $0, kümülatif harcama $2, e-posta abonesi 0.
+- 406 test yeşil; en son Pages deploy çalıştırması `30743778609` yeşil.
+- EN/TR kayıt sayfaları ve 1200×630 OG kartları canlı. `/silent-green/` altında en az bir
+  yayımlanmış giriş var; newsletter haftada bir silent-green bulgusu vaat ediyor.
+- Buttondown gerçek kayıtla denendi. Takip/izleme ayarları kapalı; UTM kaynak etiketi olarak
+  açık ve kişi izlemek için kullanılmıyor.
+- GoatCounter canlı, herkese açık görünürlükte ve çerezsiz çalışıyor.
+- Öncelik: 4 Ağustos, 15:00–20:00 TR arasında Show HN lansmanı. Açık kaynak bir
+  hata-ayıklama/teardown çalışması yayına girecek. 12 maddelik GO/NO-GO listesinin 10'u
+  yeşil; lansman anında doğrulanacak kalan ikisi hesap girişi ve ilk iki saat kesintisiz insan
+  nöbetidir.
 
-22 Temmuz'a kadar ana sayfa tarayıcıya **42 baytlık boş bir kabuk** olarak gidiyordu; defter,
-kurallar ve kanıt bölümü ancak JavaScript çalıştıktan sonra vardı. Yani Google'ın tarayıcısı,
-X'in link önizlemesi ve JS'i kapalı bir okuyucu boş sayfa görüyordu — üstelik insanların
-gerçekten indiği tek sayfada.
+### Lansman günü sitenin rolü
 
-Artık `npm run build` sonunda site kendi kendini bir kez çiziyor ve sonucu HTML'e gömüyor
-(`scripts/prerender.ts`). Tarayıcı açıldığında bu hazır HTML'i "devralıyor" (hydration), yani
-sayfa iki kez çizilmiyor. Yeni bir servis, yeni bir ücret, yeni bir bağımlılık yok — zaten
-kurulu olan Vite kullanılıyor.
+Site, lansmanın trafik iniş yeridir: hizmet yolunu, newsletter vaadini, `/silent-green/`
+içeriğini ve ziyaret sayacını aynı yerde sunar. Lansman öncesi kontrol listesi:
 
-İki şey hiçbir zaman bozulmayacak, ikisi de testli:
-- **Kanıt kapısı ham HTML'de de geçerli.** Canlı bir kanıt öğesi yokken HTML'de "The work"
-  de, "What I do" de, `#work` bağlantısı da yok. Tarayıcıda gizleyip kaynağa koymak, tam da
-  gizlemenin işe yaramadığı okuyucuya iddiayı göstermek olurdu.
-- **Build deterministik kalıyor.** Arka arkaya iki build birebir aynı baytları üretiyor. Tek
-  saat bağımlı metin gün damgası: HTML'de build günü yazılı durur, tarayıcı açıldığında
-  bugünün doğru sayısına döner.
+1. Ana sayfa, `/work/`, `/silent-green/`, kayıt yüzeyleri ve yeni paylaşım kartı canlı açılıyor.
+2. Ziyaret sayacı istekleri başarılı; sayaç paneli erişilebilir.
+3. Newsletter formu sözünü aynen taşıyor ve gerçek gönderime hazır.
+4. En güncel ledger, $0 dahil gerçek rakamları gösteriyor.
+5. OG kartı 1200×630 ve paylaşım metni ile uyumlu.
+6. İlk iki saat sayfa, kayıtlar ve anlamlı yorumlar insan tarafından kesintisiz izlenecek.
 
-### Paylaşılan hafta linkinde de tema düğmesi var
+Lansman tutmazsa X'te sonradan “başarılı oldu” izlenimi veren bir paylaşım yapılmaz. Sonuç,
+hangi yönde olursa olsun ledger ve kanal tezi içinde dürüstçe değerlendirilir.
 
-Biri X'te `/w/2026-07-19/` linkini paylaştığında açan okur, o güne kadar işletim sistemi
-tercihine mahkûmdu: hafta ve Türkçe sayfalarında tema düğmesi yoktu (ana sayfada vardı).
-Artık dört sayfa tipinde de var, ana sayfadakiyle aynı davranıyor ve seçim `localStorage`'da
-tutulduğu için sayfalar arasında da korunuyor. Türkçe sayfalarda düğme Türkçe konuşuyor
-("Koyu temaya geç" / "Açık temaya geç").
+## 6. Sırada ne var
 
-Küçük ama önemli bir ayrıntı: düğmeyi HTML'e koymuyoruz, **script kendisi yazıyor**.
-JavaScript kapalıysa ortada hiç düğme olmuyor — tıklanınca hiçbir şey yapmayan ölü bir düğme
-göstermektense hiç göstermemek doğrusu.
+1. **Show HN'i doğru işlet.** GO/NO-GO'nun iki canlı şartını doğrula, ilk iki saati izle ve
+   trafiği/konuşmaları kayda geçir.
+2. **Her Pazar ledger'ı güncelle.** Sayılar → çürüme taraması → gelecek haftanın tek önceliği:
+   ritüelin sabit sırası budur.
+3. **Newsletter sözünü tut.** Haftada bir silent-green bulgusu yayımla; giriş yoksa vaat
+   dolgu metinle kapatılmaz.
+4. **HN + 30 gün kanal tezini değerlendir.** Kapı kırmızıysa tez açıkça revize edilir; hedef
+   sonradan aşağı çekilmez.
+5. **Dönüşüm halkasını izle.** Profil ziyareti, site tıklaması, kayıt ve gerçek konuşma
+   arasındaki her kayıp ayrı bir öğrenme konusudur.
 
-Aynı turda yapılan diğer küçük temizlikler: Türkçe sayfada hedef tutarı iki farklı biçimde
-yazılıyordu (`$100.000` ve `$100,000` — Türkçede virgül ondalık ayırıcı olduğu için ikincisi
-"yüz" gibi okunuyordu), artık tek biçim ve rakam config'ten türetiliyor; paylaşım kartındaki
-metin kısaltması emoji'yi ortadan ikiye bölüp bozuk karakter üretebiliyordu, artık bölmüyor;
-hafta sayfalarının yapısal verisine sayfanın gerçek paylaşım görseli ve yayıncı bilgisi
-eklendi; her sayfaya site adı (`og:site_name`) kondu; tema düğmelerinin kenarlığı görme
-zorluğu olan kullanıcılar için 1.33:1'den 5.49:1 kontrasta çıkarıldı; ölü bir fonksiyon
-silindi ve sayfa iskeletinin kendi test dosyası yazıldı (README "her üreteç testli" diyordu,
-biri değildi).
+## 7. Riskler
 
-### Marka adı ve kanıt kartının kapsamı (22 Temmuz, akşam)
-
-İki küçük ama canlı yüzeye dokunan düzeltme:
-
-- **Marka adı `Kerem — road to $100k` oldu** (X'teki görünen adla birebir aynı, ki tweet'ten
-  gelen okur aynı ismi görsün). Ad `src/config.ts` → `SITE_NAME`'de duruyor; sayfa üstündeki
-  ve paylaşım kartındaki yazım artık oradan türetiliyor (`src/lib/brand.ts`), yani bir daha
-  değişirse tek satır yetecek — eskiden üç ayrı yerde elle yazılıydı. Kırmızı vurgu `$100k`
-  üzerinde. Hafta kartları yeniden üretildi.
-- **Kanıt kartı repoyla eşitlendi.** Teardown reposu kendi rakamının kapsamını açıklayan bir
-  cümle eklemişti; kart hâlâ ondan önceki ağaca bakıyordu. Sayı aynı (4/6 → 6/6), yanına
-  kapsamı geldi: dört baseline geçişinin ikisi upstream'in kendi testlerini yeniden üretiyor,
-  bu teardown'ın tasarladığı dört vakada baseline 2 geçti. `sourceCommit` güncel HEAD'e
-  (`7dcc0d3`) çekildi. **Pin'in tüm varlık sebebi tam olarak buydu**: repo değişince kartın
-  hangi ağaca dayandığı görünür olsun ve cümle sessizce eskimesin.
-
-### Sızıntı bekçisi (`npm run leaks`)
-
-Kural zaten vardı: başkasına ait olan hiçbir ad, adres veya ayrıntı bu public repoda geçmeyecek.
-22 Temmuz'a kadar bu kuralı **hiçbir makine kontrol etmiyordu** — denetimde yasaklı bir kelime
-`index.html`'e enjekte edildi ve bütün testler yeşil kaldı, kelime `dist`'e kadar gitti. Artık
-bir bekçi var:
-
-```sh
-npm run leaks              # kaynakları tara
-npm run leaks -- --dist    # build çıktısını da tara
-npm run leaks -- --git     # bütün commit mesajlarını da tara
-printf %s 'kelime' | npm run leaks:add   # listeye yeni kelime ekle
-```
-
-- **Kelimeler bu repoda hiçbir biçimde yok.** Ne düz metin, ne hash. Liste CI'da bir GitHub
-  *secret*'ından (`LEAK_DENYLIST`), yerelde ise git'e girmeyen `.leak-denylist.local.json`
-  dosyasından geliyor. Kaynak yoksa bekçi yeşil değil **kırmızı** verir.
-  *Neden böyle:* önce liste hash'lenmiş halde repoda duruyordu — "hash kelime değildir" diye.
-  Yanlıştı ve tartışmayla değil kanıtla anlaşıldı: aynı dosyada tuz, şemayı doğrulayan bilinen
-  bir kanarya kelimesi, her terimin tam uzunluğu ve ne olduğunu söyleyen bir not vardı. Bir
-  terim saniyeler içinde kaba kuvvetle çözüldü; dahası dosya tek tahmini anında doğrulayan bir
-  "kâhin" işlevi görüyordu. Public bir denylist, korumaya çalıştığı kelimenin doğrulayıcısıdır.
-- **Nasıl yazıldığı fark etmiyor.** Metin küçük harfe indirilip harf-rakam dışındaki her şey
-  silinerek taranıyor: `Foo-Bar`, `foo_bar`, `Foo Bar`, `kerem@foobar.com`,
-  `https://x.com/foobar/...` ve minify edilmiş kodun içi dahil hepsi yakalanıyor. E-posta ve
-  URL dizelerinin **içine** bakmak işin can alıcı kısmı — kardeş projede sızıntı tam orada
-  saklanmıştı.
-- **Bulgu raporlanırken kelime yazılmıyor:** `dosya:satır` + `[REDACTED len=N]`. Public repoda
-  CI logları da public.
-- **Bakamayan bekçi kırmızı yanar.** Liste yoksa/bozuksa/boşsa, bir klasör taşınmışsa, hedef
-  sıfır dosya eşleştirmişse, `--dist` var ama build yoksa, klon sığsa → hepsi hata. Ayrıca her
-  çalıştırmada bekçi kendi "kanarya" kelimesini yakalayabildiğini kanıtlıyor; kanıtlayamazsa
-  o çalışma başarısız.
-- **Nerede koşuyor:** CI'da build öncesi ve sonrası. Bir de `git config core.hooksPath .githooks`
-  ile açılan **pre-push hook**'unda — CI ancak deploy'u durdurabilir, o noktada commit çoktan
-  GitHub'da olur; hook ise kelime daha bilgisayardan çıkmadan yakalar.
-
-Listede ne olduğu **burada yazılı değil** — hangi kategorileri koruduğunu ilan eden bir metin,
-cevabın şeklini karşıya bedavaya verir. Yeni kelime eklemek: `printf %s 'ad' | npm run leaks:add`
-(kelime stdin'den okunur, hiçbir dosyaya ve loga düşmez, ekrana sadece `added (len N)` yazar).
-Ekledikten sonra CI'daki secret'ı tazele:
-`gh secret set LEAK_DENYLIST < .leak-denylist.local.json`.
-
-**Bekçinin YAPMADIKLARI** (bunu bilerek yaz: ona olmadığı bir güvence yüklenmesin):
-- Sadece **birebir kelimeyi** arar. Parafraz, kısaltma, base64/hex kodlama, ya da mekanizmayı
-  adını anmadan anlatan bir cümle **geçer**. Kural "ad geçmesin"i korur, "anlatma"yı değil.
-- Commit **mesajlarını** tarar, commit **diff'lerini** değil: bir kelime commit'lenip sonra
-  silinmişse geçmişte kalır ve bekçi görmez.
-- PNG/woff2 gibi ikili dosyaları okuyamaz — paylaşım kartına gömülmüş bir metni göremez.
-- `package.json` ve kilit dosyaları kapsam dışı (özel bir git bağımlılığı eklenirse önemli
-  olur).
-- Çok kısa kelimeler bu tasarımda **kullanılamaz**: 4 harfli bir deneme terimi ("is imported"
-  gibi masum İngilizce dizilerin içinde çıktığı için) sürekli yanlış alarm verdi ve çıkarıldı.
-  Terimler en az 6-7 harf olmalı.
-
-## 5. Sırada ne var
-
-1. **Her Pazar defteri güncelle.** Sitenin tek gerçek bakımı bu; asıl bileşik faiz burada.
-2. **Denetim planı bitti** ([docs/audit-2026-07-22.md](docs/audit-2026-07-22.md)): 28 bulgunun
-   tamamı kapandı — kapılar gerçek, teklif artık mobilde ilk ekranda, ana sayfa JavaScript'siz
-   de okunuyor. Geriye bilinçli bırakılanlar: `№ ← → ↗` karakterleri hâlâ sistem yazı tipine
-   düşüyor (kozmetik), ve sayfa üstündeki marka ile alttaki bağlantı aynı yere gidiyor (ekran
-   okuyucuda ufak tekrar).
-3. **Sayacın hesabını aç** — HN kapısının bu repoda açık kalan tek maddesi (§4). İki dakika:
-   goatcounter.com'da hesap → site kodu → `src/config.ts` → `ANALYTICS_CODE`, push. Yol
-   tarifi README'de.
-4. **Silent green № 002'yi yaz.** Vaat "haftada bir"; ikinci girişin gecikmesi vaadin
-   kendisini yalanlar. Yol: `src/data/series.json` → `entries`'e bir nesne, push. Ürün
-   adı/mekanizması girişlerde geçmez — kategori dili.
-4. **E-posta listesini büyütmek** için X'ten siteye trafik: her defter haftası ayrı bir
-   paylaşılabilir sayfa ve kendi görseline sahip — haftalık thread'in doğal ekidir.
-4. Opsiyonel, ücretsiz: Google Search Console'a siteyi ekle (`sitemap.xml` zaten hazır) ve
-   X kart doğrulayıcısıyla paylaşım görselini bir kez kontrol et.
-5. İleride: özel alan adı (para gerektirir — bütçe kararı), ikinci/üçüncü kanıt öğesi,
-   ilk gerçek gelir geldiğinde defterin öne çıkardığı metriklerin gözden geçirilmesi.
-
-## 6. Riskler (ve neden şu an panik yok)
-
-| Risk | Gerçek etkisi / önlem |
+| Risk | Etki ve somut önlem |
 |---|---|
-| **Defteri güncellemeyi bırakmak** | En büyük risk bu. Site teknik olarak kusursuz olsa da defter durursa iddia ölür. Tek panzehir: Pazar ritüeli. |
-| **Bozuk veri girmek** | Build patlar, deploy olmaz, eski site yayında kalır. Yani "yanlış sayı yayında" senaryosu pratikte kapalı; ceza sadece "yeni hafta görünmez" olur. |
-| **Sızıntı (ürün adı/mekanizması)** | Bu repo **public**. Ürün adı, mekanizması, private repo linkleri sitede, kodda, yorumlarda, commit mesajlarında geçmez — kategori dili kullanılır. Bu dosya da public'tir. |
-| **Sahte içerik cazibesi** | Kimse "abone sayısını yuvarlama" veya "yakında" doldurma metni eklemeyecek. Boş olan şey görünmez (kanıt bölümü, TR haftası) — yalan söylemez. |
-| **Paylaşım görselinin eski kalması** | X ve benzeri platformlar OG görselini önbelleğe alır; kart değişince ilk paylaşımda eski görsel çıkabilir. Çözüm: platformun kart doğrulayıcısından bir kez geçir. |
-| **GitHub Pages sınırları** | Ücretsiz katman, statik dosya; soft limit ~100GB/ay bant genişliği — bu ölçekte sorun değil. Sunucu tarafı mantık (form işleme, veritabanı) mümkün değil; e-posta kaydı bu yüzden Buttondown'da. |
-| **Sayaç kapalıyken launch** | 30 Temmuz'a kadar site hiçbir şey ölçmüyordu; artık ölçebiliyor ama **hesap açılmadan sayaç kapalı** (§2.2b). Launch trafiği bir kez gelir: kapalı sayaçla atılan post, geri alınamaz biçimde ölçüsüz kalır. Bu yüzden HN kapısının maddesi. |
-| **Sayacın kendi körlüğü** | JavaScript'i kapalı okur sayılmaz, bot filtresi mükemmel değil — rakam bir **taban**. Dışarıya sayı verilecekse bu şerhle verilir. |
-| **Tek kişilik bakım** | Kod sade ve test edilmiş; ama devamlılık sana bağlı. Bu dosya tam olarak bu yüzden var. |
+| **0 abone** | Şu an listenin büyümediğini açıkça kabul ediyoruz. Vaat, içerik ritmi ve giriş sayfası test edilir; sayı uydurulmaz. |
+| **Ledger ritminin kırılması** | Güven, haftalık kaydın devamından gelir. Pazar rutini takvimde sabit; boş hafta da kaydedilir. |
+| **Sayaç bağımlılığı** | Sayaç geçici olarak çalışmazsa trafik körleşir. Canlı istek, panel ve deploy sonrası yüzey kontrolü yapılır; sayıların taban olduğu unutulmaz. |
+| **Tek kanal riski** | X erişimi algoritmaya bağlıdır. Upstream katkılar, Hacker News, site ve e-posta birlikte yürütülür. |
+| **Dönüşüm halkası kopukluğu** | Gösterim, profil ziyareti, site tıklaması ve kayıt farklı basamaklardır. Her basamak ayrı ölçülür; gösterim başarı diye yazılmaz. |
+| **Deploy kırılması** | Test/build kırmızıysa değişiklik yayınlanmaz. Yeşil Actions, canlı HTTP 200 ve görünen içerik birlikte doğrulanır. |
+| **Paylaşım kartı önbelleği** | Platform eski OG kartını gösterebilir. Yeni kartı yerelde doğrula ve ilk paylaşımda kart denetleyicisiyle kontrol et. |
+| **Public içerik hatası** | Başkasına ait hiçbir ad, adres veya ayrıntı buradan çıkmaz. Şüpheli cümle yayınlanmaz. |
 
-## 7. Mini sözlük
+## 8. Mini sözlük
 
-- **Statik site:** Sunucuda hesaplama yapmayan, önceden hazırlanmış dosyalardan ibaret site.
-  Ucuz, hızlı, kırılması zor.
+- **Amplifikatör:** Kendi başına ana müşteri kaynağı olmayan, iyi içeriği daha fazla kişiye
+  duyuran kanal; burada X'in rolü budur.
 - **Build:** Kaynak koddan yayına çıkacak dosyaları üretme işlemi (`npm run build`).
-- **Deploy:** Üretilen dosyaların yayına alınması. Burada push sonrası otomatik.
-- **GitHub Actions:** Her push'ta çalışan ücretsiz otomasyon; testleri koşturup siteyi yayınlar.
-- **GitHub Pages:** GitHub'ın ücretsiz statik site barındırma servisi.
-- **Commit / push:** Değişikliği kaydetmek / GitHub'a göndermek.
-- **JSON-LD:** Sayfanın içine gömülen, arama motorlarının okuduğu makine-okur veri etiketi.
-- **sitemap / robots.txt:** Arama motorlarına sayfa listesi / gezinme izinleri.
-- **canonical:** "Bu içeriğin asıl adresi" etiketi.
-- **hreflang:** "Bu sayfanın şu dildeki karşılığı şurada" etiketi.
-- **RSS:** Okuyucu uygulamalarının yeni içeriği otomatik çekmesini sağlayan standart akış.
-- **OG görseli (Open Graph):** Link paylaşıldığında çıkan büyük önizleme görseli.
-- **MRR:** Monthly Recurring Revenue — aylık yinelenen (abonelik) gelir.
-- **Sparkline:** Eksen ve süs olmadan, sadece eğriyi gösteren küçük grafik.
-- **Headless (görünmez) tarayıcı:** Penceresi açılmadan çalışan tarayıcı; burada ekran
-  görüntüsü alıp OG kartı üretmek için kullanılır.
-- **Vitest / lint / typecheck:** Sırasıyla otomatik testler, kod kalitesi denetimi ve tip
-  denetimi. Üçü de yeşil olmadan deploy olmaz.
+- **Dönüşüm:** Bir kişinin bir sonraki anlamlı adıma geçmesi; örneğin gösterimden profil
+  ziyaretine veya tıklamadan kayda geçiş.
+- **Engagement:** Platformun etkileşim diye saydığı hareketlerin toplamı; niyetin doğrudan
+  ölçüsü değildir.
+- **GoatCounter:** Çerezsiz ziyaret sayımı yapan araç; burada sayfa ilgisini anlamak için
+  kullanılır.
+- **Gösterim (impression):** İçeriğin bir kullanıcının ekranında görünme sayısı; kişi veya
+  ilgi sayısı değildir.
+- **GitHub Pages deploy:** Build edilmiş statik dosyaların GitHub Pages üzerinde canlı sürüme
+  alınması.
+- **Kümülatif harcama:** Başlangıçtan bugüne kadar yapılan tüm harcamanın toplamı.
+- **Ledger:** Gelir, MRR, harcama ve abone sayısını haftalık, değiştirilebilir kaynakta
+  tutan açık kayıt.
+- **LIVE GKK:** Kanıtı canlı X gündemine dayanan konu adayı; zaman ve bağlam kanıtı vardır.
+- **MRR:** Monthly Recurring Revenue; aylık yinelenen gelir.
+- **OG kartı (Open Graph):** Bir link paylaşıldığında görünen 1200×630 önizleme görseli.
+- **Profil ziyareti:** İçerikten sonra birinin hesabı açması; yüzeysel erişimden daha güçlü
+  ilgi işaretidir, fakat dönüşümün sonu değildir.
+- **SOURCE-LED:** Güçlü birincil kaynağa dayanan ama canlı X gündemi kanıtı taşımayan konu
+  adayı.
+- **Statik site:** Sunucuda hesaplama yapmayan, önceden üretilmiş dosyalardan oluşan hızlı
+  site.
+- **UTM:** Linke hangi kaynaktan geldiğini ayırt etmek için eklenen kısa etiket; tek başına
+  kişiyi tanımlamaz.
+- **Vitest / lint / typecheck:** Sırasıyla otomatik test, kod kalitesi ve tip denetimi;
+  yayın öncesi birlikte yeşil olmalıdır.
