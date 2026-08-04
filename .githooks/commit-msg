@@ -1,0 +1,11 @@
+#!/bin/sh
+# This repository is public and scripts/scan-release.mjs rejects any email
+# address in commit or tag metadata. Cursor appends a Co-authored-by trailer
+# carrying an address, which would fail the release gate on every commit.
+# Strip the trailer but keep the attribution honest in plain text.
+msg="$1"
+if grep -qiE '^Co-authored-by:.*@' "$msg"; then
+  grep -viE '^Co-authored-by:.*@' "$msg" > "$msg.tmp"
+  printf 'Prepared with an AI coding agent.\n' >> "$msg.tmp"
+  mv "$msg.tmp" "$msg"
+fi
