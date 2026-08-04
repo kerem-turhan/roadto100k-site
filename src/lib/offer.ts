@@ -63,9 +63,9 @@ export const SERVICES: readonly Service[] = [
  */
 export const AUDIT = {
   name: 'Agent reliability audit',
-  price: '$1,500',
+  price: '$2,500',
   /** From the day access lands, not from the day we start talking. */
-  timebox: 'One week, from the day access lands to the report in your inbox.',
+  timebox: 'Three business days, from the day access lands to the report in your inbox.',
   deliverablesLabel: 'What comes back',
   deliverables: [
     'A failure-mode map: every path I find where a failed check still returns success, ranked by how long it can stay wrong before anyone notices.',

@@ -82,8 +82,8 @@ sormuyor. Dördü birden sayfada:
 
 | Parça | Sayfadaki hâli |
 |---|---|
-| **Fiyat** | **$1,500** — "Agent reliability audit". Sitedeki **tek** fiyat (bir test bunu sayıyor). |
-| **Süre kutusu** | *"One week, from the day access lands to the report in your inbox."* — sayaç konuşmanın başladığı gün değil, erişimin geldiği gün başlar. |
+| **Fiyat** | **$2,500** — "Agent reliability audit". Sitedeki **tek** fiyat (bir test bunu sayıyor). |
+| **Süre kutusu** | *"Three business days, from the day access lands to the report in your inbox."* — sayaç konuşmanın başladığı gün değil, erişimin geldiği gün başlar. |
 | **Sayılı çıktı listesi** | 5 numaralı madde: failure-mode haritası · **en az 3** tekrar-üretilebilir hata · başlangıç eval seti + tek komut · öncelikli aksiyon planı · yazılı kapanış (çağrı isteğe bağlı — varsayılan yazılı). |
 | **Ön koşul / erişim checklist'i** | Gün birden önce ne gerektiği: **read-not-write** erişim (salt-okunur davet veya fork; PR açılır, dala push edilmez) · uçtan uca çalıştırma yolu (env şablonu / fixture / sandbox anahtarı, **asla prod kimlik bilgisi**) · yazılı yanıt verebilen tek muhatap · "yanlış"ın tanımı. |
 | **Sonraki basamak** | Tek satır, fiyatsız: *"Ongoing operations: after first delivery, priced per engagement."* |

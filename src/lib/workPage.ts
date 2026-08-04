@@ -75,7 +75,7 @@ export function buildWorkPage({ meta, items }: WorkPageOptions): StaticPage | nu
   const url = workUrl(meta.siteUrl)
   const base = basePath(meta.siteUrl)
   const contact = meta.contactEmail
-  const description = `${POSITIONING.claim} ${POSITIONING.rule} A ${AUDIT.price} reliability audit for AI agents — one week, a counted list of deliverables, and a public reproducible teardown as the reference.`
+  const description = `${POSITIONING.claim} ${POSITIONING.rule} A ${AUDIT.price} reliability audit for AI agents — three business days, a counted list of deliverables, and a public reproducible teardown as the reference.`
 
   const receipts = live.map((item) => receiptMarkup(item)).join('\n')
 

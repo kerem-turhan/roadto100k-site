@@ -89,8 +89,8 @@ describe('the audit package', () => {
   ].join(' ')
 
   it('carries all four things that turn a number into an offer', () => {
-    expect(AUDIT.price).toBe('$1,500')
-    expect(AUDIT.timebox).toMatch(/One week/)
+    expect(AUDIT.price).toBe('$2,500')
+    expect(AUDIT.timebox).toMatch(/Three business days/)
     expect(AUDIT.deliverables.length).toBeGreaterThanOrEqual(3)
     expect(AUDIT.prerequisites.length).toBeGreaterThanOrEqual(3)
   })
@@ -124,7 +124,7 @@ describe('the audit package', () => {
   })
 
   it('names exactly one price across the whole offer', () => {
-    expect(all.match(/\$\s?[\d,]+/g)).toEqual(['$1,500'])
+    expect(all.match(/\$\s?[\d,]+/g)).toEqual(['$2,500'])
   })
 })
 

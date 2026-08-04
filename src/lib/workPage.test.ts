@@ -66,13 +66,13 @@ describe('buildWorkPage', () => {
    */
   it('names one price, and only one', () => {
     const body = main()
-    expect(body).toContain('$1,500')
-    expect(body.match(/\$\s?[\d,]+/g)).toEqual(['$1,500'])
+    expect(body).toContain('$2,500')
+    expect(body.match(/\$\s?[\d,]+/g)).toEqual(['$2,500'])
   })
 
   it('bounds the work in time and in count', () => {
     const body = main()
-    expect(body).toContain('One week, from the day access lands')
+    expect(body).toContain('Three business days, from the day access lands')
     expect(body).toContain('At least three reproducible failures')
     const pkg = body.slice(body.indexOf('<div class="package">'), body.indexOf('</main'))
     expect((pkg.match(/<ol class="steps">/g) ?? []).length).toBe(1)
