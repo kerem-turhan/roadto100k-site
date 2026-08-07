@@ -9,8 +9,8 @@
 >
 > **Son güncelleme: 3 Ağustos 2026.** Üç haftalık ledger canlı; gelir $0, MRR $0, kümülatif
 > harcama $2 ve e-posta abonesi 0. Site 406 otomatik testten geçiyor; çerezsiz ziyaret sayacı,
-> kayıt sayfaları, paylaşım kartları ve haftalık silent-green vaadi canlı. Şu an tek öncelik,
-> 4 Ağustos'taki Show HN lansmanında gelen trafiği dürüstçe karşılamak.
+> kayıt sayfaları, paylaşım kartları ve haftalık silent-green vaadi canlı. Lansman henüz
+> yapılmadı — 4 Ağustos denemesi platform tarafında engele takıldı; yeni tarih belirlenmedi.
 
 ---
 
@@ -322,10 +322,10 @@ kitleli yüksek erişim, reply adayı değildir.
 - Buttondown gerçek kayıtla denendi. Takip/izleme ayarları kapalı; UTM kaynak etiketi olarak
   açık ve kişi izlemek için kullanılmıyor.
 - GoatCounter canlı, herkese açık görünürlükte ve çerezsiz çalışıyor.
-- Öncelik: 4 Ağustos, 15:00–20:00 TR arasında Show HN lansmanı. Açık kaynak bir
-  hata-ayıklama/teardown çalışması yayına girecek. 12 maddelik GO/NO-GO listesinin 10'u
-  yeşil; lansman anında doğrulanacak kalan ikisi hesap girişi ve ilk iki saat kesintisiz insan
-  nöbetidir.
+- Lansman: 4 Ağustos denemesi **yapılamadı** — engel, GO/NO-GO listesinde kalan iki maddeden
+  (hesap girişi, insan nöbeti) hiçbiri değildi; platform tarafında bir kısıt çıktı. 12 maddelik
+  listenin 10'u hâlâ yeşil ve paket hazır duruyor; yeni tarih belirlenmedi. Belirlendiğinde
+  burada yazacak.
 
 ### Lansman günü sitenin rolü
 
